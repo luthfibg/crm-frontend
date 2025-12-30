@@ -1,0 +1,7 @@
+Tipe KPI-------------------------Formula Skor (0 - 100%)
+
+Funnel (V1-Repeat) ------------(Total Terpenuhi/Total Pipeline)×100
+Soc & Act-----------------------(Total Aktivitas/(Target Bulanan×Bulan Aktif))×100
+Target Achievement------------(Realisasi Penjualan/Target Tahunan)×100
+Cust. Progress-------------------((Hot Prospect/Total Customer)/0.5)×100 (Cap at 100)
+Closing Ratio-------------------((Closing/Total Customer)/0.1)×100 (Cap at 100)
