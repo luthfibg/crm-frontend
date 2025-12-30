@@ -1,3 +1,5 @@
+import { WavingHand02Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import React, { useState } from 'react';
 
 const Login = () => {
@@ -15,9 +17,9 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-slate-800">Welcome Back</h2>
-          <p className="text-slate-500 mt-2">Please enter your details to sign in</p>
+        <div className="text-center mb-8 flex gap-2 lg:gap-3 items-center justify-center">
+          <HugeiconsIcon icon={WavingHand02Icon} size={30} color="#0A4C8F" strokeWidth={1.5} />
+          <h2 className="text-3xl font-bold text-[#0A4C8F]">Welcome Back</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -62,7 +64,7 @@ const Login = () => {
           </div>
 
           <button            type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition-colors duration-200 shadow-md shadow-indigo-100"
+            className="w-full bg-[#0A4C8F] hover:bg-indigo-700 text-[#F8BF0B] font-semibold py-2.5 rounded-lg transition-colors duration-200 shadow-md shadow-indigo-100"
           >
             Sign In
           </button>
