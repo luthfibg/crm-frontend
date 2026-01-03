@@ -9,14 +9,19 @@ import {
   DashboardSpeed02Icon,
   Logout01Icon 
 } from '@hugeicons/core-free-icons';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
+
+  const { isAdmin } = useAuth();
+  const { logout } = useAuth();
+
   const menus = [
-    { id: 'sales', label: 'Tim Sales', icon: UserGroupIcon },
-    { id: 'prospek', label: 'Prospek', icon: Target02Icon },
-    { id: 'laporan', label: 'Laporan', icon: ChartPie },
-    { id: 'kpi', label: 'KPI', icon: DashboardSpeed02Icon },
-    { id: 'pengaturan', label: 'Pengaturan', icon: Settings02Icon },
+    { id: 'sales', label: 'Tim Sales', icon: UserGroupIcon, protected: false },
+    { id: 'prospek', label: 'Prospek', icon: Target02Icon, protected: false },
+    { id: 'laporan', label: 'Laporan', icon: ChartPie, protected: false },
+    { id: 'kpi', label: 'KPI', icon: DashboardSpeed02Icon, protected: true }, // Protected
+    { id: 'pengaturan', label: 'Pengaturan', icon: Settings02Icon, protected: false },
   ];
 
   return (
@@ -34,34 +39,28 @@ const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
 
         {/* Navigation */}
         <nav className="flex-1 py-6 px-3 space-y-2">
-          {menus.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center p-3 rounded-xl transition-all group
-                ${activeTab === item.id 
-                  ? 'bg-indigo-50 text-indigo-600' 
-                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'}`}
-            >
-              <HugeiconsIcon 
-                icon={item.icon} 
-                size={24} 
-                variant={activeTab === item.id ? "solid" : "outline"}
-                className="min-w-6"
-              />
-              {isOpen && <span className="ml-3 font-medium truncate">{item.label}</span>}
-              {!isOpen && (
-                <div className="absolute left-20 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
-                  {item.label}
-                </div>
-              )}
-            </button>
-          ))}
+          {menus.map((item) => {
+            const isLocked = item.protected && !isAdmin;
+            return (
+              <button
+                key={item.id}
+                disabled={isLocked}
+                onClick={() => !isLocked && setActiveTab(item.id)}
+                className={`w-full flex items-center p-3 rounded-xl transition-all group relative
+                  ${isLocked ? 'opacity-40 cursor-not-allowed filter grayscale' : ''}
+                  ${activeTab === item.id ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50'}`}
+              >
+                <HugeiconsIcon icon={item.icon} size={24} />
+                {isOpen && <span className="ml-3 font-medium">{item.label}</span>}
+                {isLocked && isOpen && <span className="ml-auto text-[10px] bg-slate-200 px-1.5 rounded text-slate-500 uppercase">Pro</span>}
+              </button>
+            );
+          })}
         </nav>
 
         {/* Footer */}
         <div className="p-3 border-t border-slate-50">
-          <button className="w-full flex items-center p-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+          <button className="w-full flex items-center p-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" onClick={logout}>
             <HugeiconsIcon icon={Logout01Icon} size={24} />
             {isOpen && <span className="ml-3 font-medium">Keluar</span>}
           </button>
