@@ -47,7 +47,7 @@ const ProspectCard = ({ data }) => {
       </div>
 
       {/* PIC & Info */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between mb-">
         <div className="min-w-0">
           <h4 className="text-sm font-bold text-slate-800 truncate">{data.pic}</h4>
           <p className="text-[13px] text-slate-500 font-medium">{data.title} @ {data.company}</p>

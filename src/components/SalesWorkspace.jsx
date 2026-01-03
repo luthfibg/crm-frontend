@@ -1,8 +1,9 @@
 import React from 'react';
 import Chart from 'react-apexcharts';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { User02Icon, StarIcon, InformationCircleIcon, FireIcon } from '@hugeicons/core-free-icons';
+import { User02Icon, StarIcon, InformationCircleIcon, FireIcon, PlusSignIcon, PencilEdit01Icon, Delete02Icon } from '@hugeicons/core-free-icons';
 import EnterpriseCoreMetrics from './EnterpriseCoreMetrics';
+import { useAuth } from '../context/AuthContext';
 
 // --- APEXCHART CONFIG ---
 const heatmapOptions = {
@@ -200,12 +201,13 @@ const PipelineRow = ({ pic, title, company, stage, date }) => {
 };
 
 // --- SALES PERSON CARD ---
-const SalesPersonCard = ({ name, avatar, summary, pipelines, totalScore = 0 }) => {
+const SalesPersonCard = ({ name, avatar, summary, pipelines, totalScore = 0, isAdmin }) => {
   const safeScore = isNaN(totalScore) ? 0 : totalScore;
   const level = getKPILevel(safeScore);
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+    <div className="bg-white group rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+
       <div className="p-3 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 overflow-hidden shadow-sm">
@@ -216,6 +218,18 @@ const SalesPersonCard = ({ name, avatar, summary, pipelines, totalScore = 0 }) =
             <p className="text-[10px] text-indigo-600 font-medium truncate">{summary}</p>
           </div>
         </div>
+
+        {/* Tombol CRUD (Hanya Admin) */}
+        {isAdmin && (
+          <div className="flex gap-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button className="p-1.5 bg-white shadow-sm border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all">
+              <HugeiconsIcon icon={PencilEdit01Icon} size={14} />
+            </button>
+            <button className="p-1.5 bg-white shadow-sm border border-slate-200 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-all">
+              <HugeiconsIcon icon={Delete02Icon} size={14} />
+            </button>
+          </div>
+        )}
 
         <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all duration-500 ${level.container}`}>
           <div className={`w-1.5 h-1.5 rounded-full ${level.dot}`} />
@@ -253,6 +267,7 @@ const SalesPersonCard = ({ name, avatar, summary, pipelines, totalScore = 0 }) =
 
 // --- MAIN COMPONENT ---
 export default function SalesWorkspace() {
+  const { isAdmin } = useAuth();
   return (
     <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-slate-50/50">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -289,9 +304,20 @@ export default function SalesWorkspace() {
                 summary={sales.summary}
                 pipelines={sales.pipelines}
                 totalScore={totalScore}
+                isAdmin={isAdmin}
               />
             );
           })}
+
+          {/* KARTU ADD NEW (Hanya untuk Admin) */}
+          {isAdmin && (
+            <button className="group h-full min-h-62.5 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center gap-3 bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition-all">
+              <div className="p-3 rounded-full bg-white shadow-sm group-hover:scale-110 transition-transform">
+                <HugeiconsIcon icon={PlusSignIcon} size={24} className="text-slate-400 group-hover:text-indigo-600" />
+              </div>
+              <span className="text-xs font-bold text-slate-400 group-hover:text-indigo-600">Add New Sales Member</span>
+            </button>
+          )}
         </div>
       </div>
     </main>

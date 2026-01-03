@@ -34,7 +34,7 @@ const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
           <div className="min-w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
             <div className="w-4 h-4 bg-white rounded-full animate-pulse" />
           </div>
-          {isOpen && <span className="ml-3 font-bold text-xl text-slate-800 truncate">CRM Pro</span>}
+          {isOpen && <span className="ml-3 font-bold text-xl text-slate-800 truncate">CRM Mandiri</span>}
         </div>
 
         {/* Navigation */}
@@ -52,7 +52,7 @@ const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
               >
                 <HugeiconsIcon icon={item.icon} size={24} />
                 {isOpen && <span className="ml-3 font-medium">{item.label}</span>}
-                {isLocked && isOpen && <span className="ml-auto text-[10px] bg-slate-200 px-1.5 rounded text-slate-500 uppercase">Pro</span>}
+                {isLocked && isOpen && <span className="ml-auto text-[10px] bg-slate-200 px-1.5 rounded text-slate-500 uppercase">special</span>}
               </button>
             );
           })}
