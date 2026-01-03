@@ -4,6 +4,7 @@ import SalesWorkspace from '../components/SalesWorkspace';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Menu01Icon, Notification03Icon, UserCircleIcon } from '@hugeicons/core-free-icons';
 import ProspectWorkspace from '../components/ProspectWorkspace';
+import KPIWorkspace from '../components/KPIWorkspace';
 
 const Panel = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -47,7 +48,7 @@ const Panel = () => {
         </header>
 
         {/* Main Workspace */}
-        {activeTab === 'sales' ? <SalesWorkspace /> : activeTab === 'prospek' ? <ProspectWorkspace /> : (
+        {activeTab === 'sales' ? <SalesWorkspace /> : activeTab === 'prospek' ? <ProspectWorkspace /> : activeTab === 'kpi' ? <KPIWorkspace /> : (
           <main className="flex-1 overflow-y-auto p-4 lg:p-8">
             <div className="max-w-7xl mx-auto">
               <div className="bg-white rounded-2xl border border-slate-200 h-[calc(100vh-160px)] flex items-center justify-center">

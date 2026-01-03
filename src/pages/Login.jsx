@@ -1,17 +1,32 @@
 import { WavingHand02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
+import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 import React, { useState } from 'react';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post('/login', formData);
+      
+      // Simpan token di localStorage
+      localStorage.setItem('token', response.data.access_token);
+      
+      // Arahkan ke dashboard
+      navigate('/panel');
+    } catch (err) {
+      setError('Invalid email or password');
+      console.error(err);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Login submitted:', formData);
   };
 
   return (

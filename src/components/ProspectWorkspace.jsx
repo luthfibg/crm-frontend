@@ -36,10 +36,10 @@ const ProspectCard = ({ data }) => {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all group mb-3">
       {/* KPI Progress Bar */}
-      <div className="mb-3">
+      <div className="mb-6">
         <div className="flex justify-between items-center mb-1">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Daily KPI Progress</span>
-          <span className="text-[10px] font-bold text-indigo-600">{data.dailyKpi}%</span>
+          <span className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Daily KPI Progress</span>
+          <span className="text-[12px] font-bold text-indigo-600">{data.dailyKpi}%</span>
         </div>
         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
           <div className={`h-full bg-indigo-500 rounded-full transition-all duration-500`} style={{ width: `${data.dailyKpi}%` }} />
@@ -47,28 +47,28 @@ const ProspectCard = ({ data }) => {
       </div>
 
       {/* PIC & Info */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-6">
         <div className="min-w-0">
           <h4 className="text-sm font-bold text-slate-800 truncate">{data.pic}</h4>
-          <p className="text-[11px] text-slate-500 font-medium">{data.title} @ {data.company}</p>
+          <p className="text-[13px] text-slate-500 font-medium">{data.title} @ {data.company}</p>
         </div>
         <div className="flex gap-1">
             <button className="p-1.5 hover:bg-slate-50 rounded-md text-slate-400 hover:text-indigo-600 transition-colors">
-                <HugeiconsIcon icon={CallIcon} size={14} />
+                <HugeiconsIcon icon={CallIcon} size={16} />
             </button>
-            <button className="p-1.5 hover:bg-slate-50 rounded-md text-slate-400 hover:text-indigo-600 transition-colors">                <HugeiconsIcon icon={Mail01Icon} size={14} />
+            <button className="p-1.5 hover:bg-slate-50 rounded-md text-slate-400 hover:text-indigo-600 transition-colors">                <HugeiconsIcon icon={Mail01Icon} size={16} />
             </button>        </div>
       </div>
 
       {/* Details Grid */}
-      <div className="grid grid-cols-1 gap-2 border-y border-slate-50 py-3 mb-3">
+      <div className="grid grid-cols-1 gap-2 border-y border-slate-50 py-3 mb-6">
         <div className="flex items-center gap-2">
-          <HugeiconsIcon icon={PackageIcon} size={14} className="text-slate-400" />
-          <span className="text-[11px] text-slate-600 truncate">{data.product}</span>
+          <HugeiconsIcon icon={PackageIcon} size={16} className="text-slate-400" />
+          <span className="text-[13px] text-slate-600 truncate">{data.product}</span>
         </div>
         <div className="flex items-center gap-2">
-          <HugeiconsIcon icon={Money01Icon} size={14} className="text-slate-400" />
-          <span className="text-[11px] font-bold text-slate-700">{formatIDR(data.value)}</span>
+          <HugeiconsIcon icon={Money01Icon} size={16} className="text-slate-400" />
+          <span className="text-[13px] font-bold text-slate-700">{formatIDR(data.value)}</span>
         </div>
       </div>
 
@@ -76,9 +76,9 @@ const ProspectCard = ({ data }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-md">
           <HugeiconsIcon icon={Clock01Icon} size={12} className="text-slate-400" />
-          <span className="text-[10px] font-bold text-slate-500">{data.daysInStage} Days</span>
+          <span className="text-[12px] font-bold text-slate-500">{data.daysInStage} Days</span>
         </div>
-        <button className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+        <button className="text-[12px] font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
           Details <HugeiconsIcon icon={AiChat02Icon} size={12} />
         </button>
       </div>
@@ -142,7 +142,7 @@ const ProspectWorkspace = () => {
                 <div className={`w-2 h-2 rounded-full ${col.color}`} />
                 <h3 className="text-xs font-black text-slate-700 uppercase tracking-widest">{col.label}</h3>
               </div>
-              <span className="bg-slate-200 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
+              <span className="bg-slate-200 text-slate-600 text-[12px] font-bold px-2 py-0.5 rounded-full">
                 {activeProspects.filter(p => p.stage === col.id).length}              </span>
             </div>
 
@@ -167,8 +167,8 @@ const ProspectWorkspace = () => {
                 <div key={i} className="bg-white/60 border border-slate-200 rounded-xl p-3 mb-2 opacity-70 grayscale">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="text-[11px] font-bold text-slate-700">{hp.pic}</h4>
-                      <p className="text-[9px] text-slate-400">{hp.company}</p>
+                      <h4 className="text-[13px] font-bold text-slate-700">{hp.pic}</h4>
+                      <p className="text-[11px] text-slate-400">{hp.company}</p>
                     </div>
                     {hp.stage === 4 ? (
                       <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500" variant="solid" />
