@@ -3,25 +3,40 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext'; // ← TAMBAHKAN INI
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // ← Tambahan untuk UX
   const navigate = useNavigate();
+  const { login } = useAuth(); // ← TAMBAHKAN INI
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Reset error
+    setIsLoading(true); // ← Tambahan
+    
     try {
       const response = await api.post('/login', formData);
       
-      // Simpan token di localStorage
-      localStorage.setItem('token', response.data.access_token);
+      // ← PERBAIKAN: Gunakan fungsi login dari context
+      login(response.data.user, response.data.access_token);
       
       // Arahkan ke dashboard
       navigate('/panel');
     } catch (err) {
-      setError('Invalid email or password');
-      console.error(err);
+      // ← PERBAIKAN: Error handling yang lebih baik
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.response?.data?.errors?.email) {
+        setError(err.response.data.errors.email[0]);
+      } else {
+        setError('Invalid email or password');
+      }
+      console.error('Login error:', err);
+    } finally {
+      setIsLoading(false); // ← Tambahan
     }
   };
 
@@ -37,6 +52,13 @@ const Login = () => {
           <h2 className="text-3xl font-bold text-[#0A4C8F]">Welcome Back</h2>
         </div>
 
+        {/* ← TAMBAHKAN: Tampilkan error jika ada */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
@@ -44,9 +66,11 @@ const Login = () => {
               type="email"
               name="email"
               required
+              value={formData.email} // ← TAMBAHKAN value
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               placeholder="name@example.com"
               onChange={handleChange}
+              disabled={isLoading} // ← TAMBAHKAN
             />
           </div>
 
@@ -61,9 +85,11 @@ const Login = () => {
               type="password"
               name="password"
               required
+              value={formData.password} // ← TAMBAHKAN value
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               placeholder="••••••••"
               onChange={handleChange}
+              disabled={isLoading} // ← TAMBAHKAN
             />
           </div>
 
@@ -78,10 +104,12 @@ const Login = () => {
             </label>
           </div>
 
-          <button            type="submit"
-            className="w-full bg-[#0A4C8F] hover:bg-indigo-700 text-[#F8BF0B] font-semibold py-2.5 rounded-lg transition-colors duration-200 shadow-md shadow-indigo-100"
+          <button
+            type="submit"
+            disabled={isLoading} // ← TAMBAHKAN
+            className="w-full bg-[#0A4C8F] hover:bg-indigo-700 text-[#F8BF0B] font-semibold py-2.5 rounded-lg transition-colors duration-200 shadow-md shadow-indigo-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Sign In
+            {isLoading ? 'Signing In...' : 'Sign In'} {/* ← TAMBAHKAN */}
           </button>
         </form>
 
