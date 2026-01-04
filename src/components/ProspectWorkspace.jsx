@@ -10,6 +10,7 @@ import KanbanBoard from './KanbanBoard';
 import CustomerTable from './CustomerTable';
 import AddCustomerModal from './AddCustomerModal';
 import TaskChecklistModal from './TaskChecklistModal';
+import AddProspectModal from './AddProspectModal';
 
 const ProspectWorkspace = () => {
   const [view, setView] = useState('pipeline');
@@ -19,6 +20,7 @@ const ProspectWorkspace = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [isAddProspectOpen, setIsAddProspectOpen] = useState(false);
 
   const [error, setError] = useState(null)
 
@@ -57,6 +59,15 @@ const ProspectWorkspace = () => {
         userId={user?.id}
       />
 
+      <AddProspectModal
+        isOpen={isAddProspectOpen}
+        onClose={() => setIsAddProspectOpen(false)}
+        onSuccess={() => {
+          setRefreshKey(k => k + 1);
+          setView('pipeline'); // Otomatis pindah ke pipeline setelah add
+        }}
+      />
+
       <TaskChecklistModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
@@ -67,27 +78,40 @@ const ProspectWorkspace = () => {
       {/* Header Section */}
       <div className="p-4 lg:p-6 flex items-center justify-between border-b border-slate-200 bg-white">
         <div>
-          <h2 className="text-lg font-bold text-slate-800">
-            {view === 'pipeline' ? 'Prospect Pipeline' : 'My Customers'}
+          <h2 className="text-lg font-bold text-slate-800 uppercase tracking-tight">
+            {view === 'pipeline' ? 'Prospect Pipeline' : 'Customer Database'}
           </h2>
-          <p className="text-xs text-slate-500 font-medium">
-            Managing {prospects.length} total customers
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+            {view === 'pipeline' ? `Managing ${prospects.length} Active Prospek` : 'Full Customer Directory'}
           </p>
         </div>
         
         <div className="flex gap-2">
+          {/* Tombol Toggle View */}
           <button onClick={() => setView(view === 'pipeline' ? 'customer' : 'pipeline')}
-            className={`flex p-2 items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all shadow-sm border ${
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border ${
                 view === 'customer' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'bg-white text-slate-600 border-slate-200'
             }`}>
             <HugeiconsIcon icon={view === 'pipeline' ? ContactBookIcon : WorkflowSquare01Icon} size={18} />
+            {view === 'pipeline' ? 'View Database' : 'View Pipeline'}
           </button>
 
-          <button onClick={() => setIsAddCustomerOpen(true)}
-            className='flex bg-blue-600 items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold text-white hover:bg-blue-700 transition-all'>
-            <HugeiconsIcon icon={PlusSignIcon} size={16} />
-            New Customer
-          </button>
+          {/* Tombol Dinamik Berdasarkan View */}
+          {view === 'pipeline' ? (
+            <button 
+              onClick={() => setIsAddProspectOpen(true)}
+              className='flex bg-indigo-600 items-center gap-2 px-4 py-2 rounded-lg text-xs font-black text-white hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100'>
+              <HugeiconsIcon icon={PlusSignIcon} size={16} />
+              ADD PROSPECT
+            </button>
+          ) : (
+            <button 
+              onClick={() => setIsAddCustomerOpen(true)}
+              className='flex bg-emerald-600 items-center gap-2 px-4 py-2 rounded-lg text-xs font-black text-white hover:bg-emerald-700 transition-all shadow-md shadow-emerald-100'>
+              <HugeiconsIcon icon={PlusSignIcon} size={16} />
+              NEW CUSTOMER
+            </button>
+          )}
         </div>
       </div>
 
@@ -116,7 +140,7 @@ const ProspectWorkspace = () => {
         view === 'pipeline' ? (
           <KanbanBoard prospects={prospects} onOpenModal={handleOpenModal} />
         ) : (
-          <div className="p-6"><CustomerTable key={refreshKey} /></div>
+          <CustomerTable key={refreshKey} />
         )
       )}
     </main>

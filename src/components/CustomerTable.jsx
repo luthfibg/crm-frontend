@@ -66,8 +66,8 @@ const CustomerTable = () => {
   }
 
   return (
-    <div className="h-full w-full flex flex-col p-4 lg:p-6">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
+    <div className="h-full min-h-0 w-full flex flex-col p-4 lg:p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-full min-h-0 overflow-hidden">
         
         {/* Table Filter/Search */}
         <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
