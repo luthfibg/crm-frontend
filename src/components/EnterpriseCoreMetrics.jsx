@@ -49,11 +49,7 @@ const EnterpriseCoreMetrics = ({ data }) => {
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em]">Enterprise Monthly Core</h3>
-          <div className="flex items-center gap-2 mt-1">
-            <HugeiconsIcon icon={GlobalIcon} size={16} className="text-slate-400" />
-            <span className="text-sm font-bold text-slate-800">Consolidated Performance</span>
-          </div>
+          <h3 className="text-[12px] font-black text-indigo-600 uppercase tracking-[0.2em]">Performa Cabang</h3>
         </div>
         <div className="bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full text-[10px] font-extrabold border border-indigo-100 shadow-sm">
           AVG KPI: {avgKpiScore}
@@ -83,7 +79,7 @@ const EnterpriseCoreMetrics = ({ data }) => {
       <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
         <div className="flex justify-between items-end">
           <div>
-            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tight">Yearly Revenue Achievement</p>
+            <p className="text-[9px] mb-1 text-slate-500 font-bold uppercase tracking-tight">Pendapatan Tahunan</p>
             <p className="text-base font-black text-slate-900 leading-tight">{formatIDR(totalRevenue)}</p>
           </div>
           <div className="text-right">
