@@ -74,7 +74,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
                   <div className="flex justify-between items-center mb-1">
                     <div className="flex flex-col flex-1">
                       <span className="text-[10px] font-black text-indigo-600 uppercase tracking-wider">
-                        📍 Current Stage
+                        Current Stage
                       </span>
                       <span className="text-[11px] font-bold text-indigo-600">
                         {current.kpi_description}

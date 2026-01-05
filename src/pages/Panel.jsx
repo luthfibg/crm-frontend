@@ -3,8 +3,8 @@ import Sidebar from '../components/Sidebar';
 import SalesWorkspace from '../components/SalesWorkspace';
 import ProspectWorkspace from '../components/ProspectWorkspace';
 import KPIWorkspace from '../components/KPIWorkspace';
-import PanelHeader from '../components/PanelHeader'; // ← Import component baru
-
+import PanelHeader from '../components/PanelHeader';
+import SettingWorkspace from '../components/SettingWorkspace';
 const Panel = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('sales');
@@ -33,6 +33,8 @@ const Panel = () => {
           <ProspectWorkspace />
         ) : activeTab === 'kpi' ? (
           <KPIWorkspace />
+        ) : activeTab === 'pengaturan' ? (
+          <SettingWorkspace />
         ) : (
           <main className="flex-1 p-4 lg:p-8">
             <div className="max-w-7xl mx-auto">

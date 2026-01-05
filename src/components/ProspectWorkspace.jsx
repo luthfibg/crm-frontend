@@ -82,7 +82,7 @@ const ProspectWorkspace = () => {
             {view === 'pipeline' ? 'Prospect Pipeline' : 'Customer Database'}
           </h2>
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-            {view === 'pipeline' ? `Managing ${prospects.length} Active Prospek` : 'Full Customer Directory'}
+            {view === 'pipeline' ? `Mengelola ${prospects.length} Prospek Aktif` : 'Direktori Semua Customer'}
           </p>
         </div>
         

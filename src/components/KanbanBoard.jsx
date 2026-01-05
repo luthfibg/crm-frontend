@@ -5,6 +5,7 @@ const COLUMNS = [
   { id: 'New', label: 'New', color: 'bg-blue-500' },
   { id: 'Warm Prospect', label: 'Warm', color: 'bg-orange-400' },
   { id: 'Hot Prospect', label: 'Hot', color: 'bg-red-500' },
+  { id: 'Deal Won', label: 'Deal Won', color: 'bg-green-500' },
   { id: 'After Sales', label: 'After Sales', color: 'bg-emerald-500' },
 ];
 

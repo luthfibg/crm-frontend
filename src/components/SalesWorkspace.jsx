@@ -11,7 +11,7 @@ const heatmapOptions = {
   dataLabels: { enabled: false },
   colors: ["#6366f1"],
   xaxis: {
-    categories: ['V1', 'V2', 'V3', 'Close', 'Repeat', 'Tgt', 'Soc', 'Act', 'Cust', 'Ratio'],
+    categories: ['Visit 1', 'Visit 2', 'Visit 3', 'Closing', 'Repeat', 'Target', 'Social', 'Activity', 'Customer', 'Ratio'],
     labels: { style: { fontSize: '10px', fontWeight: 600 } }
   },
   plotOptions: {
@@ -21,9 +21,9 @@ const heatmapOptions = {
       useFillColorAsStroke: false,
       colorScale: {
         ranges: [
-          { from: 0, to: 30, name: 'Low', color: '#f1f5f9' },
-          { from: 31, to: 65, name: 'Med', color: '#818cf8' },
-          { from: 66, to: 100, name: 'High', color: '#4f46e5' }
+          { from: 0, to: 30, name: 'Rendah', color: '#f1f5f9' },
+          { from: 31, to: 65, name: 'Sedang', color: '#818cf8' },
+          { from: 66, to: 100, name: 'Tinggi', color: '#4f46e5' }
         ]
       }
     }
@@ -277,8 +277,8 @@ export default function SalesWorkspace() {
           <div className="lg:col-span-8 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <h2 className="text-sm font-bold text-slate-800">Strength Map Performance</h2>
-                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">KPI Matrix Across Stages</p>
+                <h2 className="text-md font-bold text-slate-800">Matriks Kekuatan Sales</h2>
+                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Berdasarkan 10 KPI</p>
               </div>
               <HugeiconsIcon icon={InformationCircleIcon} size={18} className="text-slate-300" />
             </div>
