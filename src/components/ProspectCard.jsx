@@ -1,7 +1,8 @@
 import React from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CallIcon, AiChat02Icon, Clock01Icon, CheckmarkCircle02Icon, StarIcon } from '@hugeicons/core-free-icons';
+import { CallIcon, AiChat02Icon, Clock01Icon, Delete02Icon, CheckmarkCircle02Icon, StarIcon } from '@hugeicons/core-free-icons';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 
 const ProspectCard = ({ data, onDetailsClick }) => {
   const customer = data?.customer || {};
@@ -10,7 +11,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
   const kpiHistory = data?.kpi_progress_history || [];
   const user = useAuth().user;
 
-  console.log("🃏 ProspectCard data:", data);
+  console.log("🃏 Is Dev Mode:", user.is_developer_mode);
 
   // Warna progress bar berdasarkan status
   const getProgressColor = (isCompleted, isCurrent) => {
@@ -177,10 +178,10 @@ const ProspectCard = ({ data, onDetailsClick }) => {
         {user.is_developer_mode && (
           <button 
               onClick={() => handleResetProspect(data?.customer.id)}
-              className="absolute top-2 right-2 p-1.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-md transition-all border border-red-100"
+              className="top-2 right-2 p-1.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-md transition-all border border-red-100"
               title="Developer: Reset Prospect Data"
           >
-              <HugeiconsIcon icon={Delete02Icon} size={14} />
+              <HugeiconsIcon icon={Delete02Icon} size={14} className="text-red-400" />
           </button>
         )}
         <button 
