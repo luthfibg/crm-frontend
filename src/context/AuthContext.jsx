@@ -4,42 +4,58 @@ import api from '../api/axios';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Isi: { name, role, email, ... }
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
 
   // Ambil data user dari localStorage saat pertama kali load
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
-    if (savedUser) setUser(JSON.parse(savedUser));
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      console.log('User loaded from localStorage:', parsedUser);
+      setUser(parsedUser);
+    }
   }, []);
 
   const login = (userData, userToken) => {
+    console.log('Login with user data:', userData);
     setUser(userData);
     setToken(userToken);
     localStorage.setItem('token', userToken);
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
+  // Function to update user and sync with localStorage
+  const updateUser = (updatedUserData) => {
+    console.log('Updating user in context:', updatedUserData);
+    setUser(updatedUserData);
+    localStorage.setItem('user', JSON.stringify(updatedUserData));
+  };
+
   const logout = async () => {
     try {
-      // 1. Panggil API Backend
       await api.post('/logout'); 
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      // 2. Bersihkan local storage & state (Tetap jalankan walau API gagal)
       setUser(null);
       setToken(null);
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      
-      // 3. Redirect manual jika diperlukan atau biarkan ProtectedRoute yang menangani
       window.location.href = '/login';
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAdmin: user?.role === 'administrator' }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      setUser,        // Keep original setUser
+      updateUser,     // Add new updateUser
+      token, 
+      login, 
+      logout, 
+      isAdmin: user?.role === 'administrator' 
+    }}>
       {children}
     </AuthContext.Provider>
   );
