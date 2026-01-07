@@ -1,12 +1,14 @@
 import React from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CallIcon, AiChat02Icon, Clock01Icon, CheckmarkCircle02Icon, StarIcon } from '@hugeicons/core-free-icons';
+import { useAuth } from '../context/AuthContext';
 
 const ProspectCard = ({ data, onDetailsClick }) => {
   const customer = data?.customer || {};
   const kpi = data?.kpi || {};
   const stats = data?.stats || { percent: 0 };
   const kpiHistory = data?.kpi_progress_history || [];
+  const user = useAuth().user;
 
   console.log("🃏 ProspectCard data:", data);
 
@@ -32,6 +34,18 @@ const ProspectCard = ({ data, onDetailsClick }) => {
   const maxPossiblePoints = kpiHistory.reduce((sum, kpi) => {
     return sum + (kpi.kpi_weight || 0);
   }, 0);
+
+  const handleResetProspect = async (customerId) => {
+      if (!confirm("Semua progress, file, dan skor customer ini akan DIHAPUS PERMANEN. Lanjutkan?")) return;
+      
+      try {
+          await api.delete(`/progress/reset-prospect/${customerId}`);
+          alert("Data prospek berhasil di-reset.");
+          // Refresh data list customer Anda di sini
+      } catch (err) {
+          alert(err.response?.data?.message || "Gagal melakukan reset.");
+      }
+  };
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all group">
@@ -160,6 +174,15 @@ const ProspectCard = ({ data, onDetailsClick }) => {
           <HugeiconsIcon icon={Clock01Icon} size={12} className="text-slate-400" />
           <span className="text-[10px] font-bold text-slate-500 uppercase">Active</span>
         </div>
+        {user.is_developer_mode && (
+          <button 
+              onClick={() => handleResetProspect(data?.customer.id)}
+              className="absolute top-2 right-2 p-1.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-md transition-all border border-red-100"
+              title="Developer: Reset Prospect Data"
+          >
+              <HugeiconsIcon icon={Delete02Icon} size={14} />
+          </button>
+        )}
         <button 
           className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 transition-colors" 
           onClick={() => onDetailsClick?.(data)}

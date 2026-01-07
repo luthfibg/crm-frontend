@@ -5,9 +5,14 @@ import ProspectWorkspace from '../components/ProspectWorkspace';
 import KPIWorkspace from '../components/KPIWorkspace';
 import PanelHeader from '../components/PanelHeader';
 import SettingWorkspace from '../components/SettingWorkspace';
+import { useAuth } from '../context/AuthContext'; // Import useAuth
+
 const Panel = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('sales');
+  
+  // Get user from context
+  const { user, updateUser } = useAuth();
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
@@ -15,26 +20,31 @@ const Panel = () => {
         isOpen={isOpen} 
         setIsOpen={setIsOpen} 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={setActiveTab}
+        user={user}
       />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* ← Gunakan PanelHeader component */}
         <PanelHeader 
           isOpen={isOpen}
           setIsOpen={setIsOpen}
           activeTab={activeTab}
+          user={user}
         />
 
         {/* Main Workspace */}
         {activeTab === 'sales' ? (
-          <SalesWorkspace />
+          <SalesWorkspace user={user} />
         ) : activeTab === 'prospek' ? (
-          <ProspectWorkspace />
+          <ProspectWorkspace user={user} />
         ) : activeTab === 'kpi' ? (
-          <KPIWorkspace />
+          <KPIWorkspace user={user} />
         ) : activeTab === 'pengaturan' ? (
-          <SettingWorkspace />
+          <SettingWorkspace 
+            user={user} 
+            updateUser={updateUser}
+            role={user?.role}
+          />
         ) : (
           <main className="flex-1 p-4 lg:p-8">
             <div className="max-w-7xl mx-auto">
