@@ -6,6 +6,7 @@ import KPIWorkspace from '../components/KPIWorkspace';
 import PanelHeader from '../components/PanelHeader';
 import SettingWorkspace from '../components/SettingWorkspace';
 import { useAuth } from '../context/AuthContext';
+import ReportWorkspace from '../components/ReportWorkspace';
 
 const Panel = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -33,6 +34,8 @@ const Panel = () => {
         {/* Main Workspace */}
         {activeTab === 'sales' ? (
           <SalesWorkspace user={user} />
+        ) : activeTab === 'laporan' ? (
+          <ReportWorkspace/>
         ) : activeTab === 'prospek' ? (
           <ProspectWorkspace user={user} />
         ) : activeTab === 'kpi' ? (

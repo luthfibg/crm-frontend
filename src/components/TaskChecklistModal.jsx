@@ -38,7 +38,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     }
   };
 
-  // Submit Task
+  // ⭐ Submit Task - DETEKSI apakah submit baru atau re-submit
   const handleSubmitTask = async (task) => {
     const value = inputValues[task.id];
     const fileInput = document.getElementById(`file-${task.id}`);
@@ -53,8 +53,14 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
 
     try {
       const formData = new FormData();
-      formData.append('daily_goal_id', task.id);
-      formData.append('customer_id', customer.id);
+      
+      // Jika task.progress_id ada DAN is_rejected = true, gunakan UPDATE
+      const isResubmit = task.is_rejected && task.progress_id;
+      
+      if (!isResubmit) {
+        formData.append('daily_goal_id', task.id);
+        formData.append('customer_id', customer.id);
+      }
       
       if (['file', 'image', 'video'].includes(task.input_type) && file) {
         formData.append('evidence', file);
@@ -62,9 +68,14 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
         formData.append('evidence', value || '');
       }
 
-      const response = await api.post('/progress/submit', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      // ⭐ PILIH ENDPOINT: POST /submit atau PUT /update
+      const response = isResubmit
+        ? await api.put(`/progress/update/${task.progress_id}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
+        : await api.post('/progress/submit', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          });
 
       setSubmissionResults(prev => ({
         ...prev,
