@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { 
   CancelCircleIcon,
   CheckmarkCircle02Icon,
-  AiChat02Icon,
   Upload01Icon,
   SentIcon,
   InformationCircleIcon,
   Cancel02Icon,
-  ArrowRight01Icon,
-  AlertCircleIcon,
   Loading03Icon
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -19,7 +16,6 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   const [inputValues, setInputValues] = useState({});
   const [submissionResults, setSubmissionResults] = useState({});
   const [fileNames, setFileNames] = useState({});
-  const [skipping, setSkipping] = useState(false);
 
   useEffect(() => {
     if (isOpen && prospect) {
@@ -33,7 +29,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
 
   const { customer, kpi, daily_goals, stats } = prospect;
 
-  // Handle Input Change - TANPA VALIDASI, hanya simpan input
+  // Handle Input Change
   const handleInputChange = (taskId, value, file = null) => {
     setInputValues(prev => ({ ...prev, [taskId]: value }));
     
@@ -42,13 +38,12 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     }
   };
 
-  // Submit Task - LANGSUNG KIRIM tanpa validasi frontend
+  // Submit Task
   const handleSubmitTask = async (task) => {
     const value = inputValues[task.id];
     const fileInput = document.getElementById(`file-${task.id}`);
     const file = fileInput?.files[0];
 
-    // Minimal check: harus ada input
     if (!value && !file) {
       alert('Mohon isi terlebih dahulu sebelum submit');
       return;
@@ -67,126 +62,78 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
         formData.append('evidence', value || '');
       }
 
-      // Backend yang akan melakukan validasi dan memberikan approved/rejected
       const response = await api.post('/progress/submit', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      // Simpan hasil penilaian sistem
       setSubmissionResults(prev => ({
         ...prev,
         [task.id]: {
           submitted: true,
-          approved: response.data.is_valid, // true = centang hijau, false = X merah
+          approved: response.data.is_valid,
           message: response.data.message,
-          progress_percent: response.data.progress_percent
+          progress_percent: response.data.progress_percent,
+          kpi_completed: response.data.kpi_completed
         }
       }));
 
-      // Clear input setelah submit
-      setInputValues(prev => {
-        const newState = { ...prev };
-        delete newState[task.id];
-        return newState;
-      });
-      setFileNames(prev => {
-        const newState = { ...prev };
-        delete newState[task.id];
-        return newState;
-      });
+      // ⭐ AUTO CLOSE MODAL jika KPI sudah 100%
+      if (response.data.kpi_completed) {
+        setTimeout(() => {
+          alert(`✅ Selamat! KPI ${kpi.code} telah diselesaikan 100%.\n\nProspek otomatis naik ke status berikutnya.`);
+          onSuccess?.();
+          onClose();
+        }, 800);
+      } else {
+        // Clear input setelah submit
+        setInputValues(prev => {
+          const newState = { ...prev };
+          delete newState[task.id];
+          return newState;
+        });
+        setFileNames(prev => {
+          const newState = { ...prev };
+          delete newState[task.id];
+          return newState;
+        });
 
-      // Refresh data
-      setTimeout(() => onSuccess?.(), 500);
+        setTimeout(() => onSuccess?.(), 500);
+      }
 
     } catch (error) {
-    console.error('Submit error:', error);
-    
-    // Tampilkan pesan error dari backend jika ada
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
-                        'Gagal menyimpan. Silakan coba lagi.';
-    
-    alert(errorMessage);
-    
-    // Jika error 409 (duplikasi), update UI
-    if (error.response?.status === 409) {
+      console.error('Submit error:', error);
+      
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          'Gagal menyimpan. Silakan coba lagi.';
+      
+      alert(errorMessage);
+      
+      if (error.response?.status === 409) {
         setSubmissionResults(prev => ({
-        ...prev,
-        [task.id]: {
+          ...prev,
+          [task.id]: {
             submitted: true,
             approved: false,
             message: error.response.data.message || 'Sudah diselesaikan sebelumnya'
-        }
+          }
         }));
-    }
+      }
     } finally {
-    setSubmitting(null);
+      setSubmitting(null);
     }
   };
 
-  // Handle Skip ke KPI Berikutnya
-  const handleSkipToNext = async () => {
-    if (!window.confirm(
-      '⚠️ Konfirmasi Skip\n\n' +
-      'Dengan melakukan skip:\n' +
-      '• Misi yang ditolak (X merah) tidak akan menambah poin\n' +
-      '• Customer akan dipindahkan ke KPI berikutnya\n' +
-      '• Anda tidak bisa kembali ke KPI ini\n\n' +
-      'Lanjutkan?'
-    )) {
-      return;
-    }
-
-    setSkipping(true);
-    try {
-      const response = await api.post(`/customers/${customer.id}/skip-kpi`);
-      alert(`✓ ${response.data.message}\n\nStatus baru: ${response.data.new_status}`);
-      onSuccess?.();
-      onClose();
-    } catch (error) {
-      console.error('Skip error:', error);
-      alert(error.response?.data?.message || 'Gagal skip ke status berikutnya');
-    } finally {
-      setSkipping(false);
-    }
-  };
-
-  // Check kondisi untuk tombol skip
-    const allTasksAttempted = daily_goals?.every(task => {
-    // Sudah completed (approved sebelumnya dari database)
-    if (task.is_completed) return true;
-    
-    // Sudah rejected sebelumnya dari database
-    if (task.is_rejected) return true;
-    
-    // Baru saja submit (dari submissionResults)
-    if (submissionResults[task.id]?.submitted) return true;
-    
-    // Belum diattempt sama sekali
-    return false;
-    }) || false;
-
-    const hasRejectedTasks = daily_goals?.some(task => {
-    // Rejected dari database
-    if (task.is_rejected) return true;
-    
-    // Baru saja submit dan rejected
-    if (submissionResults[task.id]?.submitted && !submissionResults[task.id]?.approved) {
-        return true;
-    }
-    
-    return false;
-    }) || false;
-
-    const approvedCount = daily_goals?.filter(task => 
+  // Counter stats
+  const approvedCount = daily_goals?.filter(task => 
     task.is_completed || (submissionResults[task.id]?.submitted && submissionResults[task.id]?.approved)
-    ).length || 0;
+  ).length || 0;
 
-    const rejectedCount = daily_goals?.filter(task => 
+  const rejectedCount = daily_goals?.filter(task => 
     task.is_rejected || (submissionResults[task.id]?.submitted && !submissionResults[task.id]?.approved)
-    ).length || 0;
+  ).length || 0;
 
-    const showSkipButton = allTasksAttempted && hasRejectedTasks && !prospect?.kpi?.is_completed;
+  const totalTasks = daily_goals?.length || 0;
 
   // Render Input Form
   const renderInputForm = (task) => {
@@ -248,12 +195,13 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     }
   };
 
-  // Render Task Status & Input
+  // Render Task Content
   const renderTaskContent = (task) => {
     const result = submissionResults[task.id];
     const isAlreadyCompleted = task.is_completed;
+    const isAlreadyRejected = task.is_rejected;
     
-    // 1. Jika sudah completed dari database (approved sebelumnya)
+    // 1. Sudah approved sebelumnya (dari database)
     if (isAlreadyCompleted && !result) {
       return (
         <div className="mt-2 flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
@@ -266,7 +214,44 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
       );
     }
 
-    // 2. Jika baru saja submit dan sedang menunggu hasil
+    // 2. Sudah rejected sebelumnya (dari database)
+    if (isAlreadyRejected && !result) {
+      return (
+        <div className="mt-2 space-y-2">
+          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <HugeiconsIcon icon={Cancel02Icon} size={16} className="text-red-500 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <p className="text-xs font-bold text-red-700 mb-1">✗ Ditolak Sistem</p>
+              <p className="text-[10px] text-red-600">Misi ini perlu diperbaiki untuk melanjutkan ke KPI berikutnya</p>
+            </div>
+          </div>
+          
+          {/* Form untuk re-submit */}
+          <div className="space-y-2">
+            {renderInputForm(task)}
+            <button
+              disabled={submitting === task.id || (!inputValues[task.id] && !fileNames[task.id])}
+              onClick={() => handleSubmitTask(task)}
+              className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all"
+            >
+              {submitting === task.id ? (
+                <>
+                  <HugeiconsIcon icon={Loading03Icon} size={14} className="animate-spin" />
+                  Mengirim Ulang...
+                </>
+              ) : (
+                <>
+                  <HugeiconsIcon icon={SentIcon} size={14} />
+                  Perbaiki & Submit Ulang
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // 3. Sedang submit
     if (submitting === task.id) {
       return (
         <div className="mt-2 flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -276,7 +261,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
       );
     }
 
-    // 3. Jika sudah submit dan DITOLAK (X merah)
+    // 4. Baru submit dan DITOLAK
     if (result?.submitted && !result?.approved) {
       return (
         <div className="mt-2 space-y-2">
@@ -287,16 +272,39 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               <p className="text-[10px] text-red-600">{result.message}</p>
             </div>
           </div>
+          
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-2">
             <p className="text-[10px] text-amber-700 font-medium">
-              💡 Misi ini tidak menambah poin. Anda bisa skip ke status berikutnya setelah semua misi diisi.
+              ⚠️ Misi ini harus diperbaiki. Prospek tidak dapat naik status sampai semua misi approved 100%.
             </p>
+          </div>
+
+          {/* Form untuk re-submit */}
+          <div className="space-y-2">
+            {renderInputForm(task)}
+            <button
+              disabled={submitting === task.id || (!inputValues[task.id] && !fileNames[task.id])}
+              onClick={() => handleSubmitTask(task)}
+              className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all"
+            >
+              {submitting === task.id ? (
+                <>
+                  <HugeiconsIcon icon={Loading03Icon} size={14} className="animate-spin" />
+                  Mengirim Ulang...
+                </>
+              ) : (
+                <>
+                  <HugeiconsIcon icon={SentIcon} size={14} />
+                  Perbaiki & Submit Ulang
+                </>
+              )}
+            </button>
           </div>
         </div>
       );
     }
 
-    // 4. Jika sudah submit dan DITERIMA (centang hijau)
+    // 5. Baru submit dan DITERIMA
     if (result?.submitted && result?.approved) {
       return (
         <div className="mt-2 flex items-start gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
@@ -309,7 +317,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
       );
     }
 
-    // 5. Form input (belum submit)
+    // 6. Form input (belum submit)
     return (
       <div className="mt-2 space-y-2">
         {renderInputForm(task)}
@@ -360,40 +368,52 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           <div className="space-y-1">
             <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider">
               <span className="text-slate-400">KPI Progress</span>
-              <span className="text-indigo-600">{Math.round(stats?.percent || 0)}%</span>
+              <span className={`${Math.round(stats?.percent || 0) === 100 ? 'text-emerald-600' : 'text-indigo-600'}`}>
+                {Math.round(stats?.percent || 0)}%
+              </span>
             </div>
             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-indigo-600 transition-all duration-500" style={{ width: `${stats?.percent || 0}%` }} />
+              <div 
+                className={`h-full transition-all duration-500 ${
+                  Math.round(stats?.percent || 0) === 100 ? 'bg-emerald-600' : 'bg-indigo-600'
+                }`} 
+                style={{ width: `${stats?.percent || 0}%` }} 
+              />
             </div>
+            {Math.round(stats?.percent || 0) === 100 && (
+              <p className="text-[10px] text-emerald-600 font-bold mt-1">
+                ✓ KPI selesai! Prospek akan otomatis naik ke status berikutnya.
+              </p>
+            )}
           </div>
         </div>
 
         {/* Tasks List */}
         <div className="p-6 space-y-4 overflow-y-auto flex-1 bg-slate-50/30">
-            <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={InformationCircleIcon} size={16} className="text-indigo-500" />
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Daily Missions</span>
+              <HugeiconsIcon icon={InformationCircleIcon} size={16} className="text-indigo-500" />
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Daily Missions</span>
             </div>
             {(approvedCount > 0 || rejectedCount > 0) && (
-                <div className="flex gap-2 text-[10px] font-bold">
+              <div className="flex gap-2 text-[10px] font-bold">
                 {approvedCount > 0 && (
-                    <span className="text-emerald-600" title="Approved tasks">✓ {approvedCount}</span>
+                  <span className="text-emerald-600" title="Approved tasks">✓ {approvedCount}</span>
                 )}
                 {rejectedCount > 0 && (
-                    <span className="text-red-600" title="Rejected tasks">✗ {rejectedCount}</span>
+                  <span className="text-red-600" title="Rejected tasks">✗ {rejectedCount}</span>
                 )}
-                <span className="text-slate-400" title="Total attempted">
-                    ({approvedCount + rejectedCount}/{daily_goals?.length || 0})
+                <span className="text-slate-400" title="Total tasks">
+                  / {totalTasks}
                 </span>
-                </div>
+              </div>
             )}
-            </div>
+          </div>
 
           {daily_goals?.map((task, index) => {
             const result = submissionResults[task.id];
             const isCompleted = task.is_completed || (result?.submitted && result?.approved);
-            const isRejected = result?.submitted && !result?.approved;
+            const isRejected = task.is_rejected || (result?.submitted && !result?.approved);
             
             return (
               <div
@@ -443,43 +463,20 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-white border-t border-slate-100 space-y-3">
-          {/* Skip Button */}
-          {showSkipButton && (
-            <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-3">
-              <div className="flex items-start gap-2 mb-3">
-                <HugeiconsIcon icon={AlertCircleIcon} size={18} className="text-amber-600 mt-0.5 shrink-0" />
-                <div className="flex-1">
-                  <p className="text-xs font-bold text-amber-900 mb-1">
-                    Terdapat {rejectedCount} misi yang tidak memenuhi syarat
-                  </p>
-                  <p className="text-[10px] text-amber-700">
-                    Anda dapat melanjutkan ke KPI berikutnya. Misi yang ditolak tidak akan menambah poin KPI.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleSkipToNext}
-                disabled={skipping}
-                className="w-full flex items-center justify-center gap-2 bg-amber-600 text-white py-2.5 rounded-lg hover:bg-amber-700 disabled:bg-slate-300 disabled:cursor-not-allowed font-bold text-sm transition-all shadow-sm"
-              >
-                {skipping ? (
-                  <>
-                    <HugeiconsIcon icon={Loading03Icon} size={16} className="animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    Skip ke Status Berikutnya
-                    <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
-                  </>
-                )}
-              </button>
+        <div className="p-4 bg-white border-t border-slate-100">
+          {rejectedCount > 0 && (
+            <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 mb-3">
+              <p className="text-xs font-bold text-amber-900 mb-1">
+                ⚠️ Terdapat {rejectedCount} misi yang ditolak
+              </p>
+              <p className="text-[10px] text-amber-700">
+                Perbaiki semua misi yang ditolak untuk melanjutkan ke KPI berikutnya. Sistem hanya akan menaikkan status prospek jika semua misi approved 100%.
+              </p>
             </div>
           )}
-
+          
           <p className="text-[10px] text-center text-slate-400 font-medium">
-            Sistem Verifikasi Otomatis • Input Apa Adanya
+            Sistem Verifikasi Otomatis • Wajib 100% Approved untuk Naik Status
           </p>
         </div>
       </div>
