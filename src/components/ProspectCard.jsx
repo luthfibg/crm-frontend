@@ -175,7 +175,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
           <HugeiconsIcon icon={Clock01Icon} size={12} className="text-slate-400" />
           <span className="text-[10px] font-bold text-slate-500 uppercase">Active</span>
         </div>
-        {user.is_developer_mode && (
+        {user.is_developer_mode ? (
           <button 
               onClick={() => handleResetProspect(data?.customer.id)}
               className="top-2 right-2 p-1.5 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-md transition-all border border-red-100"
@@ -183,7 +183,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
           >
               <HugeiconsIcon icon={Delete02Icon} size={14} className="text-red-400" />
           </button>
-        )}
+        ) : null}
         <button 
           className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 transition-colors" 
           onClick={() => onDetailsClick?.(data)}

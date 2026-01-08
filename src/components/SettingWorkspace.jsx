@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SettingItem, SettingSection } from './SettingComponents';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext'; // Import useAuth di sini
 
-const SettingWorkspace = ({ user, updateUser, role = 'administrator' }) => {
+const SettingWorkspace = ({ role = 'administrator' }) => {
+  const { user, updateUser } = useAuth(); // Ambil langsung dari context
   const isAdmin = role === 'administrator';
-  const isUpdating = useRef(false); // Track if we're in the middle of an update
-
+  
   // Local state for UI-only settings
   const [localSettings, setLocalSettings] = useState({
     notifications: true,
@@ -14,68 +15,78 @@ const SettingWorkspace = ({ user, updateUser, role = 'administrator' }) => {
     auditLogs: true,
   });
 
-  // Server-synced settings
-  const [serverSettings, setServerSettings] = useState({
-    is_developer_mode: user?.is_developer_mode || false,
-    allow_force_push: user?.allow_force_push || false,
+  // State untuk loading status per toggle
+  const [loadingStates, setLoadingStates] = useState({
+    is_developer_mode: false,
+    allow_force_push: false,
   });
 
-  // Sync server settings when user prop changes (but not during our own updates)
-  useEffect(() => {
-    if (user && !isUpdating.current) {
-      console.log('Syncing settings from user prop:', user);
-      setServerSettings({
-        is_developer_mode: Boolean(user.is_developer_mode),
-        allow_force_push: Boolean(user.allow_force_push),
-      });
-    }
-  }, [user]);
-
-  // Toggle for local UI-only settings
+  // Toggle untuk local UI-only settings
   const toggleLocal = (key) => {
     setLocalSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Toggle for server-synced settings
-  const handleServerToggle = async (key) => {
-    const newValue = !serverSettings[key];
+  // Toggle untuk server-synced settings
+  const handleServerToggle = useCallback(async (key) => {
+    if (!user || loadingStates[key]) return;
     
-    // Set flag to prevent sync loop
-    isUpdating.current = true;
+    const currentValue = Boolean(user[key]);
+    const newValue = !currentValue;
     
-    // Optimistic update
-    setServerSettings(prev => ({ ...prev, [key]: newValue }));
+    console.log(`Toggling ${key}: ${currentValue} -> ${newValue}`);
+    
+    // Set loading state
+    setLoadingStates(prev => ({ ...prev, [key]: true }));
     
     try {
-      await api.patch('/user/update-settings', { [key]: newValue });
-      console.log(`${key} updated successfully`);
+      // Optimistic update langsung ke context
+      const updatedUser = { ...user, [key]: newValue };
+      updateUser(updatedUser);
       
-      // Fetch fresh user data
-      if (user?.id) {
-        const userResponse = await api.get(`/users/${user.id}`);
-        console.log('Fetched updated user:', userResponse.data);
-        
-        // Update parent context
-        if (updateUser && userResponse.data) {
-          updateUser(userResponse.data);
+      // Kirim ke server
+      await api.patch('/user/update-settings', { 
+        [key]: newValue ? 1 : 0 // Pastikan format boolean ke integer
+      });
+      
+      console.log(`${key} updated successfully on server`);
+      
+      // Fetch fresh data untuk memastikan sinkronisasi
+      setTimeout(async () => {
+        try {
+          const userResponse = await api.get(`/users/${user.id}`);
+          console.log('Verified user data:', userResponse.data);
+          
+          // Update dengan data terbaru dari server
+          if (userResponse.data) {
+            updateUser(userResponse.data);
+          }
+        } catch (fetchError) {
+          console.error('Error verifying update:', fetchError);
         }
-      }
+      }, 500);
       
     } catch (err) {
       console.error('API Error:', err);
       console.error('Response:', err.response?.data);
       
-      // Rollback on error
-      setServerSettings(prev => ({ ...prev, [key]: !newValue }));
+      // Rollback ke nilai sebelumnya
+      const rollbackUser = { ...user, [key]: currentValue };
+      updateUser(rollbackUser);
+      
       alert(`Gagal memperbarui pengaturan: ${err.response?.data?.message || err.message}`);
     } finally {
-      // Reset flag after a short delay to allow context update to propagate
-      setTimeout(() => {
-        isUpdating.current = false;
-      }, 100);
+      // Reset loading state
+      setLoadingStates(prev => ({ ...prev, [key]: false }));
     }
-  };
+  }, [user, updateUser, loadingStates]);
 
+  // Debug log untuk memantau perubahan
+  useEffect(() => {
+    console.log('Current user developer mode:', user?.is_developer_mode);
+    console.log('Current user allow_force_push:', user?.allow_force_push);
+  }, [user]);
+
+  // Perbaikan: Gunakan langsung dari user, bukan state terpisah
   return (
     <main className="flex-1 overflow-y-auto p-4 lg:p-8 bg-slate-50/50">
       <div className="w-full mx-auto">
@@ -87,20 +98,22 @@ const SettingWorkspace = ({ user, updateUser, role = 'administrator' }) => {
         </header>
 
         {/* DEVELOPER MODE SECTION */}
-        {isAdmin && (
+        {isAdmin && user && (
           <SettingSection title="Developer Tools" showHeader={true}>
             <SettingItem
               title="Developer Mode"
               description="Aktifkan fitur reset data prospek dan debugging langsung di dashboard."
-              enabled={serverSettings.is_developer_mode}
+              enabled={Boolean(user.is_developer_mode)}
               danger={true}
               onChange={() => handleServerToggle('is_developer_mode')}
+              loading={loadingStates.is_developer_mode}
             />
             <SettingItem
               title="Allow Force Push"
               description="Mengizinkan bypass validasi sistem saat melakukan update data sensitif."
-              enabled={serverSettings.allow_force_push}
+              enabled={Boolean(user.allow_force_push)}
               onChange={() => handleServerToggle('allow_force_push')}
+              loading={loadingStates.allow_force_push}
             />
           </SettingSection>
         )}

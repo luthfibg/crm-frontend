@@ -5,14 +5,13 @@ import ProspectWorkspace from '../components/ProspectWorkspace';
 import KPIWorkspace from '../components/KPIWorkspace';
 import PanelHeader from '../components/PanelHeader';
 import SettingWorkspace from '../components/SettingWorkspace';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext';
+import ReportWorkspace from '../components/ReportWorkspace';
 
 const Panel = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('sales');
-  
-  // Get user from context
-  const { user, updateUser } = useAuth();
+  const { user } = useAuth();
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden">
@@ -35,14 +34,14 @@ const Panel = () => {
         {/* Main Workspace */}
         {activeTab === 'sales' ? (
           <SalesWorkspace user={user} />
+        ) : activeTab === 'laporan' ? (
+          <ReportWorkspace/>
         ) : activeTab === 'prospek' ? (
           <ProspectWorkspace user={user} />
         ) : activeTab === 'kpi' ? (
           <KPIWorkspace user={user} />
         ) : activeTab === 'pengaturan' ? (
           <SettingWorkspace 
-            user={user} 
-            updateUser={updateUser}
             role={user?.role}
           />
         ) : (
