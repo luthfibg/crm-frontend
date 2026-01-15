@@ -1,6 +1,6 @@
 import React from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CallIcon, AiChat02Icon, Clock01Icon, Delete02Icon, CheckmarkCircle02Icon, StarIcon } from '@hugeicons/core-free-icons';
+import { CallIcon, AiChat02Icon, Clock01Icon, Delete02Icon, CheckmarkCircle02Icon, StarIcon, Bookmark01Icon } from '@hugeicons/core-free-icons';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
@@ -10,6 +10,21 @@ const ProspectCard = ({ data, onDetailsClick }) => {
   const stats = data?.stats || { percent: 0 };
   const kpiHistory = data?.kpi_progress_history || [];
   const user = useAuth().user;
+
+  // helper to style category badge
+  const getCategoryStyles = (category) => {
+    const cat = category?.toLowerCase();
+    switch (cat) {
+      case 'pendidikan':
+        return 'bg-blue-50 text-blue-600 border-blue-100';
+      case 'pemerintahan':
+        return 'bg-purple-50 text-purple-600 border-purple-100';
+      case 'swasta':
+        return 'bg-orange-50 text-orange-600 border-orange-100';
+      default:
+        return 'bg-slate-50 text-slate-600 border-slate-100';
+    }
+  };
 
   console.log("🃏 Is Dev Mode:", user.is_developer_mode);
 
@@ -50,15 +65,22 @@ const ProspectCard = ({ data, onDetailsClick }) => {
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all group">
+
       {/* ⭐ Score Badge - Top Right */}
       <div className="flex justify-between items-start mb-4">
+
         <div className="flex-1">
           <h4 className="text-sm font-bold text-slate-800 truncate">
             {customer?.pic || 'Unnamed PIC'}
           </h4>
-          <p className="text-[11px] text-slate-500 font-medium truncate">
+          <p className="text-[11px] text-slate-500 font-medium truncate mb-2">
             {customer?.institution || 'No institution'}
           </p>
+          
+          {/* ⭐ Kategori Badge - Menampilkan tipe customer */}
+          <div className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[9px] font-black uppercase tracking-wider ${getCategoryStyles(customer?.category)}`}>
+             {customer?.category || 'General'}
+          </div>
         </div>
         
         {/* Score Badge */}
