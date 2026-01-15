@@ -189,9 +189,9 @@ const ReportWorkspace = ({ user }) => {
               </table>
             </div>
 
-            <p className="text-xs text-slate-400 mt-2">
+            {/* <p className="text-xs text-slate-400 mt-2">
               Tip: Untuk PDF yang rapi, pasang package <strong>barryvdh/laravel-dompdf</strong> di backend. Untuk Excel (.xlsx) gunakan <strong>maatwebsite/excel</strong>.
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

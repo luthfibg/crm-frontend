@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Chart from 'react-apexcharts';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { User02Icon, StarIcon, InformationCircleIcon, FireIcon, PlusSignIcon, PencilEdit01Icon, Delete02Icon } from '@hugeicons/core-free-icons';
 import EnterpriseCoreMetrics from './EnterpriseCoreMetrics';
 import { useAuth } from '../context/AuthContext';
+import AddUserModal from './AddUserModal';
 
 // --- APEXCHART CONFIG ---
 const heatmapOptions = {
@@ -268,6 +269,14 @@ const SalesPersonCard = ({ name, avatar, summary, pipelines, totalScore = 0, isA
 // --- MAIN COMPONENT ---
 export default function SalesWorkspace() {
   const { isAdmin } = useAuth();
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+
+  const handleAddUserSuccess = () => {
+    // Refresh data atau tampilkan notifikasi
+    console.log('User added successfully');
+    // Anda bisa menambahkan logic untuk refresh data user di sini
+  };
+
   return (
     <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-slate-50/50">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -311,7 +320,10 @@ export default function SalesWorkspace() {
 
           {/* KARTU ADD NEW (Hanya untuk Admin) */}
           {isAdmin && (
-            <button className="group h-full min-h-62.5 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center gap-3 bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition-all">
+            <button 
+              onClick={() => setIsAddUserModalOpen(true)}
+              className="group h-full min-h-62.5 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center gap-3 bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition-all"
+            >
               <div className="p-3 rounded-full bg-white shadow-sm group-hover:scale-110 transition-transform">
                 <HugeiconsIcon icon={PlusSignIcon} size={24} className="text-slate-400 group-hover:text-indigo-600" />
               </div>
@@ -320,6 +332,13 @@ export default function SalesWorkspace() {
           )}
         </div>
       </div>
+
+      {/* Modal Add User */}
+      <AddUserModal 
+        isOpen={isAddUserModalOpen}
+        onClose={() => setIsAddUserModalOpen(false)}
+        onSuccess={handleAddUserSuccess}
+      />
     </main>
   );
 }
