@@ -37,6 +37,7 @@ const CustomerTable = () => {
         position: item.position,
         email: item.email,
         phone_number: item.phone_number,
+        category: item.category,
         notes: item.notes
       }));
 
@@ -90,6 +91,7 @@ const CustomerTable = () => {
             <thead className="sticky top-0 bg-white z-10 shadow-sm">
               <tr className="border-b border-slate-100">
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Person in Charge</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Kategori</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Institution & Position</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Contact Info</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Notes</th>
@@ -105,6 +107,11 @@ const CustomerTable = () => {
                             {item.name ? item.name.charAt(0) : '?'}
                         </div>
                         <span className="text-sm font-bold text-slate-700">{item.name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col">
+                        <span className="text-sm text-slate-700">{item.category}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">

@@ -12,9 +12,10 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     position: '',
     email: '',
     phone_number: '',
+    category: '',
     notes: '',
-    kpi_id: 1, // Default sesuai instruksi
-    current_kpi_id: 1 // Default sesuai instruksi
+    kpi_id: 1,
+    current_kpi_id: 1
   });
 
   // Sinkronkan userId jika berubah (misal saat login/reload)
@@ -26,6 +27,14 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
 
   if (!isOpen) return null;
 
+  // category options
+  const categories = [
+    "Pendidikan",
+    "Pemerintahan",
+    "Web Inquiry Corporate",
+    "Web Inquiry CNI"
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -36,7 +45,8 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
       onSuccess();
       onClose();
       // Reset form
-      setFormData({ ...formData, pic: '', institution: '', position: '', email: '', phone_number: '', notes: '' });
+      resetForm();
+      alert("Customer berhasil ditambahkan.");
     } catch (error) {
       // Tampilkan error validasi spesifik dari Laravel agar mudah didebug
       const validationErrors = error.response?.data?.errors;
@@ -53,6 +63,15 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
   };
 
   if (!isOpen) return null;
+
+  // Reset form when closed or success
+  const resetForm = () => {
+    setFormData({ 
+      ...formData, 
+      pic: '', institution: '', position: '', 
+      email: '', phone_number: '', notes: '', category: '' 
+    });
+  };
 
   return (
     <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
@@ -79,6 +98,22 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
                 onChange={(e) => setFormData({...formData, pic: e.target.value})}
                 placeholder="Full Name"
               />
+            </div>
+
+            {/* Category */}
+            <div className="md:col-span-2 space-y-1">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer Category *</label>
+              <select 
+                required
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none appearance-none"
+                value={formData.category}
+                onChange={(e) => setFormData({...formData, category: e.target.value})}
+              >
+                <option value="" className='text-slate-400'>-- Select Category --</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
             </div>
 
             {/* Institution */}
