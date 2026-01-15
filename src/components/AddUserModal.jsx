@@ -14,7 +14,7 @@ const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
     date_of_birth: '',
     role: 'sales', // Default role
     points: 0,
-    level: 'Beginner',
+    level: 1,
     bio: '',
     badge: 'New Member'
   });
@@ -51,7 +51,7 @@ const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
         date_of_birth: '',
         role: 'sales',
         points: 0,
-        level: 'Beginner',
+        level: 1,
         bio: '',
         badge: 'New Member'
       });
@@ -242,13 +242,13 @@ const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
                   {errors.level && <span className="text-red-500 text-xs ml-2">({errors.level})</span>}
                 </label>
                 <input 
-                  type="text"
+                  type="number"
                   name="level"
                   maxLength="100"
                   className={`w-full px-4 py-2.5 bg-slate-50 border ${errors.level ? 'border-red-300' : 'border-slate-200'} rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all`}
                   value={formData.level}
                   onChange={handleChange}
-                  placeholder="Beginner"
+                  placeholder="1"
                 />
               </div>
 
