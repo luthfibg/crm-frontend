@@ -78,8 +78,17 @@ const ProspectCard = ({ data, onDetailsClick }) => {
           </p>
           
           {/* ⭐ Kategori Badge - Menampilkan tipe customer */}
-          <div className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[9px] font-black uppercase tracking-wider ${getCategoryStyles(customer?.category)}`}>
-             {customer?.category || 'General'}
+          <div className="flex flex-wrap gap-1">
+            <div className={`inline-flex items-center px-2 py-0.5 rounded-md border text-[9px] font-black uppercase tracking-wider ${getCategoryStyles(customer?.category)}`}>
+               {customer?.category || 'General'}
+            </div>
+            
+            {/* Tampilkan sub_category jika ada (misal: UKPBJ) */}
+            {customer?.sub_category && (
+              <div className="inline-flex items-center px-2 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-slate-500 text-[9px] font-black uppercase tracking-wider">
+                {customer.sub_category}
+              </div>
+            )}
           </div>
         </div>
         

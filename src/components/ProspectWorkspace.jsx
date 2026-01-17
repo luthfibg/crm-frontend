@@ -21,10 +21,40 @@ const ProspectWorkspace = () => {
   const [isAddCustomerOpen, setIsAddCustomerOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [isAddProspectOpen, setIsAddProspectOpen] = useState(false);
+  const [filterType, setFilterType] = useState('all');
 
   const [error, setError] = useState(null)
 
   const { user } = useAuth();
+
+  // Filter options
+  const filterOptions = [
+    { value: 'all', label: 'All Types' },
+    { value: 'Pendidikan', label: 'Pendidikan' },
+    { value: 'Pemerintahan', label: 'Pemerintahan' },
+    { value: 'Web Inquiry Corporate', label: 'Web Inquiry Corporate' },
+    { value: 'Web Inquiry C&I', label: 'Web Inquiry C&I' }
+  ];
+
+  // Get filtered prospects based on selected filter
+  const getFilteredProspects = () => {
+    if (filterType === 'all') {
+      return prospects;
+    }
+    
+    const filtered = prospects.filter(prospect => {
+      const prospectType = prospect.customer?.category;
+      return prospectType === filterType;
+    });
+    
+    console.log(`🔍 Filter "${filterType}": ${filtered.length} of ${prospects.length} prospects`);
+    return filtered;
+  };
+
+  // Reset filter when switching views
+  useEffect(() => {
+    setFilterType('all');
+  }, [view]);
 
   // Fetch Data dari API Backend (DailyGoalController@index)
   useEffect(() => {
@@ -33,8 +63,10 @@ const ProspectWorkspace = () => {
         setLoading(true);
         setError(null);
         const response = await api.get('/daily-goals');
-        console.log("📊 API Response:", response.data);
-        setProspects(response.data.data || []);
+        console.log("📊 API Response received");
+        const prospectsData = response.data.data || [];
+        console.log(`📋 Loaded ${prospectsData.length} prospects`);
+        setProspects(prospectsData);
       } catch (error) {
         console.error("Error loading prospects:", error);
         setError(error.message);
@@ -82,11 +114,34 @@ const ProspectWorkspace = () => {
             {view === 'pipeline' ? 'Prospect Pipeline' : 'Customer Database'}
           </h2>
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-            {view === 'pipeline' ? `Mengelola ${prospects.length} Prospek Aktif` : 'Direktori Semua Customer'}
+            {view === 'pipeline' ? 
+              filterType === 'all' 
+                ? `Mengelola ${prospects.length} Prospek Aktif` 
+                : `Mengelola ${getFilteredProspects().length} Prospek (${filterType})`
+              : 'Direktori Semua Customer'
+            }
           </p>
         </div>
         
         <div className="flex gap-2">
+          {/* Filter Dropdown - Only show in pipeline view */}
+          {view === 'pipeline' && (
+            <div className="flex items-center gap-2">
+              <HugeiconsIcon icon={FilterIcon} size={16} className="text-slate-400" />
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="px-3 py-2 border border-slate-200 rounded-lg text-xs font-medium bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                {filterOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Tombol Toggle View */}
           <button onClick={() => setView(view === 'pipeline' ? 'customer' : 'pipeline')}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border ${
@@ -138,7 +193,7 @@ const ProspectWorkspace = () => {
           </div>
         ) : (
         view === 'pipeline' ? (
-          <KanbanBoard prospects={prospects} onOpenModal={handleOpenModal} />
+          <KanbanBoard prospects={getFilteredProspects()} onOpenModal={handleOpenModal} />
         ) : (
           <CustomerTable key={refreshKey} />
         )
