@@ -113,11 +113,11 @@ const ProspectWorkspace = () => {
           <h2 className="text-lg font-bold text-slate-800 uppercase tracking-tight">
             {view === 'pipeline' ? 'Prospect Pipeline' : 'Customer Database'}
           </h2>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+          <p className="text-[10px] text-orange-500 font-bold uppercase tracking-widest">
             {view === 'pipeline' ? 
               filterType === 'all' 
-                ? `Mengelola ${prospects.length} Prospek Aktif` 
-                : `Mengelola ${getFilteredProspects().length} Prospek (${filterType})`
+                ? `Saat Ini Ada ${prospects.length} Prospek Aktif` 
+                : `Saat Ini Ada ${getFilteredProspects().length} Prospek Aktif (${filterType})`
               : 'Direktori Semua Customer'
             }
           </p>

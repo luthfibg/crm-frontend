@@ -79,7 +79,7 @@ const EnterpriseCoreMetrics = ({ data }) => {
       <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
         <div className="flex justify-between items-end">
           <div>
-            <p className="text-[9px] mb-1 text-slate-500 font-bold uppercase tracking-tight">Pendapatan Tahunan</p>
+            <p className="text-[9px] mb-1 text-slate-500 font-bold uppercase tracking-tight">Pencapaian Target Tahunan</p>
             <p className="text-base font-black text-slate-900 leading-tight">{formatIDR(totalRevenue)}</p>
           </div>
           <div className="text-right">
@@ -104,7 +104,7 @@ const EnterpriseCoreMetrics = ({ data }) => {
           </div>
           <div className="flex items-center gap-1">
              <HugeiconsIcon icon={Target02Icon} size={12} className="text-slate-400" />
-             <span className="text-[10px] text-slate-400 font-medium">Goal: {formatIDR(totalTarget)}</span>
+             <span className="text-[10px] text-slate-400 font-medium">Target Tahunan: {formatIDR(totalTarget)}</span>
           </div>
         </div>
       </div>
