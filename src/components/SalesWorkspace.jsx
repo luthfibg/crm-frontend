@@ -208,7 +208,7 @@ export default function SalesWorkspace() {
                   </div>
                   <HugeiconsIcon icon={InformationCircleIcon} size={18} className="text-slate-300" />
                 </div>
-                <Chart options={heatmapOptions} series={heatmapSeries} type="heatmap" height={180} />
+                <Chart options={heatmapOptions} series={heatmapSeries} type="heatmap" height={280} />
               </div>
 
               <div className="lg:col-span-4">
