@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "crm-mas-jabar",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.luthfi.crm.masjabar",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",

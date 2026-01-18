@@ -14,8 +14,12 @@ const heatmapOptions = {
   dataLabels: { enabled: false },
   colors: ["#6366f1"],
   xaxis: {
-    categories: ['Visit 1', 'Visit 2', 'Visit 3', 'Closing', 'Repeat', 'Achieve', 'Sosmed', 'Activity', 'DB Progress', 'Email'],
-    labels: { style: { fontSize: '10px', fontWeight: 600 } }
+    categories: ['Visit 1', 'Visit 2', 'Visit 3', 'Closing', 'Repeat', 'Achieve', 'Sosmed', 'Activity', ['DB', 'Progress'], 'Email'],
+    labels: {
+      style: { fontSize: '10px', fontWeight: 600 },
+      rotate: 0,
+      rotateAlways: false
+    }
   },
   plotOptions: {
     heatmap: {
@@ -49,7 +53,10 @@ export default function SalesWorkspace() {
       
       // Fetch users
       const usersResponse = await api.get('/users');
-      const users = usersResponse.data.data || usersResponse.data;
+      const allUsers = usersResponse.data.data || usersResponse.data;
+      
+      // Filter out user ID 7 (Tony) from display for other users
+      const users = allUsers.filter(u => u.id !== 7);
       
       // Fetch additional data for each user
       const salesData = await Promise.all(
