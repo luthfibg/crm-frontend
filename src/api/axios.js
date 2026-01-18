@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://backend.test/api', // Sesuaikan URL Laravel Anda
+  baseURL: 'http://backend.test/api', // Kembali ke backend.test
+  withCredentials: true, // Penting untuk Sanctum
 });
 
 // Interceptor untuk menyisipkan token secara otomatis di setiap request

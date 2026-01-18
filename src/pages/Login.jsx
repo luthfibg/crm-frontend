@@ -31,6 +31,8 @@ const Login = () => {
         setError(err.response.data.message);
       } else if (err.response?.data?.errors?.email) {
         setError(err.response.data.errors.email[0]);
+      } else if (err.response?.data?.errors?.password) {
+        setError(err.response.data.errors.password[0]);
       } else {
         setError('Invalid email or password');
       }
