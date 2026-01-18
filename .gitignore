@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# =====================
+# Tauri (Rust build output)
+# =====================
+src-tauri/target/
+src-tauri/target/**
+src-tauri/.cargo/
+src-tauri/target-tauri/
+
+# Tauri local env
+src-tauri/.env
