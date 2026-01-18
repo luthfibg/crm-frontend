@@ -1,12 +1,10 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://backend.test/api',
-  // baseURL: 'http://192.168.1.10/api',
-  withCredentials: true, // Penting untuk Sanctum
+  baseURL: 'http://192.168.1.10/api',
+  // baseURL: 'http://backend.test/api',
 });
 
-// Interceptor untuk menyisipkan token secara otomatis di setiap request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
