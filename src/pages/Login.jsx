@@ -21,7 +21,7 @@ const Login = () => {
       const response = await api.post('/login', formData);
       
       // ← PERBAIKAN: Gunakan fungsi login dari context
-      login(response.data.user, response.data.access_token);
+      login(response.data.user, response.data.token);
       
       // Arahkan ke dashboard
       navigate('/panel');
