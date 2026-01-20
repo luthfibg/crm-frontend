@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext'; // ← TAMBAHKAN INI
 
 const Login = () => {
+
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false); // ← Tambahan untuk UX
@@ -21,7 +22,7 @@ const Login = () => {
       const response = await api.post('/login', formData);
       
       // ← PERBAIKAN: Gunakan fungsi login dari context
-      login(response.data.user, response.data.access_token);
+      login(response.data.user, response.data.token);
       
       // Arahkan ke dashboard
       navigate('/panel');
