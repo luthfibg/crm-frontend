@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext'; // ← TAMBAHKAN INI
 
 const Login = () => {
+
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false); // ← Tambahan untuk UX

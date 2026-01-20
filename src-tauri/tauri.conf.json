@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "crm-mas-jabar",
+  "productName": "CRM MAS Jabar",
   "version": "0.1.0",
   "identifier": "com.luthfi.crm.masjabar",
   "build": {
@@ -13,10 +13,11 @@
     "windows": [
       {
         "title": "CRM MAS Jabar",
-        "width": 800,
-        "height": 600,
+        "width": 1280,
+        "height": 800,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "devtools": true
       }
     ],
     "security": {

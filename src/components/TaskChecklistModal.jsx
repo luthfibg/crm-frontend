@@ -22,6 +22,15 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
       setInputValues({});
       setSubmissionResults({});
       setFileNames({});
+      
+      // Debug logging
+      console.log('📋 TaskChecklistModal - Prospect Data:', {
+        customer: prospect.customer,
+        kpi: prospect.kpi,
+        daily_goals: prospect.daily_goals,
+        daily_goals_count: prospect.daily_goals?.length || 0,
+        stats: prospect.stats
+      });
     }
   }, [isOpen, prospect]);
 
@@ -421,6 +430,15 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             )}
           </div>
 
+          {(!daily_goals || daily_goals.length === 0) && (
+            <div className="p-4 rounded-xl border-2 border-amber-200 bg-amber-50 text-center">
+              <p className="text-sm font-bold text-amber-700 mb-1">Tidak ada misi tersedia</p>
+              <p className="text-xs text-amber-600">
+                Daily goals belum dikonfigurasi untuk KPI ini atau kategori customer tidak cocok dengan filter.
+              </p>
+            </div>
+          )}
+          
           {daily_goals?.map((task, index) => {
             const result = submissionResults[task.id];
             const isCompleted = task.is_completed || (result?.submitted && result?.approved);
