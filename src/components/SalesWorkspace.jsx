@@ -55,7 +55,7 @@ export default function SalesWorkspace() {
       const usersResponse = await api.get('/users');
       const allUsers = usersResponse.data.data || usersResponse.data;
       
-      // Filter out user ID 7 (Tony) from display for other users
+      // Filter out user ID 7 (Tony) from display
       const users = allUsers.filter(u => u.id !== 7);
       
       // Fetch additional data for each user
@@ -67,10 +67,28 @@ export default function SalesWorkspace() {
             const stats = statsResponse.data;
             
             // Fetch user customers for pipelines
+            // IMPORTANT: This will only work if logged in as administrator
+            // Non-admin users will only see their own customers regardless of user_id parameter
             const customersResponse = await api.get('/customers', {
-              params: { user_id: userData.id }
+              params: { 
+                user_id: userData.id,
+                per_page: 100 // Get up to 100 customers to avoid pagination issues
+              }
             });
-            const customers = customersResponse.data.data || customersResponse.data;
+            
+            // Handle both paginated and non-paginated responses
+            let customers = [];
+            if (customersResponse.data.data && Array.isArray(customersResponse.data.data)) {
+              customers = customersResponse.data.data;
+            } else if (Array.isArray(customersResponse.data)) {
+              customers = customersResponse.data;
+            }
+            
+            // Debug log to verify correct filtering
+            console.log(`User: ${userData.name} (ID: ${userData.id}) - Fetched ${customers.length} customers`);
+            if (customers.length > 0) {
+              console.log(`  First customer user_id: ${customers[0].user_id}`);
+            }
             
             // Transform data to match existing structure
             return {
@@ -96,12 +114,13 @@ export default function SalesWorkspace() {
                 pic: customer.pic,
                 title: customer.position,
                 company: customer.institution,
-                stage: customer.kpi_id || 1,
+                stage: customer.current_kpi_id || customer.kpi_id || 1,
                 date: new Date(customer.created_at).toLocaleDateString('en-GB')
               }))
             };
           } catch (error) {
             console.error(`Error fetching data for user ${userData.id}:`, error);
+            console.error('Error details:', error.response?.data);
             // Return basic user data if stats fetch fails
             return {
               id: userData.id,
