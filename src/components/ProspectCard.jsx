@@ -1,15 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CallIcon, AiChat02Icon, Clock01Icon, Delete02Icon, CheckmarkCircle02Icon, StarIcon, Bookmark01Icon } from '@hugeicons/core-free-icons';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+
+// Helper function to format time difference in Bahasa Indonesia
+const formatTimeSinceLastFU = (lastFollowUpAt) => {
+  if (!lastFollowUpAt) return null;
+  
+  const now = new Date();
+  const lastFU = new Date(lastFollowUpAt);
+  const diffMs = now - lastFU;
+  
+  // Convert to different units
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffMinutes < 1) {
+    return 'Baru saja FU';
+  } else if (diffMinutes < 60) {
+    return `Sudah ${diffMinutes} Menit dari FU terakhir`;
+  } else if (diffHours < 24) {
+    return `Sudah ${diffHours} Jam dari FU terakhir`;
+  } else {
+    return `Sudah ${diffDays} Hari Kalender dari FU terakhir`;
+  }
+};
 
 const ProspectCard = ({ data, onDetailsClick }) => {
   const customer = data?.customer || {};
   const kpi = data?.kpi || {};
   const stats = data?.stats || { percent: 0 };
   const kpiHistory = data?.kpi_progress_history || [];
+  const lastFollowUpAt = data?.last_followup_at || null;
   const user = useAuth().user;
+
+  // State for time counter text
+  const [lastFUText, setLastFUText] = useState(formatTimeSinceLastFU(lastFollowUpAt));
+
+  // Update time counter every minute
+  useEffect(() => {
+    if (!lastFollowUpAt) return;
+    
+    // Initial update
+    setLastFUText(formatTimeSinceLastFU(lastFollowUpAt));
+    
+    // Update every minute
+    const interval = setInterval(() => {
+      setLastFUText(formatTimeSinceLastFU(lastFollowUpAt));
+    }, 60000);
+    
+    return () => clearInterval(interval);
+  }, [lastFollowUpAt]);
 
   // helper to style category badge
   const getCategoryStyles = (category) => {
@@ -90,6 +133,24 @@ const ProspectCard = ({ data, onDetailsClick }) => {
               </div>
             )}
           </div>
+
+          {/* ⭐ Last Follow-Up Time Counter */}
+          {lastFUText && (
+            <div className="flex items-center gap-1.5 mt-2 px-2 py-1 bg-amber-50 border border-amber-200 rounded-md">
+              <HugeiconsIcon icon={Clock01Icon} size={12} className="text-amber-600" />
+              <span className="text-[9px] font-semibold text-amber-700">
+                {lastFUText}
+              </span>
+            </div>
+          )}
+          {!lastFUText && (
+            <div className="flex items-center gap-1.5 mt-2 px-2 py-1 bg-slate-50 border border-slate-200 rounded-md">
+              <HugeiconsIcon icon={Clock01Icon} size={12} className="text-slate-400" />
+              <span className="text-[9px] font-semibold text-slate-500">
+                Belum ada FU tercatat
+              </span>
+            </div>
+          )}
         </div>
         
         {/* Score Badge */}

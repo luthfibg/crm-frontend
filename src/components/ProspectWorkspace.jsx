@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useAuth } from '../context/AuthContext';
-import { 
-  PlusSignIcon, ContactBookIcon, WorkflowSquare01Icon, FilterIcon, Clock01Icon 
+import {
+  PlusSignIcon, ContactBookIcon, WorkflowSquare01Icon, FilterIcon
 } from '@hugeicons/core-free-icons';
 import api from '../api/axios'; // Pastikan path axios Anda benar
 
@@ -114,16 +114,16 @@ const ProspectWorkspace = () => {
             {view === 'pipeline' ? 'Prospect Pipeline' : 'Customer Database'}
           </h2>
           <p className="text-[10px] text-orange-500 font-bold uppercase tracking-widest">
-            {view === 'pipeline' ? 
-              filterType === 'all' 
-                ? `Saat Ini Ada ${prospects.length} Prospek Aktif` 
+            {view === 'pipeline' ?
+              filterType === 'all'
+                ? `Saat Ini Ada ${prospects.length} Prospek Aktif`
                 : `Saat Ini Ada ${getFilteredProspects().length} Prospek Aktif (${filterType})`
               : 'Direktori Semua Customer'
             }
           </p>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           {/* Filter Dropdown - Only show in pipeline view */}
           {view === 'pipeline' && (
             <div className="flex items-center gap-2">
