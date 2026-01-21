@@ -16,7 +16,8 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     category: '',
     notes: '',
     kpi_id: 1,
-    current_kpi_id: 1
+    current_kpi_id: 1,
+    created_at: '' // Custom creation datetime
   });
 
   // Sinkronkan userId jika berubah (misal saat login/reload)
@@ -61,8 +62,19 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     setLoading(true);
     
     try {
-      // Payload ini sekarang sesuai dengan validator Laravel Anda
-      const response = await api.post('/customers', formData);
+      // Prepare payload - format created_at if provided
+      const payload = { ...formData };
+      
+      // Convert datetime-local format (YYYY-MM-DDTHH:MM) to Laravel format (YYYY-MM-DD HH:MM:SS)
+      if (payload.created_at) {
+        // Replace 'T' with space and add seconds
+        payload.created_at = payload.created_at.replace('T', ' ') + ':00';
+      } else {
+        // Remove empty created_at to let backend use default timestamp
+        delete payload.created_at;
+      }
+      
+      const response = await api.post('/customers', payload);
       onSuccess();
       onClose();
       // Reset form
@@ -90,7 +102,8 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     setFormData({ 
       ...formData, 
       pic: '', institution: '', position: '', 
-      email: '', phone_number: '', notes: '', category: '', sub_category: '' 
+      email: '', phone_number: '', notes: '', category: '', sub_category: '',
+      created_at: ''
     });
     setSelectedSubCategoryLabel('');
   };
@@ -233,6 +246,22 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
               onChange={(e) => setFormData({...formData, notes: e.target.value})}
               placeholder="Any additional info..."
             />
+          </div>
+
+          {/* Created At - Custom Date */}
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Custom Creation Date/Time
+            </label>
+            <input 
+              type="datetime-local"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              value={formData.created_at}
+              onChange={(e) => setFormData({...formData, created_at: e.target.value})}
+            />
+            <p className="text-xs text-slate-400 mt-1">
+              Leave empty to use current date/time. Set a past date for late data entry.
+            </p>
           </div>
 
           <div className="shrink-0 border-t border-slate-100 p-6">
