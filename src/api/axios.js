@@ -3,7 +3,8 @@ import axios from 'axios';
 console.log('MODE:', import.meta.env.MODE);
 console.log('API:', import.meta.env.VITE_API_URL);
 
-const baseURL = import.meta.env.VITE_API_URL;
+// const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = 'http://backend.test/api';
 
 if (!baseURL) {
   alert("VITE_API_URL IS EMPTY");
