@@ -100,7 +100,11 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
       // ⭐ AUTO CLOSE MODAL jika KPI sudah 100%
       if (response.data.kpi_completed) {
         setTimeout(() => {
-          alert(`✅ Selamat! KPI ${kpi.code} telah diselesaikan 100%.\n\nProspek otomatis naik ke status berikutnya.`);
+          const isFinalKPI = kpi.code === 'after_sales';
+          const message = isFinalKPI
+            ? `✅ Selamat! After Sales telah berhasil diselesaikan.\n\nPenjualan berhasil dan akan disimpan ke dalam history.`
+            : `✅ Selamat! KPI ${kpi.code} telah diselesaikan 100%.\n\nProspek otomatis naik ke status berikutnya.`;
+          alert(message);
           onSuccess?.();
           onClose();
         }, 800);
@@ -224,12 +228,20 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     // 1. Sudah approved sebelumnya (dari database)
     if (isAlreadyCompleted && !result) {
       return (
-        <div className="mt-2 flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500" />
-          <div className="flex-1">
-            <p className="text-xs font-bold text-emerald-700">✓ Terverifikasi Sistem</p>
-            <p className="text-[10px] text-emerald-600 mt-0.5">Misi ini sudah diselesaikan sebelumnya</p>
+        <div className="mt-2 space-y-2">
+          <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500" />
+            <div className="flex-1">
+              <p className="text-xs font-bold text-emerald-700">✓ Terverifikasi Sistem</p>
+              <p className="text-[10px] text-emerald-600 mt-0.5">Misi ini sudah diselesaikan sebelumnya</p>
+            </div>
           </div>
+          {task.user_input && (
+            <div className="p-2 bg-emerald-25 border border-emerald-100 rounded-lg">
+              <p className="text-[10px] font-medium text-emerald-800 mb-1">Input Anda:</p>
+              <p className="text-xs text-emerald-700 break-words">{task.user_input}</p>
+            </div>
+          )}
         </div>
       );
     }
@@ -245,7 +257,14 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               <p className="text-[10px] text-red-600">Misi ini perlu diperbaiki untuk melanjutkan ke KPI berikutnya</p>
             </div>
           </div>
-          
+
+          {task.user_input && (
+            <div className="p-2 bg-red-25 border border-red-100 rounded-lg">
+              <p className="text-[10px] font-medium text-red-800 mb-1">Input Sebelumnya:</p>
+              <p className="text-xs text-red-700 break-words">{task.user_input}</p>
+            </div>
+          )}
+
           {/* Form untuk re-submit */}
           <div className="space-y-2">
             {renderInputForm(task)}
@@ -327,12 +346,20 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     // 5. Baru submit dan DITERIMA
     if (result?.submitted && result?.approved) {
       return (
-        <div className="mt-2 flex items-start gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500 mt-0.5 shrink-0" />
-          <div className="flex-1">
-            <p className="text-xs font-bold text-emerald-700 mb-1">✓ Terverifikasi Sistem</p>
-            <p className="text-[10px] text-emerald-600">{result.message}</p>
+        <div className="mt-2 space-y-2">
+          <div className="flex items-start gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <p className="text-xs font-bold text-emerald-700 mb-1">✓ Terverifikasi Sistem</p>
+              <p className="text-[10px] text-emerald-600">{result.message}</p>
+            </div>
           </div>
+          {inputValues[task.id] && (
+            <div className="p-2 bg-emerald-25 border border-emerald-100 rounded-lg">
+              <p className="text-[10px] font-medium text-emerald-800 mb-1">Input Anda:</p>
+              <p className="text-xs text-emerald-700 break-words">{inputValues[task.id]}</p>
+            </div>
+          )}
         </div>
       );
     }

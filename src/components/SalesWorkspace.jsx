@@ -50,47 +50,50 @@ export default function SalesWorkspace() {
   const fetchSalesTeamData = async () => {
     try {
       setLoading(true);
-      
-      // Fetch users
-      const usersResponse = await api.get('/users');
+      // Semua user (admin/sales) fetch seluruh sales untuk dashboard
+      const usersResponse = await api.get('/users', {
+        params: { dashboard: 1 }
+      });
       const allUsers = usersResponse.data.data || usersResponse.data;
-      
-      // Filter out user ID 7 (Tony) from display
       const users = allUsers.filter(u => u.id !== 7);
-      
-      // Fetch additional data for each user
       const salesData = await Promise.all(
         users.map(async (userData) => {
           try {
-            // Fetch user stats
-            const statsResponse = await api.get(`/users/${userData.id}/stats`);
+            const statsResponse = await api.get(`/users/${userData.id}/stats`, {
+              params: { dashboard: 1 }
+            });
             const stats = statsResponse.data;
-            
-            // Fetch user customers for pipelines
-            // IMPORTANT: This will only work if logged in as administrator
-            // Non-admin users will only see their own customers regardless of user_id parameter
             const customersResponse = await api.get('/customers', {
               params: { 
                 user_id: userData.id,
-                per_page: 100 // Get up to 100 customers to avoid pagination issues
+                per_page: 100,
+                dashboard: 1
               }
             });
-            
-            // Handle both paginated and non-paginated responses
             let customers = [];
             if (customersResponse.data.data && Array.isArray(customersResponse.data.data)) {
               customers = customersResponse.data.data;
             } else if (Array.isArray(customersResponse.data)) {
               customers = customersResponse.data;
             }
-            
-            // Debug log to verify correct filtering
-            console.log(`User: ${userData.name} (ID: ${userData.id}) - Fetched ${customers.length} customers`);
-            if (customers.length > 0) {
-              console.log(`  First customer user_id: ${customers[0].user_id}`);
-            }
-            
-            // Transform data to match existing structure
+            const statusOrder = {
+              'Deal Won': 5,
+              'After Sales': 4,
+              'Hot Prospect': 3,
+              'Warm Prospect': 2,
+              'New': 1
+            };
+            const sortedCustomers = [...customers].sort((a, b) => {
+              const aOrder = statusOrder[a.status] || 0;
+              const bOrder = statusOrder[b.status] || 0;
+              if (aOrder === bOrder) {
+                return new Date(b.created_at) - new Date(a.created_at);
+              }
+              return bOrder - aOrder;
+            });
+            sortedCustomers.slice(0, 4).forEach((customer, idx) => {
+              console.log(`  Pipeline #${idx + 1} for ${userData.name}: customer_id=${customer.id}, user_id=${customer.user_id}, status=${customer.status}`);
+            });
             return {
               id: userData.id,
               name: userData.name,
@@ -110,18 +113,20 @@ export default function SalesWorkspace() {
               yearlyTarget: stats.yearly_target || 100000000,
               hotProspects: stats.hot_prospects || 0,
               closingCount: stats.closing_count || 0,
-              pipelines: customers.slice(0, 4).map(customer => ({
+              pipelines: sortedCustomers.slice(0, 4).map(customer => ({
+                id: customer.id,
+                user_id: customer.user_id,
                 pic: customer.pic,
                 title: customer.position,
                 company: customer.institution,
                 stage: customer.current_kpi_id || customer.kpi_id || 1,
-                date: new Date(customer.created_at).toLocaleDateString('en-GB')
+                date: new Date(customer.created_at).toLocaleDateString('en-GB'),
+                status: customer.status
               }))
             };
           } catch (error) {
             console.error(`Error fetching data for user ${userData.id}:`, error);
             console.error('Error details:', error.response?.data);
-            // Return basic user data if stats fetch fails
             return {
               id: userData.id,
               name: userData.name,
@@ -142,12 +147,7 @@ export default function SalesWorkspace() {
           }
         })
       );
-      
       setSalesTeamData(salesData);
-    } catch (error) {
-      console.error('Error fetching sales team data:', error);
-      // Set empty array on error
-      setSalesTeamData([]);
     } finally {
       setLoading(false);
     }
@@ -212,7 +212,7 @@ export default function SalesWorkspace() {
   };
 
   return (
-    <main className="flex-1 overflow-y-auto p-4 lg:p-6 bg-slate-50/50">
+    <main className="flex-1 min-h-screen h-full overflow-y-auto p-4 lg:p-6 bg-slate-50/50">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {loading ? (

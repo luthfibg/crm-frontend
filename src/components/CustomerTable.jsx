@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
+import AddCustomerModal from './AddCustomerModal';
+import EditCustomerModal from './EditCustomerModal';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { 
   PencilEdit01Icon, 
@@ -12,6 +14,9 @@ import {
 } from '@hugeicons/core-free-icons';
 
 const CustomerTable = () => {
+  // Modal & edit state
+  const [showModal, setShowModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
   // 1. PINDAHKAN SEMUA HOOK KE ATAS
   const [customers, setCustomers] = useState({
     data: [],
@@ -20,6 +25,38 @@ const CustomerTable = () => {
   const [loading, setLoading] = useState(true);
 
   // Fungsi fetch yang diperbaiki
+    // Handler Edit
+    const handleEdit = (customer) => {
+      setEditingCustomer(customer);
+      setShowModal(true);
+    };
+
+    // Handler Delete
+    const handleDelete = async (customerId) => {
+      if (window.confirm('Hapus customer ini?')) {
+        try {
+          await api.delete(`/customers/${customerId}`);
+          fetchCustomers(customers.meta.current_page);
+        } catch (err) {
+          alert('Gagal menghapus customer');
+        }
+      }
+    };
+
+    // Handler submit modal
+    const handleModalSubmit = async (formData) => {
+      if (editingCustomer) {
+        // Edit customer
+        try {
+          await api.put(`/customers/${editingCustomer.id}`, formData);
+          setShowModal(false);
+          setEditingCustomer(null);
+          fetchCustomers(customers.meta.current_page);
+        } catch (err) {
+          alert('Gagal mengedit customer');
+        }
+      }
+    };
   const fetchCustomers = async (page = 1) => {
     setLoading(true);
     try {
@@ -137,10 +174,10 @@ const CustomerTable = () => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 rounded-lg transition-all">
+                      <button className="p-2 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 rounded-lg transition-all" onClick={() => handleEdit(item)}>
                         <HugeiconsIcon icon={PencilEdit01Icon} size={18} />
                       </button>
-                      <button className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-all">
+                      <button className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-all" onClick={() => handleDelete(item.id)}>
                         <HugeiconsIcon icon={Delete02Icon} size={18} />
                       </button>
                     </div>
@@ -174,7 +211,14 @@ const CustomerTable = () => {
             </div>
         </div>
       </div>
-    </div>
+    {/* Modal Edit Customer */}
+    <EditCustomerModal
+      isOpen={showModal}
+      onClose={() => { setShowModal(false); setEditingCustomer(null); }}
+      onSuccess={() => { setShowModal(false); setEditingCustomer(null); fetchCustomers(customers.meta.current_page); }}
+      customer={editingCustomer}
+    />
+  </div>
   );
 };
 
