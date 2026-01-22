@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { useAuth } from '../context/AuthContext';
 import {
-  PlusSignIcon, ContactBookIcon, WorkflowSquare01Icon, FilterIcon
+  PlusSignIcon, ContactBookIcon, WorkflowSquare01Icon, FilterIcon, WorkHistoryIcon
 } from '@hugeicons/core-free-icons';
 import api from '../api/axios'; // Pastikan path axios Anda benar
 
 import KanbanBoard from './KanbanBoard';
 import CustomerTable from './CustomerTable';
+import HistoryWorkspace from './HistoryWorkspace';
 import AddCustomerModal from './AddCustomerModal';
 import TaskChecklistModal from './TaskChecklistModal';
 import AddProspectModal from './AddProspectModal';
@@ -51,9 +52,11 @@ const ProspectWorkspace = () => {
     return filtered;
   };
 
-  // Reset filter when switching views
+  // Reset filter when switching views (only for pipeline view)
   useEffect(() => {
-    setFilterType('all');
+    if (view !== 'pipeline') {
+      setFilterType('all');
+    }
   }, [view]);
 
   // Fetch Data dari API Backend (DailyGoalController@index)
@@ -111,14 +114,14 @@ const ProspectWorkspace = () => {
       <div className="p-4 lg:p-6 flex items-center justify-between border-b border-slate-200 bg-white">
         <div>
           <h2 className="text-lg font-bold text-slate-800 uppercase tracking-tight">
-            {view === 'pipeline' ? 'Prospect Pipeline' : 'Customer Database'}
+            {view === 'pipeline' ? 'Prospect Pipeline' : view === 'customer' ? 'Customer Database' : 'Sales History'}
           </h2>
           <p className="text-[10px] text-orange-500 font-bold uppercase tracking-widest">
             {view === 'pipeline' ?
               filterType === 'all'
                 ? `Saat Ini Ada ${prospects.length} Prospek Aktif`
                 : `Saat Ini Ada ${getFilteredProspects().length} Prospek Aktif (${filterType})`
-              : 'Direktori Semua Customer'
+              : view === 'customer' ? 'Direktori Semua Customer' : 'Riwayat Penjualan Berhasil'
             }
           </p>
         </div>
@@ -142,31 +145,77 @@ const ProspectWorkspace = () => {
             </div>
           )}
 
-          {/* Tombol Toggle View */}
-          <button onClick={() => setView(view === 'pipeline' ? 'customer' : 'pipeline')}
-            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border ${
-                view === 'customer' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'bg-white text-slate-600 border-slate-200'
-            }`}>
-            <HugeiconsIcon icon={view === 'pipeline' ? ContactBookIcon : WorkflowSquare01Icon} size={18} />
-            {view === 'pipeline' ? 'View Database' : 'View Pipeline'}
-          </button>
+          {/* Navigation Buttons */}
+          {view === 'pipeline' && (
+            <>
+              {/* History Button - from pipeline */}
+              <button onClick={() => setView('history')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                <HugeiconsIcon icon={WorkHistoryIcon} size={18} />
+                History
+              </button>
+
+              {/* Database Button - from pipeline */}
+              <button onClick={() => setView('customer')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                <HugeiconsIcon icon={ContactBookIcon} size={18} />
+                View Database
+              </button>
+            </>
+          )}
+
+          {view === 'customer' && (
+            <>
+              {/* History Button - from customer */}
+              <button onClick={() => setView('history')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                <HugeiconsIcon icon={WorkHistoryIcon} size={18} />
+                History
+              </button>
+
+              {/* Pipeline Button - from customer */}
+              <button onClick={() => setView('pipeline')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                <HugeiconsIcon icon={WorkflowSquare01Icon} size={18} />
+                View Pipeline
+              </button>
+            </>
+          )}
+
+          {view === 'history' && (
+            <>
+              {/* Pipeline Button - from history */}
+              <button onClick={() => setView('pipeline')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                <HugeiconsIcon icon={WorkflowSquare01Icon} size={18} />
+                View Pipeline
+              </button>
+
+              {/* Database Button - from history */}
+              <button onClick={() => setView('customer')}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                <HugeiconsIcon icon={ContactBookIcon} size={18} />
+                View Database
+              </button>
+            </>
+          )}
 
           {/* Tombol Dinamik Berdasarkan View */}
           {view === 'pipeline' ? (
-            <button 
+            <button
               onClick={() => setIsAddProspectOpen(true)}
               className='flex bg-indigo-600 items-center gap-2 px-4 py-2 rounded-lg text-xs font-black text-white hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100'>
               <HugeiconsIcon icon={PlusSignIcon} size={16} />
               ADD PROSPECT
             </button>
-          ) : (
-            <button 
+          ) : view === 'customer' ? (
+            <button
               onClick={() => setIsAddCustomerOpen(true)}
               className='flex bg-emerald-600 items-center gap-2 px-4 py-2 rounded-lg text-xs font-black text-white hover:bg-emerald-700 transition-all shadow-md shadow-emerald-100'>
               <HugeiconsIcon icon={PlusSignIcon} size={16} />
               NEW CUSTOMER
             </button>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -194,8 +243,10 @@ const ProspectWorkspace = () => {
         ) : (
         view === 'pipeline' ? (
           <KanbanBoard prospects={getFilteredProspects()} onOpenModal={handleOpenModal} />
-        ) : (
+        ) : view === 'customer' ? (
           <CustomerTable key={refreshKey} />
+        ) : (
+          <HistoryWorkspace />
         )
       )}
     </main>

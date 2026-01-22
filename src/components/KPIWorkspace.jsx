@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { HugeiconsIcon } from '@hugeicons/react';
+import Masonry from 'react-masonry-css';
 import { 
   PlusSignIcon, 
   PencilEdit01Icon, 
@@ -29,6 +30,15 @@ const KPIWorkspace = () => {
   const [kpis, setKpis] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Breakpoint columns for masonry
+  const breakpointColumns = {
+    default: 4,
+    1280: 3,
+    1024: 3,
+    768: 2,
+    640: 1
+  };
+
   useEffect(() => {
     const fetchKPIs = async () => {
       try {
@@ -41,8 +51,8 @@ const KPIWorkspace = () => {
           type: item.type,
           description: item.description,
           icon: getIconByKpiType(item.type),
-          // Tentukan ukuran bento berdasarkan urutan (sequence) atau type
-          size: item.weight_point > 20 ? 'large' : 'small' 
+          // Tentukan ukuran card berdasarkan weight - untuk variasi height
+          size: item.weight_point > 25 ? 'large' : item.weight_point > 15 ? 'medium' : 'small' 
         }));
         setKpis(mappedData);
       } catch (error) {
@@ -55,10 +65,10 @@ const KPIWorkspace = () => {
     fetchKPIs();
   }, []);
 
-  if (loading) return <div>Loading KPI Data...</div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="text-slate-600">Loading KPI Data...</div></div>;
 
   return (
-    <div className="p-8 bg-slate-50 min-h-screen">
+    <div className="p-8 bg-slate-50 min-h-screen h-full overflow-y-auto">
       {/* Header Section */}
       <div className="flex justify-between items-end mb-8">
         <div>
@@ -71,46 +81,74 @@ const KPIWorkspace = () => {
         </button>
       </div>
 
-      {/* Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-[160px]">
+      {/* Masonry Grid */}
+      <Masonry
+        breakpointCols={breakpointColumns}
+        className="flex -ml-6 w-auto"
+        columnClassName="pl-6 bg-clip-padding"
+      >
         {kpis.map((kpi) => (
           <div 
             key={kpi.id}
             className={`
-              group relative bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between overflow-hidden h-fit transition-all hover:shadow-xl hover:border-indigo-200 hover:-translate-y-1
-              ${kpi.size === 'large' ? 'md:col-span-2 md:row-span-2' : ''}
-              ${kpi.size === 'medium' ? 'md:col-span-2' : ''}
-              ${kpi.size === 'small' ? 'md:col-span-1 md:row-span-1' : ''}
+              group relative bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between overflow-hidden transition-all hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 mb-6
+              ${kpi.size === 'large' ? 'min-h-[280px]' : ''}
+              ${kpi.size === 'medium' ? 'min-h-[220px]' : ''}
+              ${kpi.size === 'small' ? 'min-h-[180px]' : ''}
             `}
           >
             {/* Background Decoration Icon */}
             <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-               <HugeiconsIcon icon={kpi.icon || Settings02Icon} size={100} />
+               <HugeiconsIcon icon={kpi.icon || Settings02Icon} size={120} />
             </div>
 
-            <div className="flex justify-between items-start relative z-10">
-              <div className={`p-2 rounded-lg ${kpi.size === 'large' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'}`}>
-                <HugeiconsIcon icon={kpi.icon || Settings02Icon} size={kpi.size === 'large' ? 24 : 18} />
+            <div className="flex justify-between items-start relative z-10 mb-4">
+              <div className={`p-3 rounded-xl transition-all ${
+                kpi.size === 'large' 
+                  ? 'bg-gradient-to-br from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-200' 
+                  : kpi.size === 'medium'
+                  ? 'bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600'
+                  : 'bg-slate-100 text-slate-600'
+              }`}>
+                <HugeiconsIcon 
+                  icon={kpi.icon || Settings02Icon} 
+                  size={kpi.size === 'large' ? 28 : kpi.size === 'medium' ? 24 : 20} 
+                />
               </div>
               
               {/* CRUD Actions (Visible on Hover) */}
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button className="p-1.5 hover:bg-slate-100 rounded-md text-slate-400 hover:text-indigo-600 transition-colors">
+              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                <button className="p-2 hover:bg-indigo-50 rounded-lg text-slate-400 hover:text-indigo-600 transition-colors">
                   <HugeiconsIcon icon={PencilEdit01Icon} size={16} />
                 </button>
-                <button className="p-1.5 hover:bg-red-50 rounded-md text-slate-400 hover:text-red-600 transition-colors">
+                <button className="p-2 hover:bg-red-50 rounded-lg text-slate-400 hover:text-red-600 transition-colors">
                   <HugeiconsIcon icon={Delete02Icon} size={16} />
                 </button>
               </div>
             </div>
 
-            <div className="relative z-10">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{kpi.type}</span>
-              <h3 className={`font-black text-slate-800 leading-tight ${kpi.size === 'large' ? 'text-xl' : 'text-sm'}`}>
-                {kpi.name}
-              </h3>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="text-[10px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full border border-indigo-100">
+            <div className="relative z-10 space-y-3">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                  {kpi.type}
+                </span>
+                <h3 className={`font-black text-slate-900 leading-tight ${
+                  kpi.size === 'large' ? 'text-2xl' : kpi.size === 'medium' ? 'text-lg' : 'text-base'
+                }`}>
+                  {kpi.name}
+                </h3>
+              </div>
+              
+              {kpi.description && kpi.size !== 'small' && (
+                <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                  {kpi.description}
+                </p>
+              )}
+              
+              <div className="flex items-center gap-2 pt-2">
+                <span className={`font-bold bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 ${
+                  kpi.size === 'large' ? 'text-sm' : 'text-xs'
+                }`}>
                   Weight: {kpi.weight}
                 </span>
               </div>
@@ -119,13 +157,13 @@ const KPIWorkspace = () => {
         ))}
 
         {/* Placeholder for Add New Action in Grid */}
-        <div className="border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-slate-50 hover:border-indigo-300 transition-all cursor-pointer group text-slate-400 hover:text-indigo-600">
-           <div className="p-3 bg-white rounded-full shadow-sm group-hover:scale-110 transition-transform">
-              <HugeiconsIcon icon={PlusSignIcon} size={20} />
+        <div className="border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-3 hover:bg-slate-50 hover:border-indigo-400 transition-all cursor-pointer group text-slate-400 hover:text-indigo-600 mb-6 min-h-[180px] p-6">
+           <div className="p-4 bg-white rounded-full shadow-sm group-hover:shadow-md group-hover:scale-110 transition-all border border-slate-200 group-hover:border-indigo-200">
+              <HugeiconsIcon icon={PlusSignIcon} size={24} />
            </div>
-           <span className="text-xs font-bold">New Metric</span>
+           <span className="text-sm font-bold">New Metric</span>
         </div>
-      </div>
+      </Masonry>
     </div>
   );
 };
