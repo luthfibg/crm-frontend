@@ -93,7 +93,8 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           approved: response.data.is_valid,
           message: response.data.message,
           progress_percent: response.data.progress_percent,
-          kpi_completed: response.data.kpi_completed
+          kpi_completed: response.data.kpi_completed,
+          input: response.data.user_input || value,
         }
       }));
 
@@ -162,6 +163,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   // Render Input Form
   const renderInputForm = (task) => {
     switch (task.input_type) {
+
       case 'text':
         return (
           <textarea
@@ -177,7 +179,43 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
         return (
           <input
             type="tel"
-            placeholder="Contoh: 08123456789"
+            placeholder="Contoh: 08123456789 (boleh ditambah keterangan)"
+            value={inputValues[task.id] || ''}
+            onChange={(e) => handleInputChange(task.id, e.target.value)}
+            className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+          />
+        );
+
+      // ✅ DATE (text fleksibel)
+      case 'date':
+        return (
+          <input
+            type="text"
+            placeholder="Contoh: 24-01-2026 / 24/01/2026 (boleh ditambah catatan)"
+            value={inputValues[task.id] || ''}
+            onChange={(e) => handleInputChange(task.id, e.target.value)}
+            className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+          />
+        );
+
+      // ✅ NUMBER (text fleksibel)
+      case 'number':
+        return (
+          <input
+            type="text"
+            placeholder="Contoh: 150 / 150,5 / 150.5 (boleh ditambah keterangan)"
+            value={inputValues[task.id] || ''}
+            onChange={(e) => handleInputChange(task.id, e.target.value)}
+            className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+          />
+        );
+
+      // ✅ CURRENCY (text fleksibel)
+      case 'currency':
+        return (
+          <input
+            type="text"
+            placeholder="Contoh: Rp 10.000 / 10000 / Rp 5jt cash"
             value={inputValues[task.id] || ''}
             onChange={(e) => handleInputChange(task.id, e.target.value)}
             className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
@@ -194,8 +232,11 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               className="hidden"
               id={`file-${task.id}`}
               accept={
-                task.input_type === 'image' ? 'image/*' :
-                task.input_type === 'video' ? 'video/*' : '*/*'
+                task.input_type === 'image'
+                  ? 'image/*'
+                  : task.input_type === 'video'
+                  ? 'video/*'
+                  : '*/*'
               }
               onChange={(e) => {
                 const file = e.target.files[0];
@@ -219,6 +260,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     }
   };
 
+
   // Render Task Content
   const renderTaskContent = (task) => {
     const result = submissionResults[task.id];
@@ -239,7 +281,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           {task.user_input && (
             <div className="p-2 bg-emerald-25 border border-emerald-100 rounded-lg">
               <p className="text-[10px] font-medium text-emerald-800 mb-1">Input Anda:</p>
-              <p className="text-xs text-emerald-700 break-words">{task.user_input}</p>
+              <p className="text-xs text-emerald-700 wrap-break-words">{task.user_input}</p>
             </div>
           )}
         </div>
@@ -261,7 +303,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           {task.user_input && (
             <div className="p-2 bg-red-25 border border-red-100 rounded-lg">
               <p className="text-[10px] font-medium text-red-800 mb-1">Input Sebelumnya:</p>
-              <p className="text-xs text-red-700 break-words">{task.user_input}</p>
+              <p className="text-xs text-red-700 wrap-break-words">{task.user_input}</p>
             </div>
           )}
 
@@ -354,10 +396,10 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               <p className="text-[10px] text-emerald-600">{result.message}</p>
             </div>
           </div>
-          {inputValues[task.id] && (
+          {result?.input !== undefined && result?.input !== null && (
             <div className="p-2 bg-emerald-25 border border-emerald-100 rounded-lg">
               <p className="text-[10px] font-medium text-emerald-800 mb-1">Input Anda:</p>
-              <p className="text-xs text-emerald-700 break-words">{inputValues[task.id]}</p>
+              <p className="text-xs text-emerald-700 wrap-break-words">{result.input}</p>
             </div>
           )}
         </div>

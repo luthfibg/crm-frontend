@@ -17,16 +17,25 @@ const Login = () => {
     e.preventDefault();
     setError(''); // Reset error
     setIsLoading(true); // ← Tambahan
-    
+
+    console.log('🔐 Attempting login with:', formData);
+    console.log('🌐 API URL:', api.defaults.baseURL);
+
     try {
       const response = await api.post('/login', formData);
-      
+      console.log('✅ Login successful:', response.data);
+
       // ← PERBAIKAN: Gunakan fungsi login dari context
       login(response.data.user, response.data.token);
-      
+
       // Arahkan ke dashboard
       navigate('/panel');
     } catch (err) {
+      console.error('❌ Login error:', err);
+      console.error('❌ Error response:', err.response);
+      console.error('❌ Error status:', err.response?.status);
+      console.error('❌ Error data:', err.response?.data);
+
       // ← PERBAIKAN: Error handling yang lebih baik
       if (err.response?.data?.message) {
         setError(err.response.data.message);
@@ -37,7 +46,6 @@ const Login = () => {
       } else {
         setError('Invalid email or password');
       }
-      console.error('Login error:', err);
     } finally {
       setIsLoading(false); // ← Tambahan
     }

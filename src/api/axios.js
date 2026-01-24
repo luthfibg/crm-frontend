@@ -2,17 +2,19 @@ import axios from 'axios';
 
 console.log('MODE:', import.meta.env.MODE);
 console.log('API:', import.meta.env.VITE_API_URL);
+console.log('All env vars:', import.meta.env);
 
-// const baseURL = import.meta.env.VITE_API_URL;
+// const baseURL = import.meta.env.VITE_API_URL || 'http://crm-backend.local/api';
 const baseURL = 'http://backend.test/api';
 
+console.log('Final baseURL:', baseURL);
+
 if (!baseURL) {
-  alert("VITE_API_URL IS EMPTY");
+  alert("VITE_API_URL IS EMPTY - Using fallback");
 }
 const api = axios.create({
   baseURL,
   withCredentials: false,
-  // baseURL: 'http://backend.test/api',
   headers: {
     'Content-Type': 'application/json',
     Accept: "application/json",

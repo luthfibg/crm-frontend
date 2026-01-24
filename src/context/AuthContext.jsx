@@ -18,11 +18,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData, userToken) => {
-    console.log('Login with user data:', userData);
+    console.log('🔐 Login function called with:', { userData, tokenLength: userToken?.length });
     setUser(userData);
     setToken(userToken);
     localStorage.setItem('token', userToken);
     localStorage.setItem('user', JSON.stringify(userData));
+    console.log('💾 Data saved to localStorage');
   };
 
   // Function to update user and sync with localStorage
