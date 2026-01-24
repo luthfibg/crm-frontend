@@ -9,14 +9,15 @@ import {
   BarChart3,
   Filter,
   Users,
-  CalendarRange
+  CalendarRange,
+  User
 } from 'lucide-react';
 
 const ReportWorkspace = ({ user }) => {
   const [range, setRange] = useState('monthly'); // daily|monthly
   const [date, setDate] = useState('');
   const [month, setMonth] = useState('');
-  const [format, setFormat] = useState('pdf'); // pdf|excel|word
+  const [format, setFormat] = useState('excel'); // pdf|excel|word
   const [userId, setUserId] = useState(''); // optional filter
   const [loading, setLoading] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -35,21 +36,75 @@ const ReportWorkspace = ({ user }) => {
     setPreviewLoading(true);
     setError(null);
     try {
-      // Uses existing endpoint that returns customers + daily goals
-      const res = await api.get('/daily-goals');
-      // Format preview rows: no, customer, institution, current KPI percent (approx)
-      const rows = (res.data?.data || []).map((c, i) => ({
-        no: i + 1,
-        customer: c.customer?.pic || '—',
-        institution: c.customer?.institution || '—',
-        kpiPercent: Math.round(c.stats?.percent || 0)
-      }));
+      const params = {
+        format: 'excel',
+        range,
+        ...(range === 'daily' ? { date: date || new Date().toISOString().slice(0,10) } : {}),
+        ...(range === 'monthly' ? { month: month || new Date().toISOString().slice(0,7) } : {}),
+        ...(userId ? { user_id: userId } : {})
+      };
+
+      // Uses existing endpoint that returns customers with new columns
+      const res = await api.get('/reports/progress', { params });
+      
+      // Parse CSV response for preview
+      const csvText = res.data;
+      const lines = csvText.split('\n').filter(line => line.trim());
+      
+      if (lines.length <= 1) {
+        setPreviewRows([]);
+        setPreviewLoading(false);
+        return;
+      }
+
+      // Parse CSV header
+      const headerLine = lines[0];
+      const headers = parseCSVLine(headerLine);
+      
+      // Parse data rows
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const values = parseCSVLine(lines[i]);
+        if (values.length > 0) {
+          const row = {};
+          headers.forEach((header, index) => {
+            row[header.trim()] = values[index] || '';
+          });
+          row._originalIndex = i;
+          rows.push(row);
+        }
+      }
+      
       setPreviewRows(rows.slice(0, 50));
     } catch (e) {
+      console.error('Preview error:', e);
       setError('Gagal memuat preview. Cek koneksi.');
     } finally {
       setPreviewLoading(false);
     }
+  };
+
+  // Helper function to parse CSV line handling quoted values
+  const parseCSVLine = (line) => {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current.trim());
+    
+    return result;
   };
 
   useEffect(() => {
@@ -102,6 +157,20 @@ const ReportWorkspace = ({ user }) => {
     }
   };
 
+  // Helper to get status badge color
+  const getStatusColor = (status) => {
+    const colors = {
+      'New': 'bg-blue-100 text-blue-700',
+      'Warm Prospect': 'bg-amber-100 text-amber-700',
+      'Hot Prospect': 'bg-orange-100 text-orange-700',
+      'Deal Won': 'bg-green-100 text-green-700',
+      'After Sales': 'bg-purple-100 text-purple-700',
+      'Completed': 'bg-emerald-100 text-emerald-700',
+      '-': 'bg-slate-100 text-slate-500'
+    };
+    return colors[status] || 'bg-slate-100 text-slate-600';
+  };
+
   return (
     <main className="flex-1 p-4 lg:p-6 overflow-auto">
       <div className="max-w-7xl mx-auto">
@@ -114,8 +183,8 @@ const ReportWorkspace = ({ user }) => {
                   <BarChart3 className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800">Report Workspace</h2>
-                  <p className="text-sm text-slate-500 mt-0.5">Generate and export progress reports</p>
+                  <h2 className="text-xl font-bold text-slate-800">Laporan Progress Sales</h2>
+                  <p className="text-sm text-slate-500 mt-0.5">Generate dan export laporan progress prospek</p>
                 </div>
               </div>
               <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl shadow-sm">
@@ -129,7 +198,7 @@ const ReportWorkspace = ({ user }) => {
           <div className="p-6 bg-slate-50/30 border-b border-slate-100">
             <div className="flex items-center gap-2 mb-4">
               <Filter className="w-4 h-4 text-slate-400" />
-              <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">Report Filters</h3>
+              <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">Filter Laporan</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -137,7 +206,7 @@ const ReportWorkspace = ({ user }) => {
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
                   <CalendarRange className="w-3.5 h-3.5" />
-                  Time Range
+                  Rentang Waktu
                 </label>
                 <div className="flex gap-2">
                   <button 
@@ -148,7 +217,7 @@ const ReportWorkspace = ({ user }) => {
                         : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
                     }`}
                   >
-                    Daily
+                    Harian
                   </button>
                   <button 
                     onClick={() => setRange('monthly')} 
@@ -158,7 +227,7 @@ const ReportWorkspace = ({ user }) => {
                         : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
                     }`}
                   >
-                    Monthly
+                    Bulanan
                   </button>
                 </div>
               </div>
@@ -167,7 +236,7 @@ const ReportWorkspace = ({ user }) => {
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
                   <Calendar className="w-3.5 h-3.5" />
-                  {range === 'daily' ? 'Select Date' : 'Select Month'}
+                  {range === 'daily' ? 'Pilih Tanggal' : 'Pilih Bulan'}
                 </label>
                 <div className="relative">
                   {range === 'daily' ? (
@@ -192,7 +261,7 @@ const ReportWorkspace = ({ user }) => {
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
                   <FileText className="w-3.5 h-3.5" />
-                  Export Format
+                  Format Export
                 </label>
                 <select 
                   value={format} 
@@ -206,8 +275,8 @@ const ReportWorkspace = ({ user }) => {
                     paddingRight: '2.5rem'
                   }}
                 >
-                  <option value="pdf">PDF Document</option>
                   <option value="excel">Excel (CSV)</option>
+                  <option value="pdf">PDF Document</option>
                   <option value="word">Word (HTML)</option>
                 </select>
               </div>
@@ -231,7 +300,7 @@ const ReportWorkspace = ({ user }) => {
                       paddingRight: '2.5rem'
                     }}
                   >
-                    <option value="">All Sales</option>
+                    <option value="">Semua Sales</option>
                     {users.map(u => (
                       <option key={u.id} value={u.id}>
                         {u.name} ({u.email})
@@ -257,7 +326,7 @@ const ReportWorkspace = ({ user }) => {
                 className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw className={`w-4 h-4 ${previewLoading ? 'animate-spin' : ''}`} />
-                {previewLoading ? 'Refreshing...' : 'Refresh Preview'}
+                {previewLoading ? 'Memuat...' : 'Refresh Preview'}
               </button>
               
               <button 
@@ -266,12 +335,12 @@ const ReportWorkspace = ({ user }) => {
                 className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-bold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 <Download className={`w-4 h-4 ${loading ? 'animate-pulse' : ''}`} />
-                {loading ? 'Processing...' : `Export ${format.toUpperCase()}`}
+                {loading ? 'Memproses...' : `Export ${format.toUpperCase()}`}
               </button>
 
               {previewRows.length > 0 && (
                 <div className="ml-auto text-xs text-slate-500 font-medium">
-                  Showing {previewRows.length} records in preview
+                  Menampilkan {previewRows.length} data
                 </div>
               )}
             </div>
@@ -297,8 +366,8 @@ const ReportWorkspace = ({ user }) => {
                   <BarChart3 className="w-4 h-4 text-slate-600" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Data Preview</h3>
-                  <p className="text-xs text-slate-500">Sample of customers & KPI progress</p>
+                  <h3 className="text-sm font-bold text-slate-800">Preview Data</h3>
+                  <p className="text-xs text-slate-500">Sample data prospek dengan progress</p>
                 </div>
               </div>
             </div>
@@ -308,16 +377,31 @@ const ReportWorkspace = ({ user }) => {
                 <table className="w-full text-left border-collapse">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-wide">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-12">
                         No
                       </th>
-                      <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-wide">
-                        Customer Name
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
+                        Sales
                       </th>
-                      <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-wide">
-                        Institution
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
+                        Customer
                       </th>
-                      <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-wide text-right">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24">
+                        Product
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
+                        Status
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide">
+                        Kesimpulan
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
+                        Harga Penawaran
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24">
+                        Harga Deal
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28 text-right">
                         KPI Progress
                       </th>
                     </tr>
@@ -325,7 +409,7 @@ const ReportWorkspace = ({ user }) => {
                   <tbody className="divide-y divide-slate-100 bg-white">
                     {previewLoading ? (
                       <tr>
-                        <td colSpan="4" className="px-6 py-12">
+                        <td colSpan={9} className="px-6 py-12">
                           <div className="flex flex-col items-center justify-center gap-3">
                             <div className="w-8 h-8 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
                             <p className="text-sm text-slate-500 font-medium">Loading preview data...</p>
@@ -334,62 +418,101 @@ const ReportWorkspace = ({ user }) => {
                       </tr>
                     ) : previewRows.length === 0 ? (
                       <tr>
-                        <td colSpan="4" className="px-6 py-12">
+                        <td colSpan={9} className="px-6 py-12">
                           <div className="flex flex-col items-center justify-center gap-3">
                             <div className="p-4 bg-slate-100 rounded-full">
                               <FileText className="w-8 h-8 text-slate-400" />
                             </div>
                             <div className="text-center">
-                              <p className="text-sm font-semibold text-slate-700">No data available</p>
-                              <p className="text-xs text-slate-500 mt-1">Try refreshing or adjusting your filters</p>
+                              <p className="text-sm font-semibold text-slate-700">Tidak ada data</p>
+                              <p className="text-xs text-slate-500 mt-1">Coba refresh atau ubah filter</p>
                             </div>
                           </div>
                         </td>
                       </tr>
                     ) : (
-                      previewRows.map((row) => (
-                        <tr 
-                          key={row.no} 
-                          className="group hover:bg-slate-50/80 transition-colors"
-                        >
-                          <td className="px-6 py-4">
-                            <div className="w-8 h-8 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center text-xs font-bold">
-                              {row.no}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-sm font-semibold text-slate-700">
-                              {row.customer}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-sm text-slate-600">
-                              {row.institution}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="inline-flex items-center gap-2">
-                              <div className="flex-1 max-w-[100px] h-2 bg-slate-100 rounded-full overflow-hidden">
-                                <div 
-                                  className={`h-full rounded-full transition-all ${
-                                    row.kpiPercent >= 80 ? 'bg-green-500' :
-                                    row.kpiPercent >= 50 ? 'bg-amber-500' :
-                                    'bg-red-500'
-                                  }`}
-                                  style={{ width: `${Math.min(row.kpiPercent, 100)}%` }}
-                                ></div>
+                      previewRows.map((row) => {
+                        const kpiValue = parseInt(row['KPI Progress %'] || row['KPI Progress'] || '0') || 0;
+                        
+                        return (
+                          <tr 
+                            key={row._originalIndex} 
+                            className="group hover:bg-slate-50/80 transition-colors"
+                          >
+                            <td className="px-4 py-3">
+                              <div className="w-8 h-8 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center text-xs font-bold">
+                                {row.No || row.no || '-'}
                               </div>
-                              <span className={`text-sm font-bold min-w-[48px] text-right ${
-                                row.kpiPercent >= 80 ? 'text-green-600' :
-                                row.kpiPercent >= 50 ? 'text-amber-600' :
-                                'text-red-600'
-                              }`}>
-                                {row.kpiPercent}%
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-7 h-7 bg-indigo-100 rounded-full flex items-center justify-center">
+                                  <User className="w-3.5 h-3.5 text-indigo-600" />
+                                </div>
+                                <span className="text-sm font-medium text-slate-700 truncate max-w-[120px]">
+                                  {row.Sales || row.sales_name || '-'}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div>
+                                <span className="text-sm font-semibold text-slate-700 block truncate max-w-[140px]">
+                                  {row.Customer || row.customer_name || '-'}
+                                </span>
+                                <span className="text-xs text-slate-500 truncate block max-w-[140px]">
+                                  {row.Institution || row.institution || ''}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="text-sm text-slate-500">
+                                {row.Product || row.product || '-'}
                               </span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(row.Status || row.status)}`}>
+                                {row.Status || row.status || '-'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="text-sm text-slate-600 max-w-xs truncate" title={row.Kesimpulan || row.kesimpulan || '-'}>
+                                {row.Kesimpulan || row.kesimpulan || '-'}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="text-sm text-slate-500">
+                                {row['Harga Penawaran'] || row.harga_penawaran || '-'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="text-sm text-slate-500">
+                                {row['Harga Deal'] || row.harga_deal || '-'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                              <div className="inline-flex items-center gap-2 w-full justify-end">
+                                <div className="flex-1 max-w-[80px] h-2 bg-slate-100 rounded-full overflow-hidden">
+                                  <div 
+                                    className={`h-full rounded-full transition-all ${
+                                      kpiValue >= 80 ? 'bg-green-500' :
+                                      kpiValue >= 50 ? 'bg-amber-500' :
+                                      'bg-red-500'
+                                    }`}
+                                    style={{ width: `${Math.min(kpiValue, 100)}%` }}
+                                  ></div>
+                                </div>
+                                <span className={`text-sm font-bold min-w-[40px] text-right ${
+                                  kpiValue >= 80 ? 'text-green-600' :
+                                  kpiValue >= 50 ? 'text-amber-600' :
+                                  'text-red-600'
+                                }`}>
+                                  {row['KPI Progress %'] || row.kpi_progress || '0'}%
+                                </span>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
@@ -399,7 +522,7 @@ const ReportWorkspace = ({ user }) => {
             {previewRows.length > 0 && (
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
                 <p className="text-xs text-blue-800">
-                  <span className="font-bold">💡 Tip:</span> The preview shows up to 50 records. The exported file will contain all matching data based on your selected filters.
+                  <span className="font-bold">💡 Tips:</span> Preview menampilkan maksimal 50 data. File export akan berisi semua data sesuai filter yang dipilih.
                 </p>
               </div>
             )}
@@ -411,3 +534,4 @@ const ReportWorkspace = ({ user }) => {
 };
 
 export default ReportWorkspace;
+

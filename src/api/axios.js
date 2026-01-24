@@ -4,8 +4,8 @@ console.log('MODE:', import.meta.env.MODE);
 console.log('API:', import.meta.env.VITE_API_URL);
 console.log('All env vars:', import.meta.env);
 
-// const baseURL = import.meta.env.VITE_API_URL || 'http://crm-backend.local/api';
-const baseURL = 'http://backend.test/api';
+const baseURL = import.meta.env.VITE_API_URL || 'http://crm-backend.local/api';
+// const baseURL = 'http://backend.test/api';
 
 console.log('Final baseURL:', baseURL);
 
