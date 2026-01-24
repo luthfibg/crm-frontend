@@ -6,22 +6,28 @@ import {
   SentIcon,
   InformationCircleIcon,
   Cancel02Icon,
-  Loading03Icon
+  Loading03Icon,
+  CheckmarkSquare02Icon
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import api from '../api/axios';
 
 const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   const [submitting, setSubmitting] = useState(null);
+  const [submittingSummary, setSubmittingSummary] = useState(false);
   const [inputValues, setInputValues] = useState({});
   const [submissionResults, setSubmissionResults] = useState({});
   const [fileNames, setFileNames] = useState({});
+  const [summaryRequired, setSummaryRequired] = useState(false);
+  const [summaryValue, setSummaryValue] = useState('');
 
   useEffect(() => {
     if (isOpen && prospect) {
       setInputValues({});
       setSubmissionResults({});
       setFileNames({});
+      setSummaryRequired(false);
+      setSummaryValue('');
       
       // Debug logging
       console.log('📋 TaskChecklistModal - Prospect Data:', {
@@ -44,6 +50,39 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     
     if (file) {
       setFileNames(prev => ({ ...prev, [taskId]: file.name }));
+    }
+  };
+
+  // ⭐ Submit Summary and Advance Customer
+  const handleSubmitSummary = async () => {
+    if (!summaryValue || summaryValue.trim().length < 5) {
+      alert('Mohon isi Kesimpulan minimal 5 karakter sebelum submit');
+      return;
+    }
+
+    setSubmittingSummary(true);
+
+    try {
+      const response = await api.post('/summaries/submit-and-advance', {
+        customer_id: customer.id,
+        summary: summaryValue
+      });
+
+      if (response.data.status) {
+        setTimeout(() => {
+          alert(response.data.message);
+          onSuccess?.();
+          onClose();
+        }, 500);
+      }
+    } catch (error) {
+      console.error('Summary submit error:', error);
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          'Gagal menyimpan kesimpulan. Silakan coba lagi.';
+      alert(errorMessage);
+    } finally {
+      setSubmittingSummary(false);
     }
   };
 
@@ -98,8 +137,12 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
         }
       }));
 
-      // ⭐ AUTO CLOSE MODAL jika KPI sudah 100%
-      if (response.data.kpi_completed) {
+      // ⭐ JIKA KPI 100% DAN MEMERLUKAN SUMMARY
+      if (response.data.summary_required) {
+        setSummaryRequired(true);
+      }
+      // ⭐ AUTO CLOSE MODAL jika KPI sudah 100% (hanya jika tidak perlu summary)
+      else if (response.data.kpi_completed) {
         setTimeout(() => {
           const isFinalKPI = kpi.code === 'after_sales';
           const message = isFinalKPI
@@ -469,9 +512,9 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
                 style={{ width: `${stats?.percent || 0}%` }} 
               />
             </div>
-            {Math.round(stats?.percent || 0) === 100 && (
+            {Math.round(stats?.percent || 0) === 100 && !summaryRequired && (
               <p className="text-[10px] text-emerald-600 font-bold mt-1">
-                ✓ KPI selesai! Prospek akan otomatis naik ke status berikutnya.
+                ✓ KPI selesai! Silakan isi Kesimpulan untuk melanjutkan.
               </p>
             )}
           </div>
@@ -558,11 +601,57 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               </div>
             );
           })}
+
+          {/* ⭐ SUMMARY SECTION - Appears when progress is 100% */}
+          {summaryRequired && (
+            <div className="mt-6 p-4 rounded-xl border-2 border-indigo-200 bg-indigo-50">
+              <div className="flex items-center gap-2 mb-3">
+                <HugeiconsIcon icon={CheckmarkSquare02Icon} size={18} className="text-indigo-600" />
+                <span className="text-sm font-bold text-indigo-700 uppercase tracking-tight">
+                  Kesimpulan
+                </span>
+              </div>
+              
+              <p className="text-xs text-indigo-600 mb-3">
+                Semua misi telah selesai! Silakan tuliskan kesimpulan dari aktivitas Anda pada tahap ini.
+              </p>
+              
+              <textarea
+                placeholder="Tulis kesimpulan Anda di sini... (contoh: Telah berhasil melakukan demo produk dan mendapatkan komitmen untuk follow-up meeting)"
+                value={summaryValue}
+                onChange={(e) => setSummaryValue(e.target.value)}
+                rows={4}
+                className="w-full p-3 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+              />
+              
+              <p className="text-[10px] text-indigo-400 mt-1 mb-3">
+                * Kesimpulan akan disimpan dan menggantikan kesimpulan sebelumnya
+              </p>
+              
+              <button
+                disabled={submittingSummary || !summaryValue || summaryValue.trim().length < 5}
+                onClick={handleSubmitSummary}
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition-all"
+              >
+                {submittingSummary ? (
+                  <>
+                    <HugeiconsIcon icon={Loading03Icon} size={16} className="animate-spin" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  <>
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} />
+                    Submit Kesimpulan & Lanjut
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
         <div className="p-4 bg-white border-t border-slate-100">
-          {rejectedCount > 0 && (
+          {rejectedCount > 0 && !summaryRequired && (
             <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 mb-3">
               <p className="text-xs font-bold text-amber-900 mb-1">
                 ⚠️ Terdapat {rejectedCount} misi yang ditolak
@@ -574,7 +663,9 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           )}
           
           <p className="text-[10px] text-center text-slate-400 font-medium">
-            Sistem Verifikasi Otomatis • Wajib 100% Approved untuk Naik Status
+            {summaryRequired 
+              ? '⚡ Wajib mengisi Kesimpulan untuk melanjutkan'
+              : 'Sistem Verifikasi Otomatis • Wajib 100% Approved untuk Naik Status'}
           </p>
         </div>
       </div>
@@ -583,3 +674,4 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
 };
 
 export default TaskChecklistModal;
+
