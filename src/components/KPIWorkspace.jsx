@@ -92,9 +92,9 @@ const KPIWorkspace = () => {
             key={kpi.id}
             className={`
               group relative bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between overflow-hidden transition-all hover:shadow-xl hover:border-indigo-300 hover:-translate-y-1 mb-6
-              ${kpi.size === 'large' ? 'min-h-[280px]' : ''}
-              ${kpi.size === 'medium' ? 'min-h-[220px]' : ''}
-              ${kpi.size === 'small' ? 'min-h-[180px]' : ''}
+              ${kpi.size === 'large' ? 'min-h-70' : ''}
+              ${kpi.size === 'medium' ? 'min-h-55' : ''}
+              ${kpi.size === 'small' ? 'min-h-45' : ''}
             `}
           >
             {/* Background Decoration Icon */}
@@ -105,9 +105,9 @@ const KPIWorkspace = () => {
             <div className="flex justify-between items-start relative z-10 mb-4">
               <div className={`p-3 rounded-xl transition-all ${
                 kpi.size === 'large' 
-                  ? 'bg-gradient-to-br from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-200' 
+                  ? 'bg-linear-to-br from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-200' 
                   : kpi.size === 'medium'
-                  ? 'bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600'
+                  ? 'bg-linear-to-br from-indigo-100 to-indigo-50 text-indigo-600'
                   : 'bg-slate-100 text-slate-600'
               }`}>
                 <HugeiconsIcon 
@@ -157,7 +157,7 @@ const KPIWorkspace = () => {
         ))}
 
         {/* Placeholder for Add New Action in Grid */}
-        <div className="border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-3 hover:bg-slate-50 hover:border-indigo-400 transition-all cursor-pointer group text-slate-400 hover:text-indigo-600 mb-6 min-h-[180px] p-6">
+        <div className="border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center gap-3 hover:bg-slate-50 hover:border-indigo-400 transition-all cursor-pointer group text-slate-400 hover:text-indigo-600 mb-6 min-h-45 p-6">
            <div className="p-4 bg-white rounded-full shadow-sm group-hover:shadow-md group-hover:scale-110 transition-all border border-slate-200 group-hover:border-indigo-200">
               <HugeiconsIcon icon={PlusSignIcon} size={24} />
            </div>

@@ -50,12 +50,28 @@ export default function SalesWorkspace() {
   const fetchSalesTeamData = async () => {
     try {
       setLoading(true);
+      console.log('🔄 SalesWorkspace: Starting to fetch sales data...');
+
+      // Debug: Check API base URL
+      console.log('🔗 API Base URL:', api.defaults.baseURL);
+
+      // Debug: Check if we have auth token
+      const token = localStorage.getItem('token');
+      console.log('🔑 Auth token present:', !!token);
+      console.log('🔑 Token value:', token ? token.substring(0, 20) + '...' : 'none');
+
       // Semua user (admin/sales) fetch seluruh sales untuk dashboard
+      console.log('📡 Fetching users...');
       const usersResponse = await api.get('/users', {
         params: { dashboard: 1 }
       });
+      console.log('✅ Users response:', usersResponse);
+
       const allUsers = usersResponse.data.data || usersResponse.data;
+      console.log('👥 All users:', allUsers);
+
       const users = allUsers.filter(u => u.id !== 7);
+      console.log('👨‍💼 Filtered users:', users);
       const salesData = await Promise.all(
         users.map(async (userData) => {
           try {
@@ -77,8 +93,8 @@ export default function SalesWorkspace() {
               customers = customersResponse.data;
             }
             const statusOrder = {
-              'Deal Won': 5,
-              'After Sales': 4,
+              'Deal Won': 4,
+              'After Sales': 5,
               'Hot Prospect': 3,
               'Warm Prospect': 2,
               'New': 1
@@ -147,7 +163,19 @@ export default function SalesWorkspace() {
           }
         })
       );
+      console.log('✅ Sales data fetched successfully:', salesData);
       setSalesTeamData(salesData);
+    } catch (error) {
+      console.error('❌ SalesWorkspace: Error fetching sales data:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+
+      // Show user-friendly error
+      alert(`Error loading sales data: ${error.message}\n\nCheck console for details.`);
     } finally {
       setLoading(false);
     }
