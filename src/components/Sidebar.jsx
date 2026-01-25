@@ -7,7 +7,8 @@ import {
   Settings02Icon,
   Menu01Icon,
   DashboardSpeed02Icon,
-  Logout01Icon 
+  Logout01Icon,
+  PackageIcon 
 } from '@hugeicons/core-free-icons';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,6 +21,7 @@ const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
     { id: 'sales', label: 'Tim Sales', icon: UserGroupIcon, protected: false },
     { id: 'prospek', label: 'Prospek', icon: Target02Icon, protected: false },
     { id: 'laporan', label: 'Laporan', icon: ChartPie, protected: false },
+    { id: 'produk', label: 'Produk', icon: PackageIcon, protected: true }, // Admin only
     { id: 'kpi', label: 'KPI', icon: DashboardSpeed02Icon, protected: true }, // Protected
     { id: 'pengaturan', label: 'Pengaturan', icon: Settings02Icon, protected: false },
   ];

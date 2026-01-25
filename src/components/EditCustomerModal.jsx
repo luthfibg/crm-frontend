@@ -5,6 +5,8 @@ import { CancelCircleIcon, FloppyDiskIcon } from '@hugeicons/core-free-icons';
 
 const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
   const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [formData, setFormData] = useState({
     pic: '',
     institution: '',
@@ -33,6 +35,26 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
     }
   }, [customer]);
 
+  useEffect(() => {
+    if (isOpen) {
+      fetchProducts();
+      if (customer) {
+        // Set selected products based on customer's current products
+        setSelectedProductIds(customer.product_ids || []);
+      }
+    }
+  }, [isOpen, customer]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await api.get('/products/list');
+      setProducts(response.data || []);
+    } catch (err) {
+      console.error("Gagal mengambil produk", err);
+      setProducts([]);
+    }
+  };
+
   if (!isOpen) return null;
 
   const categories = [
@@ -52,11 +74,21 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
     { label: 'Kelurahan', value: 'Kecamatan' },
   ];
 
+  const handleProductToggle = (productId) => {
+    setSelectedProductIds(prev => {
+      if (prev.includes(productId)) {
+        return prev.filter(id => id !== productId);
+      } else {
+        return [...prev, productId];
+      }
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const payload = { ...formData };
+      const payload = { ...formData, product_ids: selectedProductIds };
       if (payload.created_at) {
         payload.created_at = payload.created_at.replace('T', ' ') + ':00';
       } else {
@@ -179,6 +211,39 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
               placeholder="Any additional info..."
             />
           </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Products <span className="text-slate-400 font-normal">(optional)</span>
+            </label>
+            <div className="max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
+              {products.length === 0 ? (
+                <p className="text-xs text-slate-500 text-center py-2">No products available</p>
+              ) : (
+                products.map(product => (
+                  <label
+                    key={product.id}
+                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${selectedProductIds.includes(product.id) ? 'bg-indigo-50 border border-indigo-200' : 'hover:bg-slate-50'}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedProductIds.includes(product.id)}
+                      onChange={() => handleProductToggle(product.id)}
+                      className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-slate-700 block">{product.name}</span>
+                      <span className="text-xs text-slate-500">Rp {Number(product.default_price || 0).toLocaleString('id-ID')}</span>
+                    </div>
+                    <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300" />
+                  </label>
+                ))
+              )}
+            </div>
+            {selectedProductIds.length > 0 && (
+              <p className="text-xs text-indigo-600">{selectedProductIds.length} produk dipilih</p>
+            )}
+          </div>
+
           <div className="space-y-1">
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Custom Creation Date/Time

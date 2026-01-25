@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CancelCircleIcon, FloppyDiskIcon } from '@hugeicons/core-free-icons';
+import { CancelCircleIcon, FloppyDiskIcon, PackageIcon } from '@hugeicons/core-free-icons';
 
 const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
   const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
   const [selectedSubCategoryLabel, setSelectedSubCategoryLabel] = useState('');
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [formData, setFormData] = useState({
     user_id: userId,
     pic: '',
@@ -17,17 +19,31 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     notes: '',
     kpi_id: 1,
     current_kpi_id: 1,
-    created_at: '' // Custom creation datetime
+    created_at: ''
   });
 
-  // Sinkronkan userId jika berubah (misal saat login/reload)
+  useEffect(() => {
+    if (isOpen) {
+      fetchProducts();
+    }
+  }, [isOpen]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await api.get('/products/list');
+      setProducts(response.data || []);
+    } catch (err) {
+      console.error("Gagal mengambil produk", err);
+      setProducts([]);
+    }
+  };
+
   useEffect(() => {
     if (userId) {
       setFormData(prev => ({ ...prev, user_id: userId }));
     }
   }, [userId]);
 
-  // Update selectedSubCategoryLabel ketika formData.sub_category berubah
   useEffect(() => {
     if (formData.sub_category) {
       const mapping = SUB_CAT_MAPPING.find(item => item.value === formData.sub_category);
@@ -39,9 +55,8 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     }
   }, [formData.sub_category]);
 
-  // Reset subcategory ketika category berubah dan bukan pemerintahan
   useEffect(() => {
-    if (formData.category !== "Pemerintahan") {
+    if (formData.category !== "Pemerintah") {
       setFormData(prev => ({ ...prev, sub_category: '' }));
       setSelectedSubCategoryLabel('');
     }
@@ -49,39 +64,42 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
 
   if (!isOpen) return null;
 
-  // category options
   const categories = [
     "Pendidikan",
-    "Pemerintahan",
+    "Pemerintah",
     "Web Inquiry Corporate",
     "Web Inquiry CNI"
   ];
+
+  const handleProductToggle = (productId) => {
+    setSelectedProductIds(prev => {
+      if (prev.includes(productId)) {
+        return prev.filter(id => id !== productId);
+      } else {
+        return [...prev, productId];
+      }
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     
     try {
-      // Prepare payload - format created_at if provided
-      const payload = { ...formData };
+      const payload = { ...formData, product_ids: selectedProductIds };
       
-      // Convert datetime-local format (YYYY-MM-DDTHH:MM) to Laravel format (YYYY-MM-DD HH:MM:SS)
       if (payload.created_at) {
-        // Replace 'T' with space and add seconds
         payload.created_at = payload.created_at.replace('T', ' ') + ':00';
       } else {
-        // Remove empty created_at to let backend use default timestamp
         delete payload.created_at;
       }
       
-      const response = await api.post('/customers', payload);
+      await api.post('/customers', payload);
       onSuccess();
       onClose();
-      // Reset form
       resetForm();
       alert("Customer berhasil ditambahkan.");
     } catch (error) {
-      // Tampilkan error validasi spesifik dari Laravel agar mudah didebug
       const validationErrors = error.response?.data?.errors;
       console.error("Gagal menambah customer:", validationErrors || error.message);
       
@@ -95,9 +113,6 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     }
   };
 
-  if (!isOpen) return null;
-
-  // Reset form when closed or success
   const resetForm = () => {
     setFormData({ 
       ...formData, 
@@ -106,9 +121,9 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
       created_at: ''
     });
     setSelectedSubCategoryLabel('');
+    setSelectedProductIds([]);
   };
 
-  // Konfigurasi Mapping
   const SUB_CAT_MAPPING = [
     { label: "Kantor Kedinasan", value: "Kedinasan" },
     { label: "Kantor Balai", value: "Kedinasan" },
@@ -133,7 +148,6 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
 
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* PIC - Required */}
             <div className="md:col-span-2 space-y-1">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Person In Charge *</label>
               <input 
@@ -146,7 +160,6 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
               />
             </div>
 
-            {/* Category */}
             <div className="md:col-span-2 space-y-1">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer Category *</label>
               <select 
@@ -162,11 +175,10 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
               </select>
             </div>
 
-            {/* Subcategory */}
             <div className="md:col-span-2 space-y-1">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer Sub Category</label>
               <select 
-                disabled={formData.category !== "Pemerintahan"}
+                disabled={formData.category !== "Pemerintah"}
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
                 value={selectedSubCategoryLabel}
                 onChange={(e) => {
@@ -181,13 +193,12 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
                 }}
               >
                 <option value="">-- Pilih Jenis Instansi --</option>
-                {formData.category === "Pemerintahan" && SUB_CAT_MAPPING.map((item, index) => (
+                {formData.category === "Pemerintah" && SUB_CAT_MAPPING.map((item, index) => (
                   <option key={index} value={item.label}>{item.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Institution */}
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Institution *</label>
               <input 
@@ -199,7 +210,6 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
               />
             </div>
 
-            {/* Position */}
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Position</label>
               <input 
@@ -211,7 +221,6 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
               />
             </div>
 
-            {/* Email */}
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email</label>
               <input 
@@ -223,10 +232,9 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
               />
             </div>
 
-            {/* Phone */}
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Phone Number *</label>
-              <input 
+              <input
                 type="text"
                 className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
                 value={formData.phone_number}
@@ -236,11 +244,43 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
             </div>
           </div>
 
-          {/* Notes */}
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              Products <span className="text-slate-400 font-normal">(optional)</span>
+            </label>
+            <div className="max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
+              {products.length === 0 ? (
+                <p className="text-xs text-slate-500 text-center py-2">No products available</p>
+              ) : (
+                products.map(product => (
+                  <label
+                    key={product.id}
+                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${selectedProductIds.includes(product.id) ? 'bg-indigo-50 border border-indigo-200' : 'hover:bg-slate-50'}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedProductIds.includes(product.id)}
+                      onChange={() => handleProductToggle(product.id)}
+                      className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-slate-700 block">{product.name}</span>
+                      <span className="text-xs text-slate-500">Rp {Number(product.default_price || 0).toLocaleString('id-ID')}</span>
+                    </div>
+                    <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300" />
+                  </label>
+                ))
+              )}
+            </div>
+            {selectedProductIds.length > 0 && (
+              <p className="text-xs text-indigo-600">{selectedProductIds.length} produk dipilih</p>
+            )}
+          </div>
+
           <div className="space-y-1">
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Notes</label>
             <textarea 
-              rows="3"
+              rows="2"
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
               value={formData.notes}
               onChange={(e) => setFormData({...formData, notes: e.target.value})}
@@ -248,31 +288,24 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
             />
           </div>
 
-          {/* Created At - Custom Date */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Custom Creation Date/Time
-            </label>
+            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Custom Creation Date/Time</label>
             <input 
               type="datetime-local"
               className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
               value={formData.created_at}
               onChange={(e) => setFormData({...formData, created_at: e.target.value})}
             />
-            <p className="text-xs text-slate-400 mt-1">
-              Leave empty to use current date/time. Set a past date for late data entry.
-            </p>
+            <p className="text-xs text-slate-400 mt-1">Leave empty to use current date/time.</p>
           </div>
 
-          <div className="shrink-0 border-t border-slate-100 p-6">
+          <div className="shrink-0 border-t border-slate-100 p-6 mt-4">
             <div className="flex gap-3">
               <button 
                 type="button"
                 onClick={onClose}
                 className="flex-1 py-3 text-sm font-bold text-slate-500 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors"
-              >
-                Cancel
-              </button>
+              >Cancel</button>
               <button 
                 type="submit"
                 disabled={loading}
