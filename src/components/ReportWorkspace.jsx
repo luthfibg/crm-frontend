@@ -176,7 +176,7 @@ const ReportWorkspace = ({ user }) => {
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           {/* Header */}
-          <div className="p-6 border-b border-slate-100 bg-gradient-to-br from-indigo-50/50 to-purple-50/30">
+          <div className="p-6 border-b border-slate-100 bg-linear-to-br from-indigo-50/50 to-purple-50/30">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-indigo-100 rounded-xl">
@@ -332,7 +332,7 @@ const ReportWorkspace = ({ user }) => {
               <button 
                 onClick={handleExport} 
                 disabled={loading}
-                className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-bold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                className="flex items-center gap-2 px-6 py-2.5 bg-linear-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-bold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
               >
                 <Download className={`w-4 h-4 ${loading ? 'animate-pulse' : ''}`} />
                 {loading ? 'Memproses...' : `Export ${format.toUpperCase()}`}
@@ -349,7 +349,7 @@ const ReportWorkspace = ({ user }) => {
           {/* Error Message */}
           {error && (
             <div className="mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-              <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">!</span>
               </div>
               <div className="flex-1">
@@ -449,17 +449,17 @@ const ReportWorkspace = ({ user }) => {
                                 <div className="w-7 h-7 bg-indigo-100 rounded-full flex items-center justify-center">
                                   <User className="w-3.5 h-3.5 text-indigo-600" />
                                 </div>
-                                <span className="text-sm font-medium text-slate-700 truncate max-w-[120px]">
+                                <span className="text-sm font-medium text-slate-700 truncate max-w-30">
                                   {row.Sales || row.sales_name || '-'}
                                 </span>
                               </div>
                             </td>
                             <td className="px-4 py-3">
                               <div>
-                                <span className="text-sm font-semibold text-slate-700 block truncate max-w-[140px]">
+                                <span className="text-sm font-semibold text-slate-700 block truncate max-w-35">
                                   {row.Customer || row.customer_name || '-'}
                                 </span>
-                                <span className="text-xs text-slate-500 truncate block max-w-[140px]">
+                                <span className="text-xs text-slate-500 truncate block max-w-35">
                                   {row.Institution || row.institution || ''}
                                 </span>
                               </div>
@@ -491,7 +491,7 @@ const ReportWorkspace = ({ user }) => {
                             </td>
                             <td className="px-4 py-3 text-right">
                               <div className="inline-flex items-center gap-2 w-full justify-end">
-                                <div className="flex-1 max-w-[80px] h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="flex-1 max-w-20 h-2 bg-slate-100 rounded-full overflow-hidden">
                                   <div 
                                     className={`h-full rounded-full transition-all ${
                                       kpiValue >= 80 ? 'bg-green-500' :
@@ -501,7 +501,7 @@ const ReportWorkspace = ({ user }) => {
                                     style={{ width: `${Math.min(kpiValue, 100)}%` }}
                                   ></div>
                                 </div>
-                                <span className={`text-sm font-bold min-w-[40px] text-right ${
+                                <span className={`text-sm font-bold min-w-10 text-right ${
                                   kpiValue >= 80 ? 'text-green-600' :
                                   kpiValue >= 50 ? 'text-amber-600' :
                                   'text-red-600'

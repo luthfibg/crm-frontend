@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Cancel01Icon, Agreement01Icon, UserGroupIcon } from '@hugeicons/core-free-icons';
+import { Cancel01Icon, Agreement01Icon, UserGroupIcon, PackageIcon } from '@hugeicons/core-free-icons';
 import api from '../api/axios';
 
 const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
   const [customers, setCustomers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       fetchAvailableCustomers();
+      fetchProducts();
     }
   }, [isOpen]);
 
@@ -19,19 +22,35 @@ const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
   const fetchAvailableCustomers = async () => {
     try {
       setLoading(true);
-      // Use the new endpoint that filters only non-prospected customers
       const response = await api.get('/customers/available-for-prospect');
-      
-      // Handle API Resources Laravel response format
       const data = Array.isArray(response.data) ? response.data : (response.data.data || []);
       setCustomers(data);
-      
     } catch (err) {
       console.error("Gagal mengambil customer", err);
-      setCustomers([]); // Reset ke array kosong jika error
+      setCustomers([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await api.get('/products/list');
+      setProducts(response.data || []);
+    } catch (err) {
+      console.error("Gagal mengambil produk", err);
+      setProducts([]);
+    }
+  };
+
+  const handleProductToggle = (productId) => {
+    setSelectedProductIds(prev => {
+      if (prev.includes(productId)) {
+        return prev.filter(id => id !== productId);
+      } else {
+        return [...prev, productId];
+      }
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -40,14 +59,22 @@ const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
 
     setSubmitting(true);
     try {
-      // Use the dedicated convert-to-prospect endpoint
       const response = await api.post(`/customers/${selectedCustomerId}/convert-to-prospect`);
       
       if (response.data.status) {
+        if (selectedProductIds.length > 0) {
+          for (const productId of selectedProductIds) {
+            await api.post(`/customers/${selectedCustomerId}/products`, {
+              product_id: productId
+            });
+          }
+        }
+        
         alert(response.data.message || "Customer berhasil ditambahkan ke pipeline!");
         onSuccess();
         onClose();
         setSelectedCustomerId('');
+        setSelectedProductIds([]);
       }
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message;
@@ -101,41 +128,82 @@ const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
                   Select Customer
                 </label>
                 <div className="relative">
-              <select
-                required
-                value={selectedCustomerId}
-                onChange={(e) => setSelectedCustomerId(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all"
-                disabled={loading}
-              >
-                <option value="">
-                  {loading ? '⏳ Loading customers...' : '-- Choose Customer --'}
-                </option>
-                {Array.isArray(customers) && customers.length === 0 && !loading && (
-                  <option value="" disabled>No customers available</option>
-                )}
-                {Array.isArray(customers) && customers.map(c => (
-                  <option key={c.id} value={c.id}>
-                    {c.pic} {c.institution ? `- ${c.institution}` : ''}
-                  </option>
-                ))}
-              </select>
-              {!loading && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              )}
+                  <select
+                    required
+                    value={selectedCustomerId}
+                    onChange={(e) => setSelectedCustomerId(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all"
+                    disabled={loading}
+                  >
+                    <option value="">
+                      {loading ? '⏳ Loading customers...' : '-- Choose Customer --'}
+                    </option>
+                    {Array.isArray(customers) && customers.map(c => (
+                      <option key={c.id} value={c.id}>
+                        {c.pic} {c.institution ? `- ${c.institution}` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  {!loading && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
               </div>
 
+              {/* Product Selection */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                  Select Products <span className="text-slate-400 font-normal">(optional)</span>
+                </label>
+                <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
+                  {products.length === 0 ? (
+                    <p className="text-xs text-slate-500 text-center py-2">No products available</p>
+                  ) : (
+                    products.map(product => (
+                      <label 
+                        key={product.id} 
+                        className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
+                          selectedProductIds.includes(product.id) 
+                            ? 'bg-indigo-50 border border-indigo-200' 
+                            : 'hover:bg-slate-50'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedProductIds.includes(product.id)}
+                          onChange={() => handleProductToggle(product.id)}
+                          className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                        />
+                        <div className="flex-1">
+                          <span className="text-sm font-medium text-slate-700 block">
+                            {product.name}
+                          </span>
+                          <span className="text-xs text-slate-500">
+                            Rp {Number(product.default_price || 0).toLocaleString('id-ID')}
+                          </span>
+                        </div>
+                        <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300" />
+                      </label>
+                    ))
+                  )}
+                </div>
+                {selectedProductIds.length > 0 && (
+                  <p className="text-xs text-indigo-600 mt-1">
+                    {selectedProductIds.length} produk dipilih
+                  </p>
+                )}
+              </div>
+
               <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex gap-3">
-              <HugeiconsIcon icon={UserGroupIcon} className="text-amber-600 shrink-0" size={20} />
-              <p className="text-xs text-amber-800 leading-relaxed">
-                Adding this customer will initiate <strong>KPI Phase 1 (Initial Visit)</strong> and place them in the "New" column of your pipeline.
-              </p>
-            </div>
+                <HugeiconsIcon icon={UserGroupIcon} className="text-amber-600 shrink-0" size={20} />
+                <p className="text-xs text-amber-800 leading-relaxed">
+                  Adding this customer will initiate <strong>KPI Phase 1 (Initial Visit)</strong> and place them in the "New" column of your pipeline.
+                </p>
+              </div>
             </>
           )}
 
@@ -169,3 +237,4 @@ const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
 };
 
 export default AddProspectModal;
+

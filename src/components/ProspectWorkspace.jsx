@@ -80,8 +80,20 @@ const ProspectWorkspace = () => {
     fetchProspects();
   }, [refreshKey]);
 
-  const handleOpenModal = (prospect) => {
-    setSelectedProspect(prospect);
+  const handleOpenModal = async (prospect) => {
+    // Refresh prospect data to get latest summary_required status
+    try {
+      const response = await api.get('/daily-goals');
+      const prospectsData = response.data.data || [];
+      setProspects(prospectsData);
+
+      // Find the updated prospect data
+      const updatedProspect = prospectsData.find(p => p.customer.id === prospect.customer.id);
+      setSelectedProspect(updatedProspect || prospect);
+    } catch (error) {
+      console.error("Error refreshing prospect data:", error);
+      setSelectedProspect(prospect);
+    }
     setIsModalOpen(true);
   };
 

@@ -7,6 +7,7 @@ import PanelHeader from '../components/PanelHeader';
 import SettingWorkspace from '../components/SettingWorkspace';
 import { useAuth } from '../context/AuthContext';
 import ReportWorkspace from '../components/ReportWorkspace';
+import ProductWorkspace from '../components/ProductWorkspace';
 
 const Panel = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -35,7 +36,7 @@ const Panel = () => {
         {activeTab === 'sales' ? (
           <SalesWorkspace user={user} />
         ) : activeTab === 'laporan' ? (
-          <ReportWorkspace/>
+          <ReportWorkspace user={user} />
         ) : activeTab === 'prospek' ? (
           <ProspectWorkspace user={user} />
         ) : activeTab === 'kpi' ? (
@@ -44,6 +45,8 @@ const Panel = () => {
           <SettingWorkspace 
             role={user?.role}
           />
+        ) : activeTab === 'produk' ? (
+          <ProductWorkspace user={user} />
         ) : (
           <main className="flex-1 p-4 lg:p-8">
             <div className="max-w-7xl mx-auto">
