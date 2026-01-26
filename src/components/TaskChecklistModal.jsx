@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   CancelCircleIcon,
   CheckmarkCircle02Icon,
   Upload01Icon,
@@ -7,7 +7,8 @@ import {
   InformationCircleIcon,
   Cancel02Icon,
   Loading03Icon,
-  CheckmarkSquare02Icon
+  CheckmarkSquare02Icon,
+  File01Icon
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import api from '../api/axios';
@@ -23,9 +24,22 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
 
   useEffect(() => {
     if (isOpen && prospect) {
-      setInputValues({});
+      // Prefill input values with existing user_input for rejected tasks
+      const prefilledValues = {};
+      const prefilledFileNames = {};
+      prospect.daily_goals?.forEach(task => {
+        if (task.is_rejected && task.user_input) {
+          if (['file', 'image', 'video'].includes(task.input_type)) {
+            prefilledFileNames[task.id] = task.user_input;
+          } else {
+            prefilledValues[task.id] = task.user_input;
+          }
+        }
+      });
+
+      setInputValues(prefilledValues);
       setSubmissionResults({});
-      setFileNames({});
+      setFileNames(prefilledFileNames);
       setSummaryRequired(false); // Reset
       setSummaryValue('');
 
@@ -107,23 +121,33 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     setSubmitting(task.id);
 
     try {
-      const formData = new FormData();
       const isResubmit = task.is_rejected && task.progress_id;
-      
-      if (!isResubmit) {
-        formData.append('daily_goal_id', task.id);
-        formData.append('customer_id', customer.id);
-      }
-      
+      let requestData;
+      let config = {};
+
       if (['file', 'image', 'video'].includes(task.input_type) && file) {
+        // Use FormData for file uploads
+        const formData = new FormData();
+        if (!isResubmit) {
+          formData.append('daily_goal_id', task.id);
+          formData.append('customer_id', customer.id);
+        }
         formData.append('evidence', file);
+        requestData = formData;
+        // Let axios handle Content-Type for FormData
       } else {
-        formData.append('evidence', value === 0 ? '0' : value);
+        // Use JSON for text inputs
+        requestData = {
+          daily_goal_id: isResubmit ? undefined : task.id,
+          customer_id: isResubmit ? undefined : customer.id,
+          evidence: value === 0 ? '0' : value
+        };
+        // Let axios handle Content-Type for JSON
       }
 
       const response = isResubmit
-        ? api.put(`/progress/update/${task.progress_id}`, formData)
-        : await api.post('/progress/submit', formData);
+        ? await api.put(`/progress/update/${task.progress_id}`, requestData, config)
+        : await api.post('/progress/submit', requestData, config);
 
       setSubmissionResults(prev => ({
         ...prev,
@@ -347,7 +371,19 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           {task.user_input && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
               <p className="text-xs font-medium text-emerald-700">Input Anda:</p>
-              <p className="text-xs text-emerald-600 mt-1 wrap-break-words">{task.user_input}</p>
+              {['file', 'image', 'video'].includes(task.input_type) && task.progress_id ? (
+                <div className="flex items-center gap-2 mt-1">
+                  <HugeiconsIcon icon={File01Icon} size={14} className="text-emerald-600" />
+                  <button
+                    onClick={() => window.open(`${api.defaults.baseURL}/progress/attachment/${task.progress_id}`, '_blank')}
+                    className="text-xs text-emerald-600 hover:text-emerald-800 underline"
+                  >
+                    {task.user_input}
+                  </button>
+                </div>
+              ) : (
+                <p className="text-xs text-emerald-600 mt-1 wrap-break-words">{task.user_input}</p>
+              )}
             </div>
           )}
         </div>

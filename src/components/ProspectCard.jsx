@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CallIcon, AiChat02Icon, Clock01Icon, Delete02Icon, CheckmarkCircle02Icon, StarIcon, Bookmark01Icon } from '@hugeicons/core-free-icons';
+import { CallIcon, AiChat02Icon, Clock01Icon, Delete02Icon, CheckmarkCircle02Icon, StarIcon, Bookmark01Icon, File01Icon } from '@hugeicons/core-free-icons';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
