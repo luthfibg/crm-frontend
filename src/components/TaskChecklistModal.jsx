@@ -107,23 +107,33 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     setSubmitting(task.id);
 
     try {
-      const formData = new FormData();
       const isResubmit = task.is_rejected && task.progress_id;
-      
-      if (!isResubmit) {
-        formData.append('daily_goal_id', task.id);
-        formData.append('customer_id', customer.id);
-      }
-      
+      let requestData;
+      let config = {};
+
       if (['file', 'image', 'video'].includes(task.input_type) && file) {
+        // Use FormData for file uploads
+        const formData = new FormData();
+        if (!isResubmit) {
+          formData.append('daily_goal_id', task.id);
+          formData.append('customer_id', customer.id);
+        }
         formData.append('evidence', file);
+        requestData = formData;
+        // Let axios handle Content-Type for FormData
       } else {
-        formData.append('evidence', value === 0 ? '0' : value);
+        // Use JSON for text inputs
+        requestData = {
+          daily_goal_id: isResubmit ? undefined : task.id,
+          customer_id: isResubmit ? undefined : customer.id,
+          evidence: value === 0 ? '0' : value
+        };
+        // Let axios handle Content-Type for JSON
       }
 
       const response = isResubmit
-        ? api.put(`/progress/update/${task.progress_id}`, formData)
-        : await api.post('/progress/submit', formData);
+        ? await api.put(`/progress/update/${task.progress_id}`, requestData, config)
+        : await api.post('/progress/submit', requestData, config);
 
       setSubmissionResults(prev => ({
         ...prev,
