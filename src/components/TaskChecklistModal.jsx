@@ -95,10 +95,14 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     const fileInput = document.getElementById(`file-${task.id}`);
     const file = fileInput?.files[0];
 
-    if (!value && !file) {
+    if (
+      (value === null || value === undefined || value === '') &&
+      !file
+    ) {
       alert('Mohon isi terlebih dahulu sebelum submit');
       return;
     }
+
 
     setSubmitting(task.id);
 
@@ -114,16 +118,12 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
       if (['file', 'image', 'video'].includes(task.input_type) && file) {
         formData.append('evidence', file);
       } else {
-        formData.append('evidence', value || '');
+        formData.append('evidence', value === 0 ? '0' : value);
       }
 
       const response = isResubmit
-        ? await api.put(`/progress/update/${task.progress_id}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          })
-        : await api.post('/progress/submit', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          });
+        ? api.put(`/progress/update/${task.progress_id}`, formData)
+        : await api.post('/progress/submit', formData);
 
       setSubmissionResults(prev => ({
         ...prev,
@@ -347,7 +347,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           {task.user_input && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
               <p className="text-xs font-medium text-emerald-700">Input Anda:</p>
-              <p className="text-xs text-emerald-600 mt-1 break-words">{task.user_input}</p>
+              <p className="text-xs text-emerald-600 mt-1 wrap-break-words">{task.user_input}</p>
             </div>
           )}
         </div>
@@ -367,7 +367,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           {task.user_input && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-xs font-medium text-red-700">Input Anda:</p>
-              <p className="text-xs text-red-600 mt-1 break-words">{task.user_input}</p>
+              <p className="text-xs text-red-600 mt-1 wrap-break-words">{task.user_input}</p>
             </div>
           )}
           <div className="space-y-2">
@@ -406,7 +406,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           {result.input && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-xs font-medium text-red-700">Input Anda:</p>
-              <p className="text-xs text-red-600 mt-1 break-words">{result.input}</p>
+              <p className="text-xs text-red-600 mt-1 wrap-break-words">{result.input}</p>
             </div>
           )}
           <div className="space-y-2">
@@ -436,7 +436,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           {result.input && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
               <p className="text-xs font-medium text-emerald-700">Input Anda:</p>
-              <p className="text-xs text-emerald-600 mt-1 break-words">{result.input}</p>
+              <p className="text-xs text-emerald-600 mt-1 wrap-break-words">{result.input}</p>
             </div>
           )}
         </div>
