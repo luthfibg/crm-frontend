@@ -8,7 +8,8 @@ import {
   Cancel02Icon,
   Loading03Icon,
   CheckmarkSquare02Icon,
-  File01Icon
+  File01Icon,
+  Undo02Icon
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import api from '../api/axios';
@@ -101,6 +102,33 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
       alert(errorMessage);
     } finally {
       setSubmittingSummary(false);
+    }
+  };
+
+  const handleRevertTask = async (task) => {
+    if (!task.progress_id) {
+      alert('Tidak dapat revert: Progress ID tidak ditemukan');
+      return;
+    }
+
+    const confirmRevert = window.confirm('Apakah Anda yakin ingin revert submission ini? Progress dan skor akan dikembalikan.');
+    if (!confirmRevert) return;
+
+    setSubmitting(task.id);
+
+    try {
+      const response = await api.post(`/progress/revert/${task.progress_id}`);
+
+      if (response.data.status) {
+        alert('Submission berhasil direvert. Progress dan skor telah dikembalikan.');
+        onSuccess?.(); // Refresh the parent component
+      }
+    } catch (error) {
+      console.error('Revert error:', error);
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Gagal revert submission.';
+      alert(errorMessage);
+    } finally {
+      setSubmitting(null);
     }
   };
 
@@ -370,7 +398,17 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           </div>
           {task.user_input && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-              <p className="text-xs font-medium text-emerald-700">Input Anda:</p>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs font-medium text-emerald-700">Input Anda:</p>
+                <button
+                  onClick={() => handleRevertTask(task)}
+                  disabled={submitting === task.id}
+                  className="flex items-center gap-1 px-2 py-1 bg-amber-100 hover:bg-amber-200 disabled:bg-slate-200 text-amber-700 disabled:text-slate-400 rounded text-[10px] font-bold"
+                >
+                  <HugeiconsIcon icon={Undo02Icon} size={12} />
+                  Revert
+                </button>
+              </div>
               {['file', 'image', 'video'].includes(task.input_type) && task.progress_id ? (
                 <div className="flex items-center gap-2 mt-1">
                   <HugeiconsIcon icon={File01Icon} size={14} className="text-emerald-600" />
