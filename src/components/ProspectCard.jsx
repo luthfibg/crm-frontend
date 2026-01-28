@@ -150,9 +150,10 @@ const ProspectCard = ({ data, onDetailsClick }) => {
             {customer?.category || 'General'}
           </span>
 
-          {customer?.sub_category && (
+          {/* Show display_name if available, otherwise show sub_category */}
+          {(customer?.display_name || customer?.sub_category) && (
             <span className="px-2 py-0.5 text-[10px] font-semibold rounded border bg-slate-50 text-slate-600">
-              {customer.sub_category}
+              {customer.display_name || customer.sub_category}
             </span>
           )}
         </div>
