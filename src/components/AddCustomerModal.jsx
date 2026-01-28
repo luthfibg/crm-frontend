@@ -16,6 +16,8 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     email: '',
     phone_number: '',
     category: '',
+    sub_category: '',
+    display_name: '',
     notes: '',
     kpi_id: 1,
     current_kpi_id: 1,
@@ -118,6 +120,7 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
       ...formData, 
       pic: '', institution: '', position: '', 
       email: '', phone_number: '', notes: '', category: '', sub_category: '',
+      display_name: '',
       created_at: ''
     });
     setSelectedSubCategoryLabel('');
@@ -186,9 +189,9 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
                   setSelectedSubCategoryLabel(selectedLabel);
                   const mapping = SUB_CAT_MAPPING.find(item => item.label === selectedLabel);
                   if (mapping) {
-                    setFormData({...formData, sub_category: mapping.value});
+                    setFormData({...formData, sub_category: mapping.value, display_name: selectedLabel});
                   } else {
-                    setFormData({...formData, sub_category: ''});
+                    setFormData({...formData, sub_category: '', display_name: ''});
                   }
                 }}
               >

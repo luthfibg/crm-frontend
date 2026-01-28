@@ -7,6 +7,7 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [selectedSubCategoryLabel, setSelectedSubCategoryLabel] = useState('');
   const [formData, setFormData] = useState({
     pic: '',
     institution: '',
@@ -16,11 +17,25 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
     category: '',
     notes: '',
     sub_category: '',
+    display_name: '',
     created_at: '',
   });
 
   useEffect(() => {
     if (customer) {
+      // Determine the display label based on sub_category
+      const subCat = customer.sub_category || '';
+      const displayName = customer.display_name || '';
+      let label = '';
+      
+      if (displayName) {
+        label = displayName;
+      } else if (subCat) {
+        const mapping = SUB_CAT_MAPPING.find(item => item.value === subCat);
+        label = mapping?.label || subCat;
+      }
+      
+      setSelectedSubCategoryLabel(label);
       setFormData({
         pic: customer.name || '',
         institution: customer.institution || '',
@@ -30,6 +45,7 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
         category: customer.category || '',
         notes: customer.notes || '',
         sub_category: customer.sub_category || '',
+        display_name: customer.display_name || '',
         created_at: customer.created_at ? customer.created_at.replace(' ', 'T').slice(0, 16) : '',
       });
     }
