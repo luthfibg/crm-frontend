@@ -45,7 +45,10 @@ const ReportWorkspace = ({ user }) => {
       };
 
       // Uses existing endpoint that returns customers with new columns
-      const res = await api.get('/reports/progress', { params });
+      const res = await api.get('/reports/progress', { 
+        params,
+        responseType: 'text' // Important: backend returns CSV, not JSON
+      });
       
       // Parse CSV response for preview
       const csvText = res.data;
@@ -401,7 +404,16 @@ const ReportWorkspace = ({ user }) => {
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24">
                         Harga Deal
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28 text-right">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
+                        Jadwal Kunjungan Presales
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-32">
+                        Garansi Unit/Barang
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-32">
+                        Serial Number Unit/Barang
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-20 text-right">
                         KPI Progress
                       </th>
                     </tr>
@@ -409,7 +421,7 @@ const ReportWorkspace = ({ user }) => {
                   <tbody className="divide-y divide-slate-100 bg-white">
                     {previewLoading ? (
                       <tr>
-                        <td colSpan={9} className="px-6 py-12">
+                        <td colSpan={12} className="px-6 py-12">
                           <div className="flex flex-col items-center justify-center gap-3">
                             <div className="w-8 h-8 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
                             <p className="text-sm text-slate-500 font-medium">Loading preview data...</p>
@@ -418,7 +430,7 @@ const ReportWorkspace = ({ user }) => {
                       </tr>
                     ) : previewRows.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="px-6 py-12">
+                        <td colSpan={12} className="px-6 py-12">
                           <div className="flex flex-col items-center justify-center gap-3">
                             <div className="p-4 bg-slate-100 rounded-full">
                               <FileText className="w-8 h-8 text-slate-400" />
@@ -435,8 +447,8 @@ const ReportWorkspace = ({ user }) => {
                         const kpiValue = parseInt(row['KPI Progress %'] || row['KPI Progress'] || '0') || 0;
                         
                         return (
-                          <tr 
-                            key={row._originalIndex} 
+                          <tr
+                            key={row._originalIndex}
                             className="group hover:bg-slate-50/80 transition-colors"
                           >
                             <td className="px-4 py-3">
@@ -489,10 +501,25 @@ const ReportWorkspace = ({ user }) => {
                                 {row['Harga Deal'] || row.harga_deal || '-'}
                               </span>
                             </td>
+                            <td className="px-4 py-3">
+                              <span className="text-sm text-slate-600 truncate block max-w-36" title={row['Jadwal Kunjungan Presales'] || row.jadwal_kunjungan_presales || '-'}>
+                                {row['Jadwal Kunjungan Presales'] || row.jadwal_kunjungan_presales || '-'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="text-sm text-slate-600 truncate block max-w-32" title={row['Garansi Unit/Barang'] || row.garansi_unit || '-'}>
+                                {row['Garansi Unit/Barang'] || row.garansi_unit || '-'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="text-sm text-slate-600 truncate block max-w-32" title={row['Serial Number Unit/Barang'] || row.serial_number_unit || '-'}>
+                                {row['Serial Number Unit/Barang'] || row.serial_number_unit || '-'}
+                              </span>
+                            </td>
                             <td className="px-4 py-3 text-right">
                               <div className="inline-flex items-center gap-2 w-full justify-end">
-                                <div className="flex-1 max-w-20 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                  <div 
+                                <div className="flex-1 max-w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
+                                  <div
                                     className={`h-full rounded-full transition-all ${
                                       kpiValue >= 80 ? 'bg-green-500' :
                                       kpiValue >= 50 ? 'bg-amber-500' :
