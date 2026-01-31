@@ -8,7 +8,13 @@ import api from '../api/axios';
 const formatTimeDiff = (fromDate, toDate = new Date()) => {
   if (!fromDate) return null;
   const from = new Date(fromDate);
-  const diffMs = toDate - from;
+
+  // Adjust for timezone offset (assuming backend sends UTC times)
+  // For +7 timezone, getTimezoneOffset() returns -420 minutes
+  const timezoneOffsetMs = toDate.getTimezoneOffset() * 60 * 1000;
+  const adjustedToDate = new Date(toDate.getTime() + timezoneOffsetMs);
+
+  const diffMs = adjustedToDate - from;
   const diffMinutes = Math.floor(diffMs / (1000 * 60));
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));

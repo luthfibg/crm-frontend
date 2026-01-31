@@ -413,7 +413,11 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
                 <div className="flex items-center gap-2 mt-1">
                   <HugeiconsIcon icon={File01Icon} size={14} className="text-emerald-600" />
                   <button
-                    onClick={() => window.open(`${api.defaults.baseURL}/progress/attachment/${task.progress_id}`, '_blank')}
+                    onClick={() => {
+                      const token = localStorage.getItem('token');
+                      const downloadUrl = `${api.defaults.baseURL}/progress/attachment/${task.progress_id}${token ? `?token=${token}` : ''}`;
+                      window.open(downloadUrl, '_blank');
+                    }}
                     className="text-xs text-emerald-600 hover:text-emerald-800 underline"
                   >
                     {task.user_input}

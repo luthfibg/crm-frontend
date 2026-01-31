@@ -7,9 +7,9 @@ console.log('All env vars:', import.meta.env);
 // Check if running in Tauri environment
 const isTauri = typeof window !== 'undefined' && window.__TAURI__;
 
-const baseURL = import.meta.env.VITE_API_URL ||
-  (isTauri ? 'http://127.0.0.1:8000/api' : 'http://crm-backend.local/api');
-// const baseURL = 'http://backend.test/api';
+// const baseURL = import.meta.env.VITE_API_URL ||
+//   (isTauri ? 'http://127.0.0.1:8000/api' : 'http://crm-backend.local/api');
+const baseURL = 'http://backend.test/api';
 
 console.log('Final baseURL:', baseURL);
 console.log('Is Tauri:', isTauri);
