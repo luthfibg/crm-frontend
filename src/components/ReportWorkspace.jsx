@@ -1,6 +1,7 @@
 // src/components/ReportWorkspace.jsx
 import React, { useEffect, useState } from 'react';
 import api from '../api/axios';
+import Papa from 'papaparse';
 import { 
   Calendar, 
   Download, 
@@ -12,6 +13,11 @@ import {
   CalendarRange,
   User
 } from 'lucide-react';
+
+// Helper function to normalize header keys
+const normalizeHeaderKey = (key) => {
+  return key.toLowerCase().replace(/\r/g, '').trim();
+};
 
 const ReportWorkspace = ({ user }) => {
   const [range, setRange] = useState('monthly'); // daily|monthly
@@ -50,64 +56,37 @@ const ReportWorkspace = ({ user }) => {
         responseType: 'text' // Important: backend returns CSV, not JSON
       });
       
-      // Parse CSV response for preview
-      const csvText = res.data;
-      const lines = csvText.split('\n').filter(line => line.trim());
-      
-      if (lines.length <= 1) {
-        setPreviewRows([]);
-        setPreviewLoading(false);
-        return;
+      // Parse CSV response using papaparse for proper handling of:
+      // - quoted values with commas
+      // - multiline fields
+      // - different line endings (\r\n vs \n)
+      const parsed = Papa.parse(res.data, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: normalizeHeaderKey, // Normalize header keys
+      });
+
+      if (parsed.errors.length > 0) {
+        console.warn('CSV parsing warnings:', parsed.errors);
       }
 
-      // Parse CSV header
-      const headerLine = lines[0];
-      const headers = parseCSVLine(headerLine);
+      // Map rows with normalized keys and add original index
+      const rows = parsed.data.slice(0, 50).map((row, index) => {
+        const normalizedRow = {};
+        Object.entries(row).forEach(([key, value]) => {
+          normalizedRow[key] = value || '';
+        });
+        normalizedRow._originalIndex = index + 1;
+        return normalizedRow;
+      });
       
-      // Parse data rows
-      const rows = [];
-      for (let i = 1; i < lines.length; i++) {
-        const values = parseCSVLine(lines[i]);
-        if (values.length > 0) {
-          const row = {};
-          headers.forEach((header, index) => {
-            row[header.trim()] = values[index] || '';
-          });
-          row._originalIndex = i;
-          rows.push(row);
-        }
-      }
-      
-      setPreviewRows(rows.slice(0, 50));
+      setPreviewRows(rows);
     } catch (e) {
       console.error('Preview error:', e);
       setError('Gagal memuat preview. Cek koneksi.');
     } finally {
       setPreviewLoading(false);
     }
-  };
-
-  // Helper function to parse CSV line handling quoted values
-  const parseCSVLine = (line) => {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim());
-        current = '';
-      } else {
-        current += char;
-      }
-    }
-    result.push(current.trim());
-    
-    return result;
   };
 
   useEffect(() => {
@@ -266,7 +245,6 @@ const ReportWorkspace = ({ user }) => {
                   )}
                 </div>
               </div>
-
               {/* Format Selector */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
@@ -327,7 +305,6 @@ const ReportWorkspace = ({ user }) => {
                 )}
               </div>
             </div>
-
             {/* Action Buttons */}
             <div className="flex items-center gap-3 mt-6 pt-4 border-t border-slate-200">
               <button 
@@ -355,7 +332,6 @@ const ReportWorkspace = ({ user }) => {
               )}
             </div>
           </div>
-
           {/* Error Message */}
           {error && (
             <div className="mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
@@ -394,15 +370,18 @@ const ReportWorkspace = ({ user }) => {
                         Sales
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
-                        Customer
+                        Pelanggan
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24">
-                        Product
+                        Produk
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
+                        Keterangan Status
+                      </th>
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-80">
                         Kesimpulan
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
@@ -419,9 +398,6 @@ const ReportWorkspace = ({ user }) => {
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-32">
                         Serial Number Unit/Barang
-                      </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-20 text-right">
-                        KPI Progress
                       </th>
                     </tr>
                   </thead>
@@ -451,8 +427,11 @@ const ReportWorkspace = ({ user }) => {
                       </tr>
                     ) : (
                       previewRows.map((row) => {
-                        const kpiValue = parseInt(row['KPI Progress %'] || row['KPI Progress'] || '0') || 0;
-                        
+                        // Get Keterangan Status from CSV column (format: "3 mandatory selesai")
+                        const keteranganStatus = row['keterangan status'] || row['keterangan_status'] || '';
+                        // Get Kesimpulan - normalized key lookup
+                        const kesimpulan = row['kesimpulan'] || '-';
+
                         return (
                           <tr
                             key={row._originalIndex}
@@ -460,7 +439,7 @@ const ReportWorkspace = ({ user }) => {
                           >
                             <td className="px-4 py-3">
                               <div className="w-8 h-8 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center text-xs font-bold">
-                                {row.No || row.no || '-'}
+                                {row.no || '-'}
                               </div>
                             </td>
                             <td className="px-4 py-3">
@@ -469,80 +448,66 @@ const ReportWorkspace = ({ user }) => {
                                   <User className="w-3.5 h-3.5 text-indigo-600" />
                                 </div>
                                 <span className="text-sm font-medium text-slate-700 truncate max-w-30">
-                                  {row.Sales || row.sales_name || '-'}
+                                  {row.sales || row.sales_name || '-'}
                                 </span>
                               </div>
                             </td>
                             <td className="px-4 py-3">
                               <div>
                                 <span className="text-sm font-semibold text-slate-700 block truncate max-w-35">
-                                  {row.Customer || row.customer_name || '-'}
+                                  {row.customer || row.customer_name || '-'}
                                 </span>
                                 <span className="text-xs text-slate-500 truncate block max-w-35">
-                                  {row.Institution || row.institution || ''}
+                                  {row.institution || ''}
                                 </span>
                               </div>
                             </td>
                             <td className="px-4 py-3">
                               <span className="text-sm text-slate-500">
-                                {row.Product || row.product || '-'}
+                                {row.product || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(row.Status || row.status)}`}>
-                                {row.Status || row.status || '-'}
+                              <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(row.status || '-')}`}>
+                                {row.status || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <div className="text-sm text-slate-600 max-w-xs truncate" title={row.Kesimpulan || row.kesimpulan || '-'}>
-                                {row.Kesimpulan || row.kesimpulan || '-'}
+                              <span className="text-sm text-slate-700 font-medium">
+                                {keteranganStatus || '-'}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="text-sm text-slate-600 w-72 wrap-break-words" title={kesimpulan}>
+                                {kesimpulan.split('\n').map((line, i) => (
+                                  <span key={i} className="block">{line}</span>
+                                ))}
                               </div>
                             </td>
                             <td className="px-4 py-3">
                               <span className="text-sm text-slate-500">
-                                {row['Harga Penawaran'] || row.harga_penawaran || '-'}
+                                {row['harga penawaran'] || row.harga_penawaran || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
                               <span className="text-sm text-slate-500">
-                                {row['Harga Deal'] || row.harga_deal || '-'}
+                                {row['harga deal'] || row.harga_deal || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-600 truncate block max-w-36" title={row['Jadwal Kunjungan Presales'] || row.jadwal_kunjungan_presales || '-'}>
-                                {row['Jadwal Kunjungan Presales'] || row.jadwal_kunjungan_presales || '-'}
+                              <span className="text-sm text-slate-600 truncate block max-w-36" title={row['jadwal kunjungan presales'] || row.jadwal_kunjungan_presales || '-'}>
+                                {row['jadwal kunjungan presales'] || row.jadwal_kunjungan_presales || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-600 truncate block max-w-32" title={row['Garansi Unit/Barang'] || row.garansi_unit || '-'}>
-                                {row['Garansi Unit/Barang'] || row.garansi_unit || '-'}
+                              <span className="text-sm text-slate-600 truncate block max-w-32" title={row['garansi unit/barang'] || row.garansi_unit || '-'}>
+                                {row['garansi unit/barang'] || row.garansi_unit || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-600 truncate block max-w-32" title={row['Serial Number Unit/Barang'] || row.serial_number_unit || '-'}>
-                                {row['Serial Number Unit/Barang'] || row.serial_number_unit || '-'}
+                              <span className="text-sm text-slate-600 truncate block max-w-32" title={row['serial number unit/barang'] || row.serial_number_unit || '-'}>
+                                {row['serial number unit/barang'] || row.serial_number_unit || '-'}
                               </span>
-                            </td>
-                            <td className="px-4 py-3 text-right">
-                              <div className="inline-flex items-center gap-2 w-full justify-end">
-                                <div className="flex-1 max-w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
-                                  <div
-                                    className={`h-full rounded-full transition-all ${
-                                      kpiValue >= 80 ? 'bg-green-500' :
-                                      kpiValue >= 50 ? 'bg-amber-500' :
-                                      'bg-red-500'
-                                    }`}
-                                    style={{ width: `${Math.min(kpiValue, 100)}%` }}
-                                  ></div>
-                                </div>
-                                <span className={`text-sm font-bold min-w-10 text-right ${
-                                  kpiValue >= 80 ? 'text-green-600' :
-                                  kpiValue >= 50 ? 'text-amber-600' :
-                                  'text-red-600'
-                                }`}>
-                                  {row['KPI Progress %'] || row.kpi_progress || '0'}%
-                                </span>
-                              </div>
                             </td>
                           </tr>
                         );
@@ -552,7 +517,6 @@ const ReportWorkspace = ({ user }) => {
                 </table>
               </div>
             </div>
-
             {previewRows.length > 0 && (
               <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
                 <p className="text-xs text-blue-800">
@@ -568,4 +532,3 @@ const ReportWorkspace = ({ user }) => {
 };
 
 export default ReportWorkspace;
-
