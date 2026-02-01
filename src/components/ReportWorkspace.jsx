@@ -219,6 +219,7 @@ const ReportWorkspace = ({ user }) => {
                         ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' 
                         : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
                     }`}
+                    title="Tampilkan prospek yang mengisi daily goals pada tanggal tersebut"
                   >
                     Harian
                   </button>
@@ -229,10 +230,16 @@ const ReportWorkspace = ({ user }) => {
                         ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' 
                         : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
                     }`}
+                    title="Tampilkan prospek yang mengubah status dalam bulan tersebut"
                   >
                     Bulanan
                   </button>
                 </div>
+                <p className="text-[10px] text-slate-400">
+                  {range === 'daily' 
+                    ? 'Berdasarkan pengisian daily goals pada hari tersebut' 
+                    : 'Berdasarkan perubahan status dalam bulan tersebut'}
+                </p>
               </div>
 
               {/* Date/Month Picker */}
