@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { HugeiconsIcon } from '@hugeicons/react';
 import Masonry from 'react-masonry-css';
-import { 
-  PlusSignIcon, 
-  PencilEdit01Icon, 
-  Delete02Icon, 
+import {
+  PlusSignIcon,
+  PencilEdit01Icon,
+  Delete02Icon,
   Settings02Icon,
   ChartBarLineIcon,
   Medal01Icon,
@@ -68,17 +68,25 @@ const KPIWorkspace = () => {
   if (loading) return <div className="flex items-center justify-center min-h-screen"><div className="text-slate-600">Loading KPI Data...</div></div>;
 
   return (
-    <div className="p-8 bg-slate-50 min-h-screen h-full overflow-y-auto">
+    <main className="flex-1 overflow-hidden p-8 bg-slate-50">
+      <div className="h-full overflow-y-auto">
       {/* Header Section */}
-      <div className="flex justify-between items-end mb-8">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900">KPI Configurations</h1>
-          <p className="text-sm text-slate-500 font-medium">Manage your 10 core metrics and their weight distribution.</p>
+      <div className="p-6 border-b border-slate-100 bg-linear-to-br from-indigo-50/50 to-purple-50/30 rounded-t-xl -mx-6 -mt-8 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-purple-100 rounded-xl">
+              <HugeiconsIcon icon={Settings02Icon} className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-slate-800">KPI Configurations</h1>
+              <p className="text-sm text-slate-500 mt-0.5">Kelola 10 metrik utama dan distribusi bobotnya.</p>
+            </div>
+          </div>
+          <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-200">
+            <HugeiconsIcon icon={PlusSignIcon} size={18} />
+            Add New KPI
+          </button>
         </div>
-        <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-lg shadow-indigo-200">
-          <HugeiconsIcon icon={PlusSignIcon} size={18} />
-          Add New KPI
-        </button>
       </div>
 
       {/* Masonry Grid */}
@@ -164,7 +172,8 @@ const KPIWorkspace = () => {
            <span className="text-sm font-bold">New Metric</span>
         </div>
       </Masonry>
-    </div>
+      </div>
+    </main>
   );
 };
 
