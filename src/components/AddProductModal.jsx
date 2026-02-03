@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { 
   Cancel01Icon, 
@@ -13,10 +13,84 @@ const AddProductModal = ({ isOpen, onClose, onSuccess, editingProduct }) => {
   
   const [formData, setFormData] = useState({
     name: editingProduct?.name || '',
-    default_price: editingProduct?.default_price || '',
-    description: editingProduct?.description || '',
+    default_price: editingProduct?.default_price?.toString() || '',
+    specification: editingProduct?.specification || '',
     is_active: editingProduct?.is_active ?? true
   });
+
+  const [priceDisplay, setPriceDisplay] = useState(editingProduct?.default_price?.toString() || '');
+  const inputRef = useRef(null);
+
+  // Initialize price display when modal opens or editingProduct changes
+  useEffect(() => {
+    if (editingProduct?.default_price) {
+      const formatted = formatRupiah(editingProduct.default_price);
+      setPriceDisplay(formatted);
+    }
+  }, [editingProduct]);
+
+  // Format number to Rupiah format
+  const formatRupiah = (value) => {
+    if (!value) return '';
+    const num = value.toString().replace(/\D/g, '');
+    if (num === '') return '';
+    return new Intl.NumberFormat('id-ID').format(parseInt(num));
+  };
+
+  // Handle price input change
+  const handlePriceChange = (e) => {
+    const rawValue = e.target.value;
+    // Remove all non-digit characters
+    const digitsOnly = rawValue.replace(/\D/g, '');
+    
+    if (digitsOnly === '') {
+      setFormData({ ...formData, default_price: '' });
+      setPriceDisplay('');
+      return;
+    }
+    
+    const numericValue = parseInt(digitsOnly);
+    const formatted = formatRupiah(numericValue);
+    
+    setFormData({ ...formData, default_price: digitsOnly });
+    setPriceDisplay(formatted);
+  };
+
+  // Handle blur to ensure proper format
+  const handlePriceBlur = () => {
+    if (formData.default_price && parseInt(formData.default_price) > 0) {
+      setPriceDisplay(formatRupiah(formData.default_price));
+    }
+  };
+
+  // Handle focus to allow editing
+  const handlePriceFocus = (e) => {
+    // Select all text for easy replacement
+    e.target.setSelectionRange(0, e.target.value.length);
+  };
+
+  // Handle key down to allow specific key presses
+  const handlePriceKeyDown = (e) => {
+    // Allow: backspace, delete, tab, escape, enter
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'];
+    // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+    const ctrlKeys = ['a', 'c', 'v', 'x'];
+    const isCtrlPressed = e.ctrlKey || e.metaKey;
+    
+    if (allowedKeys.includes(e.key) || (isCtrlPressed && ctrlKeys.includes(e.key.toLowerCase()))) {
+      return;
+    }
+    
+    // Allow arrow keys
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+      return;
+    }
+    
+    // Block any non-numeric keys
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -29,7 +103,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess, editingProduct }) => {
       const payload = {
         name: formData.name,
         default_price: parseInt(formData.default_price) || 0,
-        description: formData.description,
+        specification: formData.specification,
         is_active: formData.is_active
       };
 
@@ -84,7 +158,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess, editingProduct }) => {
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Contoh: Paket Silver, Gold, Platinum..."
+              placeholder="Contoh: IFP Maxhub V7, Printer Epson EB500, dsb..."
               className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
             />
           </div>
@@ -93,25 +167,36 @@ const AddProductModal = ({ isOpen, onClose, onSuccess, editingProduct }) => {
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
               Harga Default (Rp) <span className="text-red-500">*</span>
             </label>
-            <input
-              type="number"
-              required
-              min="0"
-              value={formData.default_price}
-              onChange={(e) => setFormData({ ...formData, default_price: e.target.value })}
-              placeholder="0"
-              className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
-            />
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">
+                Rp
+              </span>
+              <input
+                ref={inputRef}
+                type="text"
+                required
+                value={priceDisplay}
+                onChange={handlePriceChange}
+                onBlur={handlePriceBlur}
+                onFocus={handlePriceFocus}
+                onKeyDown={handlePriceKeyDown}
+                placeholder="0"
+                className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all pl-12"
+              />
+            </div>
+            <p className="text-xs text-slate-400 mt-1">
+              Ketik angka tanpa titik atau koma, sistem akan otomatis memformat
+            </p>
           </div>
 
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-              Deskripsi
+              Spesifikasi
             </label>
             <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Deskripsi produk..."
+              value={formData.specification}
+              onChange={(e) => setFormData({ ...formData, specification: e.target.value })}
+              placeholder="Spesifikasi produk..."
               rows={3}
               className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all resize-none"
             />

@@ -6,7 +6,9 @@ import {
   Edit01Icon, 
   Trash2,
   Search01Icon,
-  Refresh01Icon
+  Refresh01Icon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon
 } from '@hugeicons/core-free-icons';
 import api from '../api/axios';
 import AddProductModal from './AddProductModal';
@@ -19,18 +21,41 @@ const ProductWorkspace = ({ user }) => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [error, setError] = useState(null);
   
+  // Pagination state
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 10,
+    total: 0,
+    has_more: false
+  });
+
   const isAdmin = user?.role === 'administrator';
 
   useEffect(() => {
     fetchProducts();
-  }, [search]);
+  }, [search, pagination.current_page]);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const params = { search: search || undefined };
+      const params = { 
+        search: search || undefined,
+        page: pagination.current_page,
+        per_page: pagination.per_page
+      };
       const response = await api.get('/products', { params });
-      setProducts(response.data.data || response.data);
+      
+      const data = response.data;
+      setProducts(data.data || []);
+      setPagination(prev => ({
+        ...prev,
+        current_page: data.pagination?.current_page || 1,
+        last_page: data.pagination?.last_page || 1,
+        per_page: data.pagination?.per_page || 10,
+        total: data.pagination?.total || 0,
+        has_more: data.pagination?.has_more || false
+      }));
       setError(null);
     } catch (err) {
       console.error('Error fetching products:', err);
@@ -64,9 +89,18 @@ const ProductWorkspace = ({ user }) => {
     }
   };
 
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.last_page) {
+      setPagination(prev => ({ ...prev, current_page: newPage }));
+    }
+  };
+
   const formatCurrency = (amount) => {
     return 'Rp ' + Number(amount).toLocaleString('id-ID');
   };
+
+  // Calculate starting number for this page
+  const startNumber = (pagination.current_page - 1) * pagination.per_page + 1;
 
   return (
     <main className="flex-1 p-4 lg:p-6 overflow-auto">
@@ -109,7 +143,10 @@ const ProductWorkspace = ({ user }) => {
                   type="text"
                   placeholder="Cari berdasarkan nama produk..."
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPagination(prev => ({ ...prev, current_page: 1 }));
+                  }}
                   className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none pl-10"
                 />
                 <div className="absolute left-3 top-1/2 -translate-y-1/2">
@@ -117,7 +154,10 @@ const ProductWorkspace = ({ user }) => {
                 </div>
               </div>
               <button
-                onClick={fetchProducts}
+                onClick={() => {
+                  setPagination(prev => ({ ...prev, current_page: 1 }));
+                  fetchProducts();
+                }}
                 className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all"
               >
                 <HugeiconsIcon icon={Refresh01Icon} size={18} />
@@ -140,19 +180,19 @@ const ProductWorkspace = ({ user }) => {
                 <table className="w-full text-left border-collapse">
                   <thead className="bg-slate-50 border-b border-slate-200">
                     <tr>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-12">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-16">
                         No
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide">
                         Nama Produk
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-32">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
                         Harga Default
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide">
-                        Deskripsi
+                        Spesifikasi
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24 text-center">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28 text-center">
                         Status
                       </th>
                       {isAdmin && (
@@ -194,8 +234,8 @@ const ProductWorkspace = ({ user }) => {
                       products.map((product, index) => (
                         <tr key={product.id} className="group hover:bg-slate-50/80 transition-colors">
                           <td className="px-4 py-3">
-                            <div className="w-8 h-8 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center text-xs font-bold">
-                              {index + 1}
+                            <div className="w-10 h-8 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center text-xs font-bold">
+                              {startNumber + index}
                             </div>
                           </td>
                           <td className="px-4 py-3">
@@ -209,8 +249,8 @@ const ProductWorkspace = ({ user }) => {
                             </span>
                           </td>
                           <td className="px-4 py-3">
-                            <span className="text-sm text-slate-500 max-w-xs truncate block" title={product.description || '-'}>
-                              {product.description || '-'}
+                            <span className="text-sm text-slate-500 max-w-xs truncate block" title={product.specification || '-'}>
+                              {product.specification || '-'}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-center">
@@ -249,6 +289,65 @@ const ProductWorkspace = ({ user }) => {
                 </table>
               </div>
             </div>
+
+            {/* Pagination */}
+            {pagination.total > 0 && (
+              <div className="mt-4 flex items-center justify-between px-4 py-3 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="text-sm text-slate-600">
+                  Menampilkan <span className="font-semibold">{startNumber}</span> - <span className="font-semibold">{Math.min(startNumber + products.length - 1, pagination.total)}</span> dari <span className="font-semibold">{pagination.total}</span> produk
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handlePageChange(pagination.current_page - 1)}
+                    disabled={pagination.current_page === 1 || loading}
+                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  >
+                    <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+                    Prev
+                  </button>
+                  
+                  {/* Page numbers */}
+                  <div className="flex items-center gap-1">
+                    {[...Array(Math.min(5, pagination.last_page))].map((_, i) => {
+                      let pageNum;
+                      if (pagination.last_page <= 5) {
+                        pageNum = i + 1;
+                      } else if (pagination.current_page <= 3) {
+                        pageNum = i + 1;
+                      } else if (pagination.current_page >= pagination.last_page - 2) {
+                        pageNum = pagination.last_page - 4 + i;
+                      } else {
+                        pageNum = pagination.current_page - 2 + i;
+                      }
+                      
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          disabled={loading}
+                          className={`w-10 h-10 text-sm font-medium rounded-lg transition-all ${
+                            pagination.current_page === pageNum
+                              ? 'bg-indigo-600 text-white'
+                              : 'text-slate-600 hover:bg-slate-100'
+                          } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  
+                  <button
+                    onClick={() => handlePageChange(pagination.current_page + 1)}
+                    disabled={!pagination.has_more || loading}
+                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  >
+                    Next
+                    <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
               <p className="text-xs text-blue-800">
