@@ -9,6 +9,7 @@ const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -35,11 +36,14 @@ const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
 
   const fetchProducts = async () => {
     try {
+      setLoadingProducts(true);
       const response = await api.get('/products/list');
       setProducts(response.data || []);
     } catch (err) {
       console.error("Gagal mengambil produk", err);
       setProducts([]);
+    } finally {
+      setLoadingProducts(false);
     }
   };
 
@@ -159,11 +163,20 @@ const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                   Select Products <span className="text-slate-400 font-normal">(optional)</span>
                 </label>
-                <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
-                  {products.length === 0 ? (
-                    <p className="text-xs text-slate-500 text-center py-2">No products available</p>
-                  ) : (
-                    products.map(product => (
+                {loadingProducts ? (
+                  <div className="flex items-center justify-center py-4">
+                    <div className="w-6 h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                    <span className="ml-2 text-xs text-slate-500">Memuat produk...</span>
+                  </div>
+                ) : products.length === 0 ? (
+                  <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 text-center">
+                    <HugeiconsIcon icon={PackageIcon} className="w-6 h-6 text-slate-300 mx-auto mb-2" />
+                    <p className="text-xs text-slate-500">Tidak ada produk aktif</p>
+                    <p className="text-[10px] text-slate-400 mt-1">Tambahkan produk di halaman Produk</p>
+                  </div>
+                ) : (
+                  <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
+                    {products.map(product => (
                       <label 
                         key={product.id} 
                         className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
@@ -178,19 +191,19 @@ const AddProspectModal = ({ isOpen, onClose, onSuccess }) => {
                           onChange={() => handleProductToggle(product.id)}
                           className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
                         />
-                        <div className="flex-1">
-                          <span className="text-sm font-medium text-slate-700 block">
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium text-slate-700 block truncate">
                             {product.name}
                           </span>
                           <span className="text-xs text-slate-500">
                             Rp {Number(product.default_price || 0).toLocaleString('id-ID')}
                           </span>
                         </div>
-                        <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300" />
+                        <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300 shrink-0" />
                       </label>
-                    ))
-                  )}
-                </div>
+                    ))}
+                  </div>
+                )}
                 {selectedProductIds.length > 0 && (
                   <p className="text-xs text-indigo-600 mt-1">
                     {selectedProductIds.length} produk dipilih

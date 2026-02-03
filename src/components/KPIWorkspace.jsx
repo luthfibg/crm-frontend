@@ -78,7 +78,7 @@ const KPIWorkspace = () => {
               <HugeiconsIcon icon={Settings02Icon} className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-800">KPI Configurations</h1>
+              <h1 className="text-xl font-bold text-slate-800">Konfigurasi KPI</h1>
               <p className="text-sm text-slate-500 mt-0.5">Kelola 10 metrik utama dan distribusi bobotnya.</p>
             </div>
           </div>

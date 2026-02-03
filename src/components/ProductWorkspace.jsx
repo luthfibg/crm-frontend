@@ -20,6 +20,7 @@ const ProductWorkspace = ({ user }) => {
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
   
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -34,7 +35,17 @@ const ProductWorkspace = ({ user }) => {
 
   useEffect(() => {
     fetchProducts();
+    fetchStatistics();
   }, [search, pagination.current_page]);
+
+  const fetchStatistics = async () => {
+    try {
+      const response = await api.get('/products/statistics');
+      setStats(response.data);
+    } catch (err) {
+      console.error('Error fetching product statistics:', err);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -118,15 +129,32 @@ const ProductWorkspace = ({ user }) => {
                   <p className="text-sm text-slate-500 mt-0.5">Kelola daftar produk yang ditawarkan</p>
                 </div>
               </div>
-              {isAdmin && (
-                <button
-                  onClick={() => handleOpenModal()}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200"
-                >
-                  <HugeiconsIcon icon={PlusSignIcon} size={18} />
-                  Tambah Produk
-                </button>
-              )}
+              <div className="flex items-center gap-4">
+                {/* Statistics */}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-lg border border-slate-200">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">Total</span>
+                    <span className="text-sm font-black text-slate-700">{stats.total}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 rounded-lg border border-green-200">
+                    <span className="text-[10px] font-bold text-green-600 uppercase">Aktif</span>
+                    <span className="text-sm font-black text-green-700">{stats.active}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-200">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">Nonaktif</span>
+                    <span className="text-sm font-black text-slate-600">{stats.inactive}</span>
+                  </div>
+                </div>
+                {isAdmin && (
+                  <button
+                    onClick={() => handleOpenModal()}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200"
+                  >
+                    <HugeiconsIcon icon={PlusSignIcon} size={18} />
+                    Tambah Produk
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -363,7 +391,10 @@ const ProductWorkspace = ({ user }) => {
         <AddProductModal 
           isOpen={showModal} 
           onClose={handleCloseModal} 
-          onSuccess={fetchProducts}
+          onSuccess={() => {
+            fetchProducts();
+            fetchStatistics();
+          }}
           editingProduct={editingProduct}
         />
       )}
