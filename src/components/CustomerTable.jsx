@@ -67,16 +67,30 @@ const CustomerTable = () => {
       const rawData = response.data.data; 
       const meta = response.data.meta;
 
-      const mappedData = rawData.map(item => ({
-        id: item.id,
-        name: item.pic,
-        institution: item.institution,
-        position: item.position,
-        email: item.email,
-        phone_number: item.phone_number,
-        category: item.category,
-        notes: item.notes
-      }));
+      const mappedData = rawData.map(item => {
+        // Convert products array to comma-separated string
+        let productsText = '-';
+        if (item.products) {
+          if (Array.isArray(item.products)) {
+            productsText = item.products.map(p => p.name).join(', ');
+          } else if (typeof item.products === 'string') {
+            productsText = item.products;
+          }
+        }
+        
+        return {
+          id: item.id,
+          name: item.pic,
+          institution: item.institution,
+          position: item.position,
+          email: item.email,
+          phone_number: item.phone_number,
+          category: item.category,
+          notes: item.notes,
+          products: productsText,
+          productsArray: item.products || []
+        };
+      });
 
       setCustomers({
         data: mappedData,
@@ -130,6 +144,7 @@ const CustomerTable = () => {
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Person in Charge</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Kategori</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Institution & Position</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Products</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Contact Info</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Notes</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter text-right">Actions</th>
@@ -156,6 +171,11 @@ const CustomerTable = () => {
                         <span className="text-sm font-bold text-slate-700">{item.institution}</span>
                         <span className="text-[11px] text-slate-400 font-medium">{item.position}</span>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <p className="text-xs text-slate-600 max-w-48 truncate" title={item.products}>
+                      {item.products || '-'}
+                    </p>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1">

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Settings02Icon } from '@hugeicons/core-free-icons';
 import { SettingItem, SettingSection } from './SettingComponents';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext'; // Import useAuth di sini
@@ -88,14 +90,23 @@ const SettingWorkspace = ({ role = 'administrator' }) => {
 
   // Perbaikan: Gunakan langsung dari user, bukan state terpisah
   return (
-    <main className="flex-1 overflow-y-auto p-4 lg:p-8 bg-slate-50/50">
-      <div className="w-full mx-auto">
-        <header className="mb-8">
-          <h1 className="text-2xl font-bold text-slate-900">Workspace Settings</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Manage your personal preferences and workspace configurations.
-          </p>
-        </header>
+    <main className="flex-1 overflow-hidden p-4 lg:p-6 bg-slate-50/50">
+      <div className="h-full overflow-y-auto">
+        <div className="p-6 border-b border-slate-100 bg-linear-to-br from-indigo-50/50 to-purple-50/30 rounded-t-xl -mx-6 -mt-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-slate-100 rounded-xl">
+                <HugeiconsIcon icon={Settings02Icon} className="w-6 h-6 text-slate-600" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-slate-800">Workspace Settings</h1>
+                <p className="text-sm text-slate-500 mt-0.5">
+                  Kelola preferensi personal dan konfigurasi workspace Anda.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* DEVELOPER MODE SECTION */}
         {isAdmin && user && (

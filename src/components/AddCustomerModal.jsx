@@ -4,7 +4,8 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { CancelCircleIcon, FloppyDiskIcon, PackageIcon } from '@hugeicons/core-free-icons';
 
 const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const [products, setProducts] = useState([]);
   const [selectedSubCategoryLabel, setSelectedSubCategoryLabel] = useState('');
   const [selectedProductIds, setSelectedProductIds] = useState([]);
@@ -32,11 +33,15 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
 
   const fetchProducts = async () => {
     try {
+      setLoadingProducts(true);
       const response = await api.get('/products/list');
+      console.log('Products fetched:', response.data);
       setProducts(response.data || []);
     } catch (err) {
       console.error("Gagal mengambil produk", err);
       setProducts([]);
+    } finally {
+      setLoadingProducts(false);
     }
   };
 
@@ -85,7 +90,7 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     
     try {
       const payload = { ...formData, product_ids: selectedProductIds };
@@ -111,7 +116,7 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
         alert("Terjadi kesalahan pada server.");
       }
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -141,7 +146,7 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
     <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
+      <div className="relative bg-white w-[95%] md:w-[80%] lg:w-[55%] max-w-5xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center shrink-0">
           <h3 className="text-lg font-black text-slate-800">Add New Customer</h3>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
@@ -251,11 +256,20 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Products <span className="text-slate-400 font-normal">(optional)</span>
             </label>
-            <div className="max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
-              {products.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-2">No products available</p>
-              ) : (
-                products.map(product => (
+            {loadingProducts ? (
+              <div className="flex items-center justify-center py-4">
+                <div className="w-6 h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                <span className="ml-2 text-xs text-slate-500">Memuat produk...</span>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 text-center">
+                <HugeiconsIcon icon={PackageIcon} className="w-6 h-6 text-slate-300 mx-auto mb-2" />
+                <p className="text-xs text-slate-500">Tidak ada produk aktif</p>
+                <p className="text-[10px] text-slate-400 mt-1">Tambahkan produk di halaman Produk</p>
+              </div>
+            ) : (
+              <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
+                {products.map(product => (
                   <label
                     key={product.id}
                     className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${selectedProductIds.includes(product.id) ? 'bg-indigo-50 border border-indigo-200' : 'hover:bg-slate-50'}`}
@@ -266,15 +280,15 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
                       onChange={() => handleProductToggle(product.id)}
                       className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
                     />
-                    <div className="flex-1">
-                      <span className="text-sm font-medium text-slate-700 block">{product.name}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-slate-700 block truncate">{product.name}</span>
                       <span className="text-xs text-slate-500">Rp {Number(product.default_price || 0).toLocaleString('id-ID')}</span>
                     </div>
-                    <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300" />
+                    <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300 shrink-0" />
                   </label>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
             {selectedProductIds.length > 0 && (
               <p className="text-xs text-indigo-600">{selectedProductIds.length} produk dipilih</p>
             )}
@@ -311,10 +325,10 @@ const AddCustomerModal = ({ isOpen, onClose, onSuccess, userId }) => {
               >Cancel</button>
               <button 
                 type="submit"
-                disabled={loading}
+                disabled={submitting}
                 className="flex-1 py-3 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
               >
-                {loading ? (
+                {submitting ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>

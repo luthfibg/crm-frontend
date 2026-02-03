@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CancelCircleIcon, FloppyDiskIcon } from '@hugeicons/core-free-icons';
+import { CancelCircleIcon, FloppyDiskIcon, PackageIcon } from '@hugeicons/core-free-icons';
 
 const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
   const [loading, setLoading] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const [products, setProducts] = useState([]);
   const [selectedProductIds, setSelectedProductIds] = useState([]);
   const [selectedSubCategoryLabel, setSelectedSubCategoryLabel] = useState('');
@@ -51,23 +52,38 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
     }
   }, [customer]);
 
-  useEffect(() => {
+useEffect(() => {
     if (isOpen) {
       fetchProducts();
       if (customer) {
         // Set selected products based on customer's current products
-        setSelectedProductIds(customer.product_ids || []);
+        // Handle both array of objects and flat array
+        let productIds = [];
+        if (customer.product_ids) {
+          if (Array.isArray(customer.product_ids)) {
+            // Check if it's array of objects or array of IDs
+            if (customer.product_ids.length > 0 && typeof customer.product_ids[0] === 'object') {
+              productIds = customer.product_ids.map(p => p.id);
+            } else {
+              productIds = customer.product_ids;
+            }
+          }
+        }
+        setSelectedProductIds(productIds);
       }
     }
   }, [isOpen, customer]);
 
   const fetchProducts = async () => {
     try {
+      setLoadingProducts(true);
       const response = await api.get('/products/list');
       setProducts(response.data || []);
     } catch (err) {
       console.error("Gagal mengambil produk", err);
       setProducts([]);
+    } finally {
+      setLoadingProducts(false);
     }
   };
 
@@ -128,7 +144,7 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
   return (
     <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
+      <div className="relative bg-white w-[95%] md:w-[80%] lg:w-[55%] max-w-5xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center shrink-0">
           <h3 className="text-lg font-black text-slate-800">Edit Customer</h3>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
@@ -231,11 +247,20 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
             <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
               Products <span className="text-slate-400 font-normal">(optional)</span>
             </label>
-            <div className="max-h-32 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
-              {products.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-2">No products available</p>
-              ) : (
-                products.map(product => (
+            {loadingProducts ? (
+              <div className="flex items-center justify-center py-4">
+                <div className="w-6 h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
+                <span className="ml-2 text-xs text-slate-500">Memuat produk...</span>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 text-center">
+                <HugeiconsIcon icon={PackageIcon} className="w-6 h-6 text-slate-300 mx-auto mb-2" />
+                <p className="text-xs text-slate-500">Tidak ada produk aktif</p>
+                <p className="text-[10px] text-slate-400 mt-1">Tambahkan produk di halaman Produk</p>
+              </div>
+            ) : (
+              <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
+                {products.map(product => (
                   <label
                     key={product.id}
                     className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${selectedProductIds.includes(product.id) ? 'bg-indigo-50 border border-indigo-200' : 'hover:bg-slate-50'}`}
@@ -246,15 +271,15 @@ const EditCustomerModal = ({ isOpen, onClose, onSuccess, customer }) => {
                       onChange={() => handleProductToggle(product.id)}
                       className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
                     />
-                    <div className="flex-1">
-                      <span className="text-sm font-medium text-slate-700 block">{product.name}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-slate-700 block truncate">{product.name}</span>
                       <span className="text-xs text-slate-500">Rp {Number(product.default_price || 0).toLocaleString('id-ID')}</span>
                     </div>
-                    <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300" />
+                    <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300 shrink-0" />
                   </label>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
             {selectedProductIds.length > 0 && (
               <p className="text-xs text-indigo-600">{selectedProductIds.length} produk dipilih</p>
             )}

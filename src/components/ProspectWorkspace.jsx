@@ -123,20 +123,26 @@ const ProspectWorkspace = () => {
       />
 
       {/* Header Section */}
-      <div className="p-4 lg:p-6 flex items-center justify-between border-b border-slate-200 bg-white">
-        <div>
-          <h2 className="text-lg font-bold text-slate-800 uppercase tracking-tight">
-            {view === 'pipeline' ? 'Prospect Pipeline' : view === 'customer' ? 'Customer Database' : 'Sales History'}
-          </h2>
-          <p className="text-[10px] text-orange-500 font-bold uppercase tracking-widest">
-            {view === 'pipeline' ?
-              filterType === 'all'
-                ? `Saat Ini Ada ${prospects.length} Prospek Aktif`
-                : `Saat Ini Ada ${getFilteredProspects().length} Prospek Aktif (${filterType})`
-              : view === 'customer' ? 'Direktori Semua Customer' : 'Riwayat Penjualan Berhasil'
-            }
-          </p>
-        </div>
+      <div className="p-6 border-b border-slate-100 bg-linear-to-br from-indigo-50/50 to-purple-50/30">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-orange-100 rounded-xl">
+              <HugeiconsIcon icon={WorkflowSquare01Icon} className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-800">
+                {view === 'pipeline' ? 'Prospect Pipeline' : view === 'customer' ? 'Customer Database' : 'Sales History'}
+              </h2>
+              <p className="text-sm text-slate-500 mt-0.5">
+                {view === 'pipeline' ?
+                  filterType === 'all'
+                    ? `Saat ini ada ${prospects.length} prospek aktif`
+                    : `Saat ini ada ${getFilteredProspects().length} prospek aktif (${filterType})`
+                  : view === 'customer' ? 'Direktori semua customer' : 'Riwayat penjualan berhasil'
+                }
+              </p>
+            </div>
+          </div>
         
         <div className="flex items-center gap-2">
           {/* Filter Dropdown - Only show in pipeline view */}
@@ -228,6 +234,7 @@ const ProspectWorkspace = () => {
               NEW CUSTOMER
             </button>
           ) : null}
+        </div>
         </div>
       </div>
 

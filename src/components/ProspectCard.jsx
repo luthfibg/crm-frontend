@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CallIcon, AiChat02Icon, Clock01Icon, Delete02Icon, CheckmarkCircle02Icon, StarIcon, Bookmark01Icon, File01Icon } from '@hugeicons/core-free-icons';
+import { CallIcon, AiChat02Icon, Clock01Icon, Delete02Icon, CheckmarkCircle02Icon, StarIcon, Bookmark01Icon, File01Icon, PackageIcon } from '@hugeicons/core-free-icons';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import ProductDetailModal from './ProductDetailModal';
 
 // Helper function to format time difference (for status and FU)
 const formatTimeDiff = (fromDate, toDate = new Date()) => {
@@ -30,6 +31,30 @@ const ProspectCard = ({ data, onDetailsClick }) => {
     const [showFUTooltip, setShowFUTooltip] = useState(false);
     const [statusTooltipPos, setStatusTooltipPos] = useState({});
     const [fuTooltipPos, setFUTooltipPos] = useState({});
+    
+    // Products modal state
+    const [showProductModal, setShowProductModal] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [loadingProducts, setLoadingProducts] = useState(false);
+    
+    // Fetch products when modal opens
+    const handleProductClick = async () => {
+        const customerId = customer?.id || data?.customer_id;
+        if (!customerId) return;
+        
+        setLoadingProducts(true);
+        setShowProductModal(true);
+        
+        try {
+            const response = await api.get(`/customers/${customerId}/products`);
+            setProducts(response.data.products || []);
+        } catch (err) {
+            console.error('Failed to fetch products:', err);
+            setProducts([]);
+        } finally {
+            setLoadingProducts(false);
+        }
+    };
 
     // Penjelasan status time
     const getStatusTooltipText = () => {
@@ -268,6 +293,42 @@ const ProspectCard = ({ data, onDetailsClick }) => {
       </div>
     )}
 
+    {/* PRODUCTS BOX - Hanya tampilkan jika ada produk */}
+    <div 
+      onClick={handleProductClick}
+      className="mb-3 p-2.5 bg-emerald-50/50 rounded border border-emerald-100 cursor-pointer hover:bg-emerald-100 hover:border-emerald-200 transition-colors"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="p-1.5 bg-emerald-100 rounded-lg shrink-0">
+            <HugeiconsIcon icon={PackageIcon} size={12} className="text-emerald-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wide block">
+              Produk
+            </span>
+            <span className="text-xs font-medium text-emerald-700 leading-tight line-clamp-2 block relative">
+              {customer?.products && customer.products.length > 0 
+                ? customer.products.map(p => p.name).join(', ')
+                : 'Tidak ada produk'
+              }
+              {customer?.products && customer.products.length > 0 && (
+                <span className="absolute top-0 right-0 h-full w-8 bg-gradient-to-r from-transparent to-emerald-50" />
+              )}
+            </span>
+          </div>
+        </div>
+        <div className="text-right shrink-0 pl-2">
+          <span className="text-sm font-bold text-emerald-600 block">
+            {customer?.products?.length || 0}
+          </span>
+          <span className="text-[10px] text-emerald-500 font-medium">
+            {customer?.products?.length === 1 ? 'Produk' : 'Produk'}
+          </span>
+        </div>
+      </div>
+    </div>
+
     {/* PREVIOUS KPI Stages */}
     {previousKPIs.length > 0 && (
       <div className="space-y-1.5 mb-3">
@@ -333,6 +394,13 @@ const ProspectCard = ({ data, onDetailsClick }) => {
         ) : null}
       </div>
     </div>
+
+    {/* Product Detail Modal */}
+    <ProductDetailModal 
+      isOpen={showProductModal} 
+      onClose={() => setShowProductModal(false)}
+      products={loadingProducts ? null : products}
+    />
   </div>
 );
 
