@@ -72,7 +72,7 @@ const AddUserModal = ({ isOpen, onClose, onSuccess }) => {
     <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div className="relative bg-white w-[95%] md:w-[80%] lg:w-[55%] max-w-5xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
         <div className="p-6 border-b border-slate-100 flex justify-between items-center">
           <h3 className="text-lg font-black text-slate-800">Add New User</h3>
           <button 
