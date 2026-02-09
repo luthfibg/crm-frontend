@@ -155,6 +155,26 @@ const ProspectCard = ({ data, onDetailsClick }) => {
       }
   };
 
+  // Handle WhatsApp call
+  const handleWhatsApp = () => {
+    // Get phone number from customer
+    const phoneNumber = customer?.phone_number;
+    
+    if (!phoneNumber) {
+      alert('Nomor telepon tidak tersedia');
+      return;
+    }
+    
+    // Format nomor: hapus semua non-digit, ganti 0 dengan 62
+    let formattedNumber = phoneNumber.replace(/\D/g, '');
+    if (formattedNumber.startsWith('0')) {
+      formattedNumber = '62' + formattedNumber.substring(1);
+    }
+    
+    // Buka WhatsApp
+    window.open(`https://wa.me/${formattedNumber}`, '_blank');
+  };
+
   // Filter previous KPIs (non-current)
   const previousKPIs = kpiHistory.filter(k => !k.is_current);
   const completedPrevious = previousKPIs.filter(k => k.is_completed).length;
@@ -313,7 +333,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
                 : 'Tidak ada produk'
               }
               {customer?.products && customer.products.length > 0 && (
-                <span className="absolute top-0 right-0 h-full w-8 bg-gradient-to-r from-transparent to-emerald-50" />
+                <span className="absolute top-0 right-0 h-full w-8 bg-linear-to-r from-transparent to-emerald-50" />
               )}
             </span>
           </div>
@@ -371,7 +391,11 @@ const ProspectCard = ({ data, onDetailsClick }) => {
       </span>
 
       <div className="flex items-center gap-1.5">
-        <button className="p-1 rounded hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors">
+        <button 
+          onClick={handleWhatsApp}
+          className="p-1 rounded hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors"
+          title="Hubungi via WhatsApp"
+        >
           <HugeiconsIcon icon={CallIcon} size={12} />
         </button>
 
