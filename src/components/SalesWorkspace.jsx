@@ -4,21 +4,40 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { InformationCircleIcon, PlusSignIcon } from '@hugeicons/core-free-icons';
 import EnterpriseCoreMetrics from './EnterpriseCoreMetrics';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 import AddUserModal from './AddUserModal';
 import SalesPersonCard from './SalesPersonCard';
 import api from '../api/axios';
 
 // --- APEXCHART CONFIG ---
-const heatmapOptions = {
-  chart: { toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+const getHeatmapOptions = (isDarkMode) => ({
+  chart: { 
+    toolbar: { show: false }, 
+    fontFamily: 'Inter, sans-serif',
+    background: 'transparent'
+  },
   dataLabels: { enabled: false },
   colors: ["#6366f1"],
+  theme: {
+    mode: isDarkMode ? 'dark' : 'light'
+  },
   xaxis: {
     categories: ['Visit 1', 'Visit 2', 'Visit 3', 'Closing', 'Repeat', 'Achieve', 'Sosmed', 'Activity', ['DB', 'Progress'], 'Email'],
     labels: {
-      style: { fontSize: '10px', fontWeight: 600 },
+      style: { 
+        fontSize: '10px', 
+        fontWeight: 600,
+        colors: isDarkMode ? '#94a3b8' : '#64748b'
+      },
       rotate: 0,
       rotateAlways: false
+    }
+  },
+  yaxis: {
+    labels: {
+      style: {
+        colors: isDarkMode ? '#94a3b8' : '#64748b'
+      }
     }
   },
   plotOptions: {
@@ -28,20 +47,21 @@ const heatmapOptions = {
       useFillColorAsStroke: false,
       colorScale: {
         ranges: [
-          { from: 0, to: 30, name: 'Rendah', color: '#f1f5f9' },
+          { from: 0, to: 30, name: 'Rendah', color: isDarkMode ? '#334155' : '#f1f5f9' },
           { from: 31, to: 65, name: 'Sedang', color: '#818cf8' },
           { from: 66, to: 100, name: 'Tinggi', color: '#4f46e5' }
         ]
       }
     }
   },
-};
+});
 
 // --- FUNGSI PERHITUNGAN KPI ---
 
 // --- MAIN COMPONENT ---
 export default function SalesWorkspace() {
   const { isAdmin, user } = useAuth();
+  const { settings } = useSettings();
   const [salesTeamData, setSalesTeamData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
@@ -214,6 +234,9 @@ export default function SalesWorkspace() {
     data: calculateKPIScores(sales)
   }));
 
+  // Get heatmap options based on dark mode
+  const heatmapOptions = getHeatmapOptions(settings.darkMode);
+
   const handleAddUserSuccess = () => {
     // Refresh data setelah user ditambahkan
     fetchSalesTeamData();
@@ -240,7 +263,7 @@ export default function SalesWorkspace() {
   };
 
   return (
-    <main className="flex-1 overflow-hidden p-4 lg:p-6 bg-slate-50/50">
+    <main className="flex-1 overflow-hidden p-4 lg:p-6 bg-slate-50/50 dark:bg-slate-900/50">
       <div className="h-full overflow-y-auto">
         <div className="max-w-7xl mx-auto space-y-6">
         
@@ -248,20 +271,20 @@ export default function SalesWorkspace() {
           <div className="flex items-center justify-center min-h-96">
             <div className="text-center">
               <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-slate-600">Loading sales data...</p>
+              <p className="text-slate-600 dark:text-slate-400">Loading sales data...</p>
             </div>
           </div>
         ) : (
           <>
             {/* TOP SECTION: KPI MATRIX & STATS */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-              <div className="lg:col-span-8 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+              <div className="lg:col-span-8 bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
                 <div className="flex justify-between items-center mb-4">
                   <div>
-                    <h2 className="text-md font-bold text-slate-800">Monitoring Sales KPI</h2>
-                    <p className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Berdasarkan 10 KPI</p>
+                    <h2 className="text-md font-bold text-slate-800 dark:text-slate-100">Monitoring Sales KPI</h2>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-bold tracking-tighter">Berdasarkan 10 KPI</p>
                   </div>
-                  <HugeiconsIcon icon={InformationCircleIcon} size={18} className="text-slate-300" />
+                  <HugeiconsIcon icon={InformationCircleIcon} size={18} className="text-slate-300 dark:text-slate-600" />
                 </div>
                 <Chart options={heatmapOptions} series={heatmapSeries} type="heatmap" height={280} />
               </div>
@@ -297,12 +320,12 @@ export default function SalesWorkspace() {
             {isAdmin && (
               <button 
                 onClick={() => setIsAddUserModalOpen(true)}
-                className="group h-64 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center gap-3 bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition-all hover:shadow-md"
+                className="group h-64 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl flex flex-col items-center justify-center gap-3 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all hover:shadow-md"
               >
-                <div className="p-3 rounded-full bg-white shadow-sm group-hover:scale-110 transition-transform">
-                  <HugeiconsIcon icon={PlusSignIcon} size={24} className="text-slate-400 group-hover:text-indigo-600" />
+                <div className="p-3 rounded-full bg-white dark:bg-slate-700 shadow-sm group-hover:scale-110 transition-transform">
+                  <HugeiconsIcon icon={PlusSignIcon} size={24} className="text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
                 </div>
-                <span className="text-xs font-bold text-slate-400 group-hover:text-indigo-600">Add New Sales Member</span>
+                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">Add New Sales Member</span>
               </button>
             )}
           </>

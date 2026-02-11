@@ -15,10 +15,10 @@ const PipelineRow = ({ pic, title, company, stage, date }) => {
   };
 
   return (
-    <div className="group flex items-center justify-between py-2 border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors px-2">
+    <div className="group flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-700 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors px-2">
       <div className="flex flex-col min-w-0">
-        <span className="text-[11px] font-bold text-slate-800 truncate leading-tight">{pic}</span>
-        <span className="text-[9px] text-slate-500 truncate leading-tight">{title} • {company}</span>
+        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 truncate leading-tight">{pic}</span>
+        <span className="text-[9px] text-slate-500 dark:text-slate-400 truncate leading-tight">{title} • {company}</span>
       </div>
 
       <div className="flex items-center gap-1 relative group/tooltip">
@@ -35,7 +35,7 @@ const PipelineRow = ({ pic, title, company, stage, date }) => {
         ))}
         
         <div className="absolute bottom-full right-0 mb-2 hidden group-hover/tooltip:block z-50">
-          <div className="bg-slate-900 text-white text-[9px] py-1 px-2 rounded shadow-xl whitespace-nowrap">
+          <div className="bg-slate-900 dark:bg-slate-700 text-white text-[9px] py-1 px-2 rounded shadow-xl whitespace-nowrap">
             Last Checkpoint: {date}
           </div>
         </div>
@@ -93,16 +93,16 @@ const SalesPersonCard = ({
   const level = getKPILevel(safeScore);
 
   return (
-    <div className="bg-white group rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden hover:shadow-md transition-shadow duration-300">
+    <div className="bg-white dark:bg-slate-800 group rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden hover:shadow-md transition-shadow duration-300">
 
-      <div className="p-3 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
+      <div className="p-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-700/30 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 overflow-hidden shadow-sm">
             <img src={avatar} alt={name} className="w-full h-full object-cover" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-xs font-extrabold text-slate-800 truncate">{name}</h3>
-            <p className="text-[10px] text-indigo-600 font-medium truncate">{summary}</p>
+            <h3 className="text-xs font-extrabold text-slate-800 dark:text-slate-100 truncate">{name}</h3>
+            <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium truncate">{summary}</p>
           </div>
         </div>
 
@@ -111,13 +111,13 @@ const SalesPersonCard = ({
           <div className="flex gap-1 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
             <button 
               onClick={onEdit}
-              className="p-1.5 bg-white shadow-sm border border-slate-200 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all hover:scale-105"
+              className="p-1.5 bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all hover:scale-105"
             >
               <HugeiconsIcon icon={PencilEdit01Icon} size={14} />
             </button>
             <button 
               onClick={onDelete}
-              className="p-1.5 bg-white shadow-sm border border-slate-200 rounded-lg text-slate-500 hover:text-red-600 hover:bg-red-50 transition-all hover:scale-105"
+              className="p-1.5 bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all hover:scale-105"
             >
               <HugeiconsIcon icon={Delete02Icon} size={14} />
             </button>
@@ -137,26 +137,26 @@ const SalesPersonCard = ({
         </div>
       </div>
 
-      <div className="max-h-55 overflow-y-auto scrollbar-hide bg-white">
+      <div className="max-h-55 overflow-y-auto scrollbar-hide bg-white dark:bg-slate-800">
         {pipelines && pipelines.length > 0 ? (
           pipelines.map((pipeline, idx) => (
             <PipelineRow key={idx} {...pipeline} />
           ))
         ) : (
           <div className="py-6 text-center">
-            <p className="text-xs text-slate-400">No pipelines available</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">No pipelines available</p>
           </div>
         )}
       </div>
 
-      <div className="px-3 py-2 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center">
-        <span className="text-[9px] font-bold text-slate-400 uppercase">Performance Index</span>
+      <div className="px-3 py-2 bg-slate-50/50 dark:bg-slate-800/80 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center">
+        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase">Performance Index</span>
         <div className="flex gap-0.5">
           {[...Array(5)].map((_, i) => (
             <div 
               key={i} 
               className={`h-1 w-3 rounded-full transition-all duration-300 ${
-                i < (safeScore / 200) ? level.dot : 'bg-slate-200'
+                i < (safeScore / 200) ? level.dot : 'bg-slate-200 dark:bg-slate-700'
               }`} 
             />
           ))}

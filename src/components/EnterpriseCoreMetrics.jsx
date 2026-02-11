@@ -45,42 +45,42 @@ const EnterpriseCoreMetrics = ({ data }) => {
   }).format(val);
 
   return (
-    <div className="bg-white rounded-2xl p-5 text-slate-900 shadow-sm border border-slate-200 flex flex-col h-full justify-between">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 text-slate-900 dark:text-slate-100 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col h-full justify-between">
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-[12px] font-black text-indigo-600 uppercase tracking-[0.2em]">Performa Cabang</h3>
+          <h3 className="text-[12px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.2em]">Performa Cabang</h3>
         </div>
-        <div className="bg-indigo-50 text-indigo-600 px-2.5 py-1 rounded-full text-[10px] font-extrabold border border-indigo-100 shadow-sm">
+        <div className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2.5 py-1 rounded-full text-[10px] font-extrabold border border-indigo-100 dark:border-indigo-800 shadow-sm">
           AVG KPI: {avgKpiScore}
         </div>
       </div>
 
       {/* Prospect Grid */}
       <div className="grid grid-cols-3 gap-2 mb-6">
-        <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-          <p className="text-[8px] uppercase text-slate-500 font-bold tracking-wider">Warm</p>
-          <p className="text-lg font-black text-blue-600">{warm}</p>
+        <div className="bg-slate-50 dark:bg-slate-700 p-2.5 rounded-xl border border-slate-100 dark:border-slate-600">
+          <p className="text-[8px] uppercase text-slate-500 dark:text-slate-400 font-bold tracking-wider">Warm</p>
+          <p className="text-lg font-black text-blue-600 dark:text-blue-400">{warm}</p>
         </div>
-        <div className="bg-orange-50/50 p-2.5 rounded-xl border border-orange-100">
-          <p className="text-[8px] uppercase text-orange-600 font-bold tracking-wider">Hot</p>
+        <div className="bg-orange-50/50 dark:bg-orange-900/20 p-2.5 rounded-xl border border-orange-100 dark:border-orange-800">
+          <p className="text-[8px] uppercase text-orange-600 dark:text-orange-400 font-bold tracking-wider">Hot</p>
           <div className="flex items-center gap-1">
-            <p className="text-lg font-black text-orange-600">{hot}</p>
-            <HugeiconsIcon icon={FireIcon} size={12} className="text-orange-500 animate-pulse" variant="solid" />
+            <p className="text-lg font-black text-orange-600 dark:text-orange-400">{hot}</p>
+            <HugeiconsIcon icon={FireIcon} size={12} className="text-orange-500 dark:text-orange-400 animate-pulse" variant="solid" />
           </div>
         </div>
-        <div className="bg-emerald-50 p-2.5 rounded-xl border border-emerald-100">
-          <p className="text-[8px] uppercase text-emerald-700 font-bold tracking-wider">Closed</p>
-          <p className="text-lg font-black text-emerald-600">{closed}</p>
+        <div className="bg-emerald-50 dark:bg-emerald-900/20 p-2.5 rounded-xl border border-emerald-100 dark:border-emerald-800">
+          <p className="text-[8px] uppercase text-emerald-700 dark:text-emerald-400 font-bold tracking-wider">Closed</p>
+          <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">{closed}</p>
         </div>
       </div>
 
       {/* Revenue Section */}
-      <div className="space-y-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+      <div className="space-y-3 bg-slate-50/50 dark:bg-slate-700/30 p-4 rounded-xl border border-slate-100 dark:border-slate-600">
         <div className="flex justify-between items-end">
           <div>
-            <p className="text-[9px] mb-1 text-slate-500 font-bold uppercase tracking-tight">Pencapaian Target Tahunan</p>
-            <p className="text-base font-black text-slate-900 leading-tight">{formatIDR(totalRevenue)}</p>
+            <p className="text-[9px] mb-1 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tight">Pencapaian Target Tahunan</p>
+            <p className="text-base font-black text-slate-900 dark:text-slate-100 leading-tight">{formatIDR(totalRevenue)}</p>
           </div>
           <div className="text-right">
             <span className="text-[10px] font-black px-2 py-0.5 bg-indigo-600 text-white rounded-md shadow-sm">
@@ -90,7 +90,7 @@ const EnterpriseCoreMetrics = ({ data }) => {
         </div>
         
         {/* Progress Bar */}
-        <div className="h-2.5 w-full bg-slate-200 rounded-full overflow-hidden p-px">
+        <div className="h-2.5 w-full bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden p-px">
           <div 
             className="h-full bg-linear-to-r from-indigo-600 via-indigo-500 to-blue-400 rounded-full transition-all duration-1000"
             style={{ width: `${Math.min(100, revenueProgress)}%` }}
@@ -99,12 +99,12 @@ const EnterpriseCoreMetrics = ({ data }) => {
 
         <div className="flex justify-between items-center pt-1">
           <div className="flex items-center gap-1.5">
-            <HugeiconsIcon icon={ChartLineData01Icon} size={14} className="text-slate-400" />
-            <span className="text-[10px] text-slate-500 font-semibold">Pipelines: <b className="text-slate-900">{totalPipes}</b></span>
+            <HugeiconsIcon icon={ChartLineData01Icon} size={14} className="text-slate-400 dark:text-slate-500" />
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">Pipelines: <b className="text-slate-900 dark:text-slate-100">{totalPipes}</b></span>
           </div>
           <div className="flex items-center gap-1">
-             <HugeiconsIcon icon={Target02Icon} size={12} className="text-slate-400" />
-             <span className="text-[10px] text-slate-400 font-medium">Target Tahunan: {formatIDR(totalTarget)}</span>
+             <HugeiconsIcon icon={Target02Icon} size={12} className="text-slate-400 dark:text-slate-500" />
+             <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Target Tahunan: {formatIDR(totalTarget)}</span>
           </div>
         </div>
       </div>

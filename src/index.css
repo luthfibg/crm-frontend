@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+/* Configure dark mode variant for Tailwind CSS v4 */
+/* This tells Tailwind to apply dark: variants when .dark class is present on html or parent */
+@custom-variant dark (.dark &);
