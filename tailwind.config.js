@@ -4,7 +4,8 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class', // This is the crucial part
+  // Tailwind v4 handles dark mode differently via CSS @variant
+  // but this config is kept for compatibility
   theme: {
     extend: {},
   },
