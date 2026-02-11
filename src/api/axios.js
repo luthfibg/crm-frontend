@@ -33,7 +33,7 @@ if (!baseURL) {
 
 const api = axios.create({
   baseURL,
-  withCredentials: true,  // Enable credentials for CORS
+  withCredentials: false,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
