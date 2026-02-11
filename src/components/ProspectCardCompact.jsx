@@ -29,7 +29,7 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
   }, 0);
 
   // Get current KPI (last stage)
-  const currentKPI = kpiHistory.find(k => k.is_current);
+  // const currentKPI = kpiHistory.find(k => k.is_current);
 
   // Fetch products when modal opens
   const handleProductClick = async () => {
@@ -82,9 +82,10 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
     }
   };
 
+
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-3 shadow-sm hover:shadow-md transition flex flex-col gap-2">
-      {/* HEADER: PIC + Score */}
+      {/* HEADER: PIC + Score + Product Icon */}
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0 flex-1">
           <h4 className="text-xs font-semibold text-slate-900 truncate">
@@ -94,15 +95,22 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
             {customer?.institution || 'No institution'}
           </p>
         </div>
-
-        {/* Score Badge */}
-        <div className="text-right shrink-0">
-          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 border border-amber-200">
+        <div className="flex flex-col items-end gap-1">
+          {/* Score Badge */}
+          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 border border-amber-200 mb-0.5">
             <span className="text-[10px] font-bold text-amber-700">
               {formatPoints(totalEarnedPoints)}
             </span>
             <span className="text-[9px] text-amber-600">/{formatPoints(maxPossiblePoints)}</span>
           </div>
+          {/* Product Icon Button */}
+          <button
+            onClick={handleProductClick}
+            className="p-1.5 rounded hover:bg-emerald-50 text-emerald-600 border border-emerald-100 transition-colors"
+            title="Lihat Produk"
+          >
+            <HugeiconsIcon icon={PackageIcon} size={14} />
+          </button>
         </div>
       </div>
 
@@ -118,35 +126,8 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
         )}
       </div>
 
-      {/* PROGRESS: Current KPI ringkas */}
-      {currentKPI && (
-        <div className="space-y-1 p-2 bg-indigo-50/50 rounded border border-indigo-100">
-          <div className="flex justify-between items-center gap-1">
-            <span className="text-[9px] font-semibold text-indigo-600 uppercase">Progress</span>
-            <span className="text-[10px] font-bold text-indigo-600">{Math.round(currentKPI.percent)}%</span>
-          </div>
-          <div className="h-1 w-full bg-indigo-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-indigo-500 rounded-full transition-all duration-300"
-              style={{ width: `${currentKPI.percent}%` }}
-            />
-          </div>
-          <span className="text-[9px] text-indigo-600">{currentKPI.completed_count}/{currentKPI.assigned_count} tasks</span>
-        </div>
-      )}
 
-      {/* PRODUCTS: Compact view */}
-      <div
-        onClick={handleProductClick}
-        className="p-2 bg-emerald-50/50 rounded border border-emerald-100 cursor-pointer hover:bg-emerald-100 transition-colors flex items-center gap-2 justify-between"
-      >
-        <div className="flex items-center gap-1.5 min-w-0 flex-1">
-          <HugeiconsIcon icon={PackageIcon} size={12} className="text-emerald-600 shrink-0" />
-          <span className="text-[9px] font-semibold text-emerald-600 uppercase">
-            {customer?.products?.length || 0} Produk
-          </span>
-        </div>
-      </div>
+
 
       {/* ACTION BUTTONS */}
       <div className="flex items-center gap-1 pt-1 border-t border-slate-100 justify-between">
