@@ -1,5 +1,6 @@
 import React from 'react';
 import ProspectCard from './ProspectCard';
+import ProspectCardCompact from './ProspectCardCompact';
 
 const COLUMNS = [
   { id: 'New', label: 'New', color: 'bg-blue-500' },
@@ -75,13 +76,19 @@ const KanbanBoard = ({ prospects = [], onOpenModal }) => {
                   <p className="text-slate-400 text-sm">No {col.label.toLowerCase()} prospects</p>
                 </div>
               ) : (
-                columnProspects.map((item) => (
-                  <ProspectCard 
-                    key={item?.customer?.id || item?.id || Math.random()} 
-                    data={item} 
-                    onDetailsClick={onOpenModal} 
-                  />
-                ))
+                columnProspects.map((item) => {
+                  // Use compact card for After Sales column, regular card for others
+                  const isAfterSalesColumn = col.id === 'After Sales';
+                  const CardComponent = isAfterSalesColumn ? ProspectCardCompact : ProspectCard;
+                  
+                  return (
+                    <CardComponent
+                      key={item?.customer?.id || item?.id || Math.random()}
+                      data={item}
+                      onDetailsClick={onOpenModal}
+                    />
+                  );
+                })
               )}
             </div>
           </div>
