@@ -4,21 +4,40 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { InformationCircleIcon, PlusSignIcon } from '@hugeicons/core-free-icons';
 import EnterpriseCoreMetrics from './EnterpriseCoreMetrics';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 import AddUserModal from './AddUserModal';
 import SalesPersonCard from './SalesPersonCard';
 import api from '../api/axios';
 
 // --- APEXCHART CONFIG ---
-const heatmapOptions = {
-  chart: { toolbar: { show: false }, fontFamily: 'Inter, sans-serif' },
+const getHeatmapOptions = (isDarkMode) => ({
+  chart: { 
+    toolbar: { show: false }, 
+    fontFamily: 'Inter, sans-serif',
+    background: 'transparent'
+  },
   dataLabels: { enabled: false },
   colors: ["#6366f1"],
+  theme: {
+    mode: isDarkMode ? 'dark' : 'light'
+  },
   xaxis: {
     categories: ['Visit 1', 'Visit 2', 'Visit 3', 'Closing', 'Repeat', 'Achieve', 'Sosmed', 'Activity', ['DB', 'Progress'], 'Email'],
     labels: {
-      style: { fontSize: '10px', fontWeight: 600 },
+      style: { 
+        fontSize: '10px', 
+        fontWeight: 600,
+        colors: isDarkMode ? '#94a3b8' : '#64748b'
+      },
       rotate: 0,
       rotateAlways: false
+    }
+  },
+  yaxis: {
+    labels: {
+      style: {
+        colors: isDarkMode ? '#94a3b8' : '#64748b'
+      }
     }
   },
   plotOptions: {
@@ -28,20 +47,21 @@ const heatmapOptions = {
       useFillColorAsStroke: false,
       colorScale: {
         ranges: [
-          { from: 0, to: 30, name: 'Rendah', color: '#f1f5f9' },
+          { from: 0, to: 30, name: 'Rendah', color: isDarkMode ? '#334155' : '#f1f5f9' },
           { from: 31, to: 65, name: 'Sedang', color: '#818cf8' },
           { from: 66, to: 100, name: 'Tinggi', color: '#4f46e5' }
         ]
       }
     }
   },
-};
+});
 
 // --- FUNGSI PERHITUNGAN KPI ---
 
 // --- MAIN COMPONENT ---
 export default function SalesWorkspace() {
   const { isAdmin, user } = useAuth();
+  const { settings } = useSettings();
   const [salesTeamData, setSalesTeamData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
@@ -213,6 +233,9 @@ export default function SalesWorkspace() {
     name: sales.name,
     data: calculateKPIScores(sales)
   }));
+
+  // Get heatmap options based on dark mode
+  const heatmapOptions = getHeatmapOptions(settings.darkMode);
 
   const handleAddUserSuccess = () => {
     // Refresh data setelah user ditambahkan

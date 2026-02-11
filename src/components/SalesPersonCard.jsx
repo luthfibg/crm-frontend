@@ -149,14 +149,14 @@ const SalesPersonCard = ({
         )}
       </div>
 
-      <div className="px-3 py-2 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center">
-        <span className="text-[9px] font-bold text-slate-400 uppercase">Performance Index</span>
+      <div className="px-3 py-2 bg-slate-50/50 dark:bg-slate-800/80 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center">
+        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-300 uppercase">Performance Index</span>
         <div className="flex gap-0.5">
           {[...Array(5)].map((_, i) => (
             <div 
               key={i} 
               className={`h-1 w-3 rounded-full transition-all duration-300 ${
-                i < (safeScore / 200) ? level.dot : 'bg-slate-200'
+                i < (safeScore / 200) ? level.dot : 'bg-slate-200 dark:bg-slate-700'
               }`} 
             />
           ))}
