@@ -15,7 +15,7 @@ const Panel = () => {
   const { user } = useAuth();
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
       <Sidebar 
         isOpen={isOpen} 
         setIsOpen={setIsOpen} 
@@ -50,9 +50,9 @@ const Panel = () => {
         ) : (
           <main className="flex-1 p-4 lg:p-8">
             <div className="max-w-7xl mx-auto">
-              <div className="bg-white rounded-2xl border border-slate-200 h-[calc(100vh-160px)] flex items-center justify-center">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 h-[calc(100vh-160px)] flex items-center justify-center">
                 <div className="text-center">
-                  <p className="text-slate-400 font-medium">Konten {activeTab} akan muncul di sini</p>
+                  <p className="text-slate-400 dark:text-slate-500 font-medium">Konten {activeTab} akan muncul di sini</p>
                 </div>
               </div>
             </div>

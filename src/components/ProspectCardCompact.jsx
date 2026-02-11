@@ -84,29 +84,29 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
 
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-3 shadow-sm hover:shadow-md transition flex flex-col gap-2">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm hover:shadow-md transition flex flex-col gap-2">
       {/* HEADER: PIC + Score + Product Icon */}
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0 flex-1">
-          <h4 className="text-xs font-semibold text-slate-900 truncate">
+          <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
             {customer?.pic || 'Unnamed PIC'}
           </h4>
-          <p className="text-[10px] text-slate-500 truncate">
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
             {customer?.institution || 'No institution'}
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
           {/* Score Badge */}
-          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 border border-amber-200 mb-0.5">
-            <span className="text-[10px] font-bold text-amber-700">
+          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 mb-0.5">
+            <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400">
               {formatPoints(totalEarnedPoints)}
             </span>
-            <span className="text-[9px] text-amber-600">/{formatPoints(maxPossiblePoints)}</span>
+            <span className="text-[9px] text-amber-600 dark:text-amber-500">/{formatPoints(maxPossiblePoints)}</span>
           </div>
           {/* Product Icon Button */}
           <button
             onClick={handleProductClick}
-            className="p-1.5 rounded hover:bg-emerald-50 text-emerald-600 border border-emerald-100 transition-colors"
+            className="p-1.5 rounded hover:bg-emerald-50 dark:hover:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800 transition-colors"
             title="Lihat Produk"
           >
             <HugeiconsIcon icon={PackageIcon} size={14} />

@@ -56,29 +56,29 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 px-4">
+      <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100 dark:border-slate-700">
         <div className="text-center mb-8 flex gap-2 lg:gap-3 items-center justify-center">
           <HugeiconsIcon icon={WavingHand02Icon} size={30} color="#0A4C8F" strokeWidth={1.5} />
-          <h2 className="text-3xl font-bold text-[#0A4C8F]">Welcome Back</h2>
+          <h2 className="text-3xl font-bold text-[#0A4C8F] dark:text-indigo-400">Welcome Back</h2>
         </div>
 
         {/* ← TAMBAHKAN: Tampilkan error jika ada */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm">
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
             <input
               type="email"
               name="email"
               required
               value={formData.email} // ← TAMBAHKAN value
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
               placeholder="name@example.com"
               onChange={handleChange}
               disabled={isLoading} // ← TAMBAHKAN
@@ -87,8 +87,8 @@ const Login = () => {
 
           <div>
             <div className="flex justify-between mb-1">
-              <label className="text-sm font-medium text-slate-700">Password</label>
-              <button type="button" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+              <button type="button" className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500">
                 Forgot password?
               </button>
             </div>
@@ -97,7 +97,7 @@ const Login = () => {
               name="password"
               required
               value={formData.password} // ← TAMBAHKAN value
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
               placeholder="••••••••"
               onChange={handleChange}
               disabled={isLoading} // ← TAMBAHKAN

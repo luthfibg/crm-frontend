@@ -27,16 +27,16 @@ const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
   ];
 
   return (
-    <aside className={`fixed inset-y-0 left-0 z-50 bg-white border-r border-slate-200 transition-all duration-300 ease-in-out 
+    <aside className={`fixed inset-y-0 left-0 z-50 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ease-in-out 
       ${isOpen ? 'w-64' : 'w-20'} lg:static lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
       
       <div className="flex flex-col h-full">
         {/* Logo Section */}
-        <div className="h-16 flex items-center px-6 border-b border-slate-50">
+        <div className="h-16 flex items-center px-6 border-b border-slate-50 dark:border-slate-700">
           <div className="min-w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
             <div className="w-4 h-4 bg-white rounded-full animate-pulse" />
           </div>
-          {isOpen && <span className="ml-3 font-bold text-lg text-slate-800 truncate">CRM MAS Jabar</span>}
+          {isOpen && <span className="ml-3 font-bold text-lg text-slate-800 dark:text-slate-100 truncate">CRM MAS Jabar</span>}
         </div>
 
         {/* Navigation */}
@@ -50,19 +50,21 @@ const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
                 onClick={() => !isLocked && setActiveTab(item.id)}
                 className={`w-full flex items-center p-3 rounded-xl transition-all group relative
                   ${isLocked ? 'opacity-40 cursor-not-allowed filter grayscale' : ''}
-                  ${activeTab === item.id ? 'bg-indigo-50 text-indigo-600' : 'text-slate-500 hover:bg-slate-50'}`}
+                  ${activeTab === item.id 
+                    ? 'bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400' 
+                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'}`}
               >
                 <HugeiconsIcon icon={item.icon} size={24} />
                 {isOpen && <span className="ml-3 font-medium">{item.label}</span>}
-                {isLocked && isOpen && <span className="ml-auto text-[10px] bg-slate-200 px-1.5 rounded text-slate-500 uppercase">special</span>}
+                {isLocked && isOpen && <span className="ml-auto text-[10px] bg-slate-200 dark:bg-slate-600 px-1.5 rounded text-slate-500 dark:text-slate-400 uppercase">special</span>}
               </button>
             );
           })}
         </nav>
 
         {/* Footer */}
-        <div className="p-3 border-t border-slate-50">
-          <button className="w-full flex items-center p-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" onClick={logout}>
+        <div className="p-3 border-t border-slate-50 dark:border-slate-700">
+          <button className="w-full flex items-center p-3 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-xl transition-all" onClick={logout}>
             <HugeiconsIcon icon={Logout01Icon} size={24} />
             {isOpen && <span className="ml-3 font-medium">Keluar</span>}
           </button>

@@ -1,6 +1,7 @@
 import React from 'react';
 import ProspectCard from './ProspectCard';
 import ProspectCardCompact from './ProspectCardCompact';
+import { useSettings } from '../context/SettingsContext';
 
 const COLUMNS = [
   { id: 'New', label: 'New', color: 'bg-blue-500' },
@@ -11,6 +12,8 @@ const COLUMNS = [
 ];
 
 const KanbanBoard = ({ prospects = [], onOpenModal }) => {
+  const { settings } = useSettings();
+  
   // ← TAMBAHAN: Debugging
   console.log("🎯 KanbanBoard received prospects:", prospects);
 
@@ -42,8 +45,8 @@ const KanbanBoard = ({ prospects = [], onOpenModal }) => {
     return (
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="text-center">
-          <p className="text-slate-400 font-medium mb-2">No prospects found</p>
-          <p className="text-slate-400 text-sm">Add a new customer to get started</p>
+          <p className="text-slate-400 dark:text-slate-500 font-medium mb-2">No prospects found</p>
+          <p className="text-slate-400 dark:text-slate-500 text-sm">Add a new customer to get started</p>
         </div>
       </div>
     );
@@ -60,11 +63,11 @@ const KanbanBoard = ({ prospects = [], onOpenModal }) => {
             <div className="flex items-center justify-between mb-4 px-1">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${col.color}`} />
-                <h3 className="text-xs font-black text-slate-700 uppercase tracking-widest">
+                <h3 className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">
                   {col.label}
                 </h3>
               </div>
-              <span className="bg-slate-200 text-slate-600 text-[12px] font-bold px-2 py-0.5 rounded-full">
+              <span className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[12px] font-bold px-2 py-0.5 rounded-full">
                 {columnProspects.length}
               </span>
             </div>
@@ -73,13 +76,14 @@ const KanbanBoard = ({ prospects = [], onOpenModal }) => {
             <div className="flex-1 overflow-y-auto pr-1 scrollbar-hide space-y-3">
               {columnProspects.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-slate-400 text-sm">No {col.label.toLowerCase()} prospects</p>
+                  <p className="text-slate-400 dark:text-slate-500 text-sm">No {col.label.toLowerCase()} prospects</p>
                 </div>
               ) : (
                 columnProspects.map((item) => {
-                  // Use compact card for After Sales column, regular card for others
+                  // Use compact card for After Sales column based on user setting
                   const isAfterSalesColumn = col.id === 'After Sales';
-                  const CardComponent = isAfterSalesColumn ? ProspectCardCompact : ProspectCard;
+                  const useCompactCard = isAfterSalesColumn && settings.afterSalesCardStyle === 'compact';
+                  const CardComponent = useCompactCard ? ProspectCardCompact : ProspectCard;
                   
                   return (
                     <CardComponent

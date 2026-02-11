@@ -184,15 +184,15 @@ const ProspectCard = ({ data, onDetailsClick }) => {
   const currentPoints = currentKPI ? (currentKPI.percent / 100) * (currentKPI.kpi_weight || 0) : 0;
 
   return (
-  <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:shadow-md transition">
+  <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-sm hover:shadow-md transition">
 
     {/* HEADER */}
     <div className="flex justify-between items-start gap-3 mb-3">
       <div className="min-w-0">
-        <h4 className="text-sm font-semibold text-slate-900 truncate">
+        <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
           {customer?.pic || 'Unnamed PIC'}
         </h4>
-        <p className="text-xs text-slate-500 truncate mb-2">
+        <p className="text-xs text-slate-500 dark:text-slate-400 truncate mb-2">
           {customer?.institution || 'No institution'}
         </p>
 
@@ -203,7 +203,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
 
           {/* Show display_name if available, otherwise show sub_category */}
           {(customer?.display_name || customer?.sub_category) && (
-            <span className="px-2 py-0.5 text-[10px] font-semibold rounded border bg-slate-50 text-slate-600">
+            <span className="px-2 py-0.5 text-[10px] font-semibold rounded border bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
               {customer.display_name || customer.sub_category}
             </span>
           )}
