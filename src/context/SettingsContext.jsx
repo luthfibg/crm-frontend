@@ -18,8 +18,8 @@ export const SettingsProvider = ({ children }) => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Ensure darkMode is boolean and default is false
-        return { ...defaultSettings, ...parsed, darkMode: !!parsed.darkMode };
+        // Ensure darkMode is boolean, default to false if not set
+        return { ...defaultSettings, ...parsed, darkMode: parsed.darkMode || false };
       } catch {
         return defaultSettings;
       }
@@ -27,54 +27,30 @@ export const SettingsProvider = ({ children }) => {
     return defaultSettings;
   });
 
-  // Save to localStorage whenever settings change
+  // Apply/remove 'dark' class whenever darkMode setting changes
   useEffect(() => {
-    localStorage.setItem('appSettings', JSON.stringify(settings));
-    // Apply dark mode to document
     if (settings.darkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [settings.darkMode]);
+    // Also save to localStorage on change
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+  }, [settings]);
 
   // Update a single setting
   const updateSetting = (key, value) => {
-    setSettings(prev => {
-      // If updating darkMode, update document class immediately
-      if (key === 'darkMode') {
-        if (value) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
-      return { ...prev, [key]: value };
-    });
+    setSettings(prev => ({ ...prev, [key]: value }));
   };
 
   // Toggle a boolean setting
   const toggleSetting = (key) => {
-    setSettings(prev => {
-      const newValue = !prev[key];
-      // If toggling darkMode, update document class immediately
-      if (key === 'darkMode') {
-        if (newValue) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
-      return { ...prev, [key]: newValue };
-    });
+    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   // Reset to defaults
   const resetSettings = () => {
-    setSettings(() => {
-      document.documentElement.classList.remove('dark');
-      return defaultSettings;
-    });
+    setSettings(defaultSettings);
   };
 
   return (
