@@ -366,19 +366,19 @@ const ReportWorkspace = ({ user }) => {
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-12">
                         No
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24">
                         Sales
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
                         Pelanggan
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-56">
                         Produk
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
                         Keterangan Status
                       </th>
                       <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-80">

@@ -194,9 +194,12 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
       } else if (response.data.kpi_completed) {
         setTimeout(() => {
           const isFinalKPI = kpi.code === 'after_sales';
+          const isDealWon = kpi.code === 'deal';
           const message = isFinalKPI
             ? 'After Sales telah selesai. Penjualan akan disimpan ke history.'
-            : `KPI ${kpi.code} telah selesai 100%. Prospek naik ke status berikutnya.`;
+            : (isDealWon
+              ? 'Deal Won berhasil diselesaikan! Prospek naik ke After Sales dan tercatat di Sales History.'
+              : `KPI ${kpi.code} telah selesai 100%. Prospek naik ke status berikutnya.`);
           alert(message);
           onSuccess?.();
           onClose();
