@@ -7,9 +7,15 @@ console.log('All env vars:', import.meta.env);
 // Check if running in Tauri environment
 const isTauri = typeof window !== 'undefined' && window.__TAURI__;
 
+// PC Server's URL
 // const baseURL = import.meta.env.VITE_API_URL ||
 //   (isTauri ? 'http://127.0.0.1:8000/api' : 'http://crm-backend.local/api');
-const baseURL = 'http://backend.test/api';
+
+//local PC Dev URL
+// const baseURL = 'http://backend.test/api';
+
+// Railway deployment URL
+const baseURL = 'https://crm-backend-production-0b0c.up.railway.app/api';
 
 console.log('Final baseURL:', baseURL);
 console.log('Is Tauri:', isTauri);
