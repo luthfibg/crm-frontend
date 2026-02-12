@@ -282,7 +282,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             value={inputValues[task.id] || ''}
             onChange={(e) => handleInputChange(task.id, e.target.value)}
             rows={3}
-            className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+            className="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none resize-none placeholder-slate-400 dark:placeholder-slate-500"
           />
         );
 
@@ -293,14 +293,14 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             placeholder="Contoh: 08123456789"
             value={inputValues[task.id] || ''}
             onChange={(e) => handleInputChange(task.id, e.target.value)}
-            className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+            className="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500"
           />
         );
 
       case 'date':
         const datePhrase = detectPhrase(inputValues[task.id], 'date');
-        const dateColorClass = datePhrase?.status === 'success' ? 'border-emerald-300 bg-emerald-50' : datePhrase?.status === 'warning' ? 'border-red-300 bg-red-50' : 'border-slate-200';
-        const dateTextClass = datePhrase?.status === 'success' ? 'text-emerald-600' : datePhrase?.status === 'warning' ? 'text-red-600' : 'text-amber-600';
+        const dateColorClass = datePhrase?.status === 'success' ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/40 dark:text-slate-100' : datePhrase?.status === 'warning' ? 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/40 dark:text-slate-100' : 'border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100';
+        const dateTextClass = datePhrase?.status === 'success' ? 'text-emerald-600 dark:text-emerald-400' : datePhrase?.status === 'warning' ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400';
         return (
           <div className="space-y-2">
             <input
@@ -308,7 +308,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               placeholder="Contoh: 24-01-2026 atau 'Sudah ada target pengiriman 24-01-2026'"
               value={inputValues[task.id] || ''}
               onChange={(e) => handleInputChange(task.id, e.target.value)}
-              className={`w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none ${dateColorClass}`}
+              className={`w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500 ${dateColorClass}`}
             />
             {datePhrase && (
               <p className={`text-[10px] ${dateTextClass} font-medium flex items-center gap-1`}>
@@ -326,14 +326,14 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             placeholder="Contoh: 150 atau 150.5"
             value={inputValues[task.id] || ''}
             onChange={(e) => handleInputChange(task.id, e.target.value)}
-            className="w-full p-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+            className="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500"
           />
         );
 
       case 'currency':
         const currencyPhrase = detectPhrase(inputValues[task.id], 'currency');
-        const currencyColorClass = currencyPhrase?.status === 'success' ? 'border-emerald-300 bg-emerald-50' : currencyPhrase?.status === 'warning' ? 'border-red-300 bg-red-50' : 'border-slate-200';
-        const currencyTextClass = currencyPhrase?.status === 'success' ? 'text-emerald-600' : currencyPhrase?.status === 'warning' ? 'text-red-600' : 'text-amber-600';
+        const currencyColorClass = currencyPhrase?.status === 'success' ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/40 dark:text-slate-100' : currencyPhrase?.status === 'warning' ? 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/40 dark:text-slate-100' : 'border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100';
+        const currencyTextClass = currencyPhrase?.status === 'success' ? 'text-emerald-600 dark:text-emerald-400' : currencyPhrase?.status === 'warning' ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400';
         return (
           <div className="space-y-2">
             <input
@@ -341,7 +341,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               placeholder="Contoh: Rp 10.000.000 atau 'Sudah ada target harga Rp 10.000.000'"
               value={inputValues[task.id] || ''}
               onChange={(e) => handleInputChange(task.id, e.target.value)}
-              className={`w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none ${currencyColorClass}`}
+              className={`w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500 ${currencyColorClass}`}
             />
             {currencyPhrase && (
               <p className={`text-[10px] ${currencyTextClass} font-medium flex items-center gap-1`}>
@@ -369,7 +369,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             />
             <label
               htmlFor={`file-${task.id}`}
-              className="flex items-center gap-2 p-3 border-2 border-dashed border-slate-300 rounded-lg text-xs font-medium text-slate-500 cursor-pointer hover:bg-slate-50"
+              className="flex items-center gap-2 p-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               <HugeiconsIcon icon={Upload01Icon} size={16} />
               <span className="flex-1 truncate">
@@ -392,17 +392,17 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     if (isAlreadyCompleted && !result) {
       return (
         <div className="mt-2 space-y-2">
-          <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500 dark:text-emerald-400 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-700 rounded-lg">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-1">✓ Terverifikasi Sistem</p>
-              <p className="text-[10px] text-emerald-600 dark:text-emerald-500">Sudah diselesaikan sebelumnya</p>
+              <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-1">✓ Terverifikasi Sistem</p>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-300">Sudah diselesaikan sebelumnya</p>
             </div>
           </div>
           {task.user_input && (
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-700 rounded-lg">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Input Anda:</p>
+                <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Input Anda:</p>
                 <button
                   onClick={() => handleRevertTask(task)}
                   disabled={submitting === task.id}
@@ -421,13 +421,13 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
                       const downloadUrl = `${api.defaults.baseURL}/progress/attachment/${task.progress_id}${token ? `?token=${token}` : ''}`;
                       window.open(downloadUrl, '_blank');
                     }}
-                    className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 underline"
+                    className="text-xs text-emerald-600 dark:text-emerald-300 hover:text-emerald-800 dark:hover:text-emerald-200 underline"
                   >
                     {task.user_input}
                   </button>
                 </div>
               ) : (
-                <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-1 wrap-break-words">{task.user_input}</p>
+                <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1 wrap-break-words">{task.user_input}</p>
               )}
             </div>
           )}
@@ -438,17 +438,17 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     if (isAlreadyRejected && !result) {
       return (
         <div className="mt-2 space-y-2">
-          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <HugeiconsIcon icon={Cancel02Icon} size={16} className="text-red-500 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-700 rounded-lg">
+            <HugeiconsIcon icon={Cancel02Icon} size={16} className="text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-red-700 mb-1">✗ Ditolak Sistem</p>
-              <p className="text-[10px] text-red-600">Misi ini perlu diperbaiki</p>
+              <p className="text-xs font-bold text-red-700 dark:text-red-300 mb-1">✗ Ditolak Sistem</p>
+              <p className="text-[10px] text-red-600 dark:text-red-300">Misi ini perlu diperbaiki</p>
             </div>
           </div>
           {task.user_input && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-xs font-medium text-red-700">Input Anda:</p>
-              <p className="text-xs text-red-600 mt-1 wrap-break-words">{task.user_input}</p>
+            <div className="p-3 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-700 rounded-lg">
+              <p className="text-xs font-medium text-red-700 dark:text-red-300">Input Anda:</p>
+              <p className="text-xs text-red-700 dark:text-red-300 mt-1 wrap-break-words">{task.user_input}</p>
             </div>
           )}
           <div className="space-y-2">
@@ -456,7 +456,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             <button
               disabled={submitting === task.id}
               onClick={() => handleSubmitTask(task)}
-              className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-200 text-white rounded-lg text-xs font-bold"
+              className="w-full py-2.5 bg-amber-600 dark:bg-amber-700 hover:bg-amber-700 dark:hover:bg-amber-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white rounded-lg text-xs font-bold"
             >
               {submitting === task.id ? 'Mengirim...' : 'Perbaiki & Submit'}
             </button>
@@ -467,9 +467,9 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
 
     if (submitting === task.id) {
       return (
-        <div className="mt-2 flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <HugeiconsIcon icon={Loading03Icon} size={16} className="text-blue-500 animate-spin" />
-          <p className="text-xs font-bold text-blue-700">Sistem sedang memverifikasi...</p>
+        <div className="mt-2 flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-700 rounded-lg">
+          <HugeiconsIcon icon={Loading03Icon} size={16} className="text-blue-500 dark:text-blue-400 animate-spin" />
+          <p className="text-xs font-bold text-blue-700 dark:text-blue-300">Sistem sedang memverifikasi...</p>
         </div>
       );
     }
@@ -477,17 +477,17 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     if (result?.submitted && !result?.approved) {
       return (
         <div className="mt-2 space-y-2">
-          <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <HugeiconsIcon icon={Cancel02Icon} size={16} className="text-red-500 dark:text-red-400 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-700 rounded-lg">
+            <HugeiconsIcon icon={Cancel02Icon} size={16} className="text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-red-700 dark:text-red-400 mb-1">✗ Tidak Memenuhi Syarat</p>
-              <p className="text-[10px] text-red-600 dark:text-red-500">{result.message}</p>
+              <p className="text-xs font-bold text-red-700 dark:text-red-300 mb-1">✗ Tidak Memenuhi Syarat</p>
+              <p className="text-[10px] text-red-600 dark:text-red-300">{result.message}</p>
             </div>
           </div>
           {result.input && (
-            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-              <p className="text-xs font-medium text-red-700 dark:text-red-400">Input Anda:</p>
-              <p className="text-xs text-red-600 dark:text-red-500 mt-1 wrap-break-words">{result.input}</p>
+            <div className="p-3 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-700 rounded-lg">
+              <p className="text-xs font-medium text-red-700 dark:text-red-300">Input Anda:</p>
+              <p className="text-xs text-red-700 dark:text-red-300 mt-1 wrap-break-words">{result.input}</p>
             </div>
           )}
           <div className="space-y-2">
@@ -507,17 +507,17 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     if (result?.submitted && result?.approved) {
       return (
         <div className="mt-2 space-y-2">
-          <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500 dark:text-emerald-400 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-700 rounded-lg">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-1">✓ Terverifikasi Sistem</p>
-              <p className="text-[10px] text-emerald-600 dark:text-emerald-500">{result.message}</p>
+              <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-1">✓ Terverifikasi Sistem</p>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-300">{result.message}</p>
             </div>
           </div>
           {result.input && (
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-              <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Input Anda:</p>
-              <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-1 wrap-break-words">{result.input}</p>
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-700 rounded-lg">
+              <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Input Anda:</p>
+              <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1 wrap-break-words">{result.input}</p>
             </div>
           )}
         </div>
