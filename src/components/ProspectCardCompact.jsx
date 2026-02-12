@@ -72,13 +72,13 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
     const cat = category?.toLowerCase();
     switch (cat) {
       case 'pendidikan':
-        return 'bg-blue-50 text-blue-600 border-blue-100';
+        return 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-800';
       case 'pemerintahan':
-        return 'bg-purple-50 text-purple-600 border-purple-100';
+        return 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 border-purple-100 dark:border-purple-800';
       case 'swasta':
-        return 'bg-orange-50 text-orange-600 border-orange-100';
+        return 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-800';
       default:
-        return 'bg-slate-50 text-slate-600 border-slate-100';
+        return 'bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-100 dark:border-slate-600';
     }
   };
 
@@ -120,7 +120,7 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
           {customer?.category || 'General'}
         </span>
         {(customer?.display_name || customer?.sub_category) && (
-          <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-slate-50 text-slate-600 truncate">
+          <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-slate-50 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-100 dark:border-slate-600 truncate">
             {customer.display_name || customer.sub_category}
           </span>
         )}
@@ -130,10 +130,10 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
 
 
       {/* ACTION BUTTONS */}
-      <div className="flex items-center gap-1 pt-1 border-t border-slate-100 justify-between">
+      <div className="flex items-center gap-1 pt-1 border-t border-slate-200 dark:border-slate-700 justify-between">
         <button
           onClick={handleWhatsApp}
-          className="p-1.5 rounded hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors shrink-0"
+          className="p-1.5 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors shrink-0"
           title="WhatsApp"
         >
           <HugeiconsIcon icon={CallIcon} size={11} />
@@ -141,7 +141,7 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
 
         <button
           onClick={() => onDetailsClick?.(data)}
-          className="text-[9px] font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 px-2 py-1 rounded flex items-center gap-1 transition-colors flex-1 justify-center"
+          className="text-[9px] font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 px-2 py-1 rounded flex items-center gap-1 transition-colors flex-1 justify-center"
         >
           Details <HugeiconsIcon icon={AiChat02Icon} size={10} />
         </button>

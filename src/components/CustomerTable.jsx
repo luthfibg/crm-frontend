@@ -111,27 +111,27 @@ const CustomerTable = () => {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-        <span className="ml-3 text-slate-500 font-medium">Loading Customers Data...</span>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
+        <span className="ml-3 text-slate-500 dark:text-slate-400 font-medium">Loading Customers Data...</span>
       </div>
     );
   }
 
   return (
     <div className="h-full min-h-0 w-full flex flex-col p-4 lg:p-6">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-full min-h-0 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col h-full min-h-0 overflow-hidden">
         
         {/* Table Filter/Search */}
-        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/30 dark:bg-slate-900/20">
             <div className="relative w-72">
-                <HugeiconsIcon icon={Search01Icon} size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <HugeiconsIcon icon={Search01Icon} size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <input 
                     type="text" 
                     placeholder="Search customers..." 
-                    className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
+                    className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition-all outline-none"
                 />
             </div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                 Total: {customers.meta.total} Customers
             </div>
         </div>
@@ -139,65 +139,65 @@ const CustomerTable = () => {
         {/* The Table */}
         <div className="flex-1 overflow-auto">
           <table className="w-full text-left border-collapse">
-            <thead className="sticky top-0 bg-white z-10 shadow-sm">
-              <tr className="border-b border-slate-100">
-                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Person in Charge</th>
-                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Kategori</th>
-                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Institution & Position</th>
-                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Products</th>
-                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Contact Info</th>
-                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter">Notes</th>
-                <th className="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-tighter text-right">Actions</th>
+            <thead className="sticky top-0 bg-white dark:bg-slate-800 z-10 shadow-sm">
+              <tr className="border-b border-slate-100 dark:border-slate-700">
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Person in Charge</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Kategori</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Institution & Position</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Products</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Contact Info</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Notes</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-slate-800">
               {customers.data.map((item) => (
-                <tr key={item.id} className="group hover:bg-slate-50/80 transition-colors">
+                <tr key={item.id} className="group hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-[10px]">
+                        <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-[10px]">
                             {item.name ? item.name.charAt(0) : '?'}
                         </div>
-                        <span className="text-sm font-bold text-slate-700">{item.name}</span>
+                        <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{item.name}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
-                        <span className="text-sm text-slate-700">{item.category}</span>
+                        <span className="text-sm text-slate-700 dark:text-slate-300">{item.category}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-700">{item.institution}</span>
-                        <span className="text-[11px] text-slate-400 font-medium">{item.position}</span>
+                        <span className="text-sm font-bold text-slate-700 dark:text-slate-200">{item.institution}</span>
+                        <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">{item.position}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-xs text-slate-600 max-w-48 truncate" title={item.products}>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 max-w-48 truncate" title={item.products}>
                       {item.products || '-'}
                     </p>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1">
-                        <span className="text-[12px] text-slate-600 font-medium flex items-center gap-1">
-                            <HugeiconsIcon icon={Mail01Icon} size={12} className="text-slate-400" /> {item.email}
+                        <span className="text-[12px] text-slate-600 dark:text-slate-400 font-medium flex items-center gap-1">
+                            <HugeiconsIcon icon={Mail01Icon} size={12} className="text-slate-400 dark:text-slate-500" /> {item.email}
                         </span>
-                        <span className="text-[12px] text-slate-600 font-medium flex items-center gap-1">
-                            <HugeiconsIcon icon={CallIcon} size={12} className="text-slate-400" /> {item.phone_number}
+                        <span className="text-[12px] text-slate-600 dark:text-slate-400 font-medium flex items-center gap-1">
+                            <HugeiconsIcon icon={CallIcon} size={12} className="text-slate-400 dark:text-slate-500" /> {item.phone_number}
                         </span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-xs text-slate-500 max-w-50 truncate" title={item.notes}>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-50 truncate" title={item.notes}>
                       {item.notes || '-'}
                     </p>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 rounded-lg transition-all" onClick={() => handleEdit(item)}>
+                      <button className="p-2 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg transition-all" onClick={() => handleEdit(item)}>
                         <HugeiconsIcon icon={PencilEdit01Icon} size={18} />
                       </button>
-                      <button className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-all" onClick={() => handleDelete(item.id)}>
+                      <button className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-all" onClick={() => handleDelete(item.id)}>
                         <HugeiconsIcon icon={Delete02Icon} size={18} />
                       </button>
                     </div>
@@ -209,22 +209,22 @@ const CustomerTable = () => {
         </div>
 
         {/* Pagination Footer */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50/30 flex items-center justify-between">
-            <span className="text-xs text-slate-500 font-medium">
-                Showing page <b className="text-slate-800">{customers.meta.current_page}</b> of <b className="text-slate-800">{customers.meta.last_page}</b>
+        <div className="p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-900/20 flex items-center justify-between">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                Showing page <b className="text-slate-800 dark:text-slate-200">{customers.meta.current_page}</b> of <b className="text-slate-800 dark:text-slate-200">{customers.meta.last_page}</b>
             </span>
             <div className="flex gap-2">
                 <button 
                     onClick={() => fetchCustomers(customers.meta.current_page - 1)}
                     disabled={customers.meta.current_page === 1}
-                    className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="p-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
                 >
                     <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
                 </button>
                 <button 
                     onClick={() => fetchCustomers(customers.meta.current_page + 1)}
                     disabled={customers.meta.current_page === customers.meta.last_page}
-                    className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="p-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
                 >
                     <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
                 </button>

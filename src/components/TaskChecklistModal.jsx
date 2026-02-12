@@ -392,21 +392,21 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     if (isAlreadyCompleted && !result) {
       return (
         <div className="mt-2 space-y-2">
-          <div className="flex items-start gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500 dark:text-emerald-400 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-emerald-700 mb-1">✓ Terverifikasi Sistem</p>
-              <p className="text-[10px] text-emerald-600">Sudah diselesaikan sebelumnya</p>
+              <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-1">✓ Terverifikasi Sistem</p>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-500">Sudah diselesaikan sebelumnya</p>
             </div>
           </div>
           {task.user_input && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-medium text-emerald-700">Input Anda:</p>
+                <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Input Anda:</p>
                 <button
                   onClick={() => handleRevertTask(task)}
                   disabled={submitting === task.id}
-                  className="flex items-center gap-1 px-2 py-1 bg-amber-100 hover:bg-amber-200 disabled:bg-slate-200 text-amber-700 disabled:text-slate-400 rounded text-[10px] font-bold"
+                  className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/40 hover:bg-amber-200 dark:hover:bg-amber-800 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-amber-700 dark:text-amber-400 disabled:text-slate-400 dark:disabled:text-slate-500 rounded text-[10px] font-bold"
                 >
                   <HugeiconsIcon icon={Undo02Icon} size={12} />
                   Revert
@@ -414,20 +414,20 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               </div>
               {['file', 'image', 'video'].includes(task.input_type) && task.progress_id ? (
                 <div className="flex items-center gap-2 mt-1">
-                  <HugeiconsIcon icon={File01Icon} size={14} className="text-emerald-600" />
+                  <HugeiconsIcon icon={File01Icon} size={14} className="text-emerald-600 dark:text-emerald-400" />
                   <button
                     onClick={() => {
                       const token = localStorage.getItem('token');
                       const downloadUrl = `${api.defaults.baseURL}/progress/attachment/${task.progress_id}${token ? `?token=${token}` : ''}`;
                       window.open(downloadUrl, '_blank');
                     }}
-                    className="text-xs text-emerald-600 hover:text-emerald-800 underline"
+                    className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 underline"
                   >
                     {task.user_input}
                   </button>
                 </div>
               ) : (
-                <p className="text-xs text-emerald-600 mt-1 wrap-break-words">{task.user_input}</p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-1 wrap-break-words">{task.user_input}</p>
               )}
             </div>
           )}
@@ -477,17 +477,17 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     if (result?.submitted && !result?.approved) {
       return (
         <div className="mt-2 space-y-2">
-          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <HugeiconsIcon icon={Cancel02Icon} size={16} className="text-red-500 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <HugeiconsIcon icon={Cancel02Icon} size={16} className="text-red-500 dark:text-red-400 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-red-700 mb-1">✗ Tidak Memenuhi Syarat</p>
-              <p className="text-[10px] text-red-600">{result.message}</p>
+              <p className="text-xs font-bold text-red-700 dark:text-red-400 mb-1">✗ Tidak Memenuhi Syarat</p>
+              <p className="text-[10px] text-red-600 dark:text-red-500">{result.message}</p>
             </div>
           </div>
           {result.input && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-xs font-medium text-red-700">Input Anda:</p>
-              <p className="text-xs text-red-600 mt-1 wrap-break-words">{result.input}</p>
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-xs font-medium text-red-700 dark:text-red-400">Input Anda:</p>
+              <p className="text-xs text-red-600 dark:text-red-500 mt-1 wrap-break-words">{result.input}</p>
             </div>
           )}
           <div className="space-y-2">
@@ -495,7 +495,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             <button
               disabled={submitting === task.id}
               onClick={() => handleSubmitTask(task)}
-              className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold"
+              className="w-full py-2.5 bg-amber-600 dark:bg-amber-700 hover:bg-amber-700 dark:hover:bg-amber-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white dark:text-white rounded-lg text-xs font-bold"
             >
               Perbaiki & Submit
             </button>
@@ -507,17 +507,17 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
     if (result?.submitted && result?.approved) {
       return (
         <div className="mt-2 space-y-2">
-          <div className="flex items-start gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-2 p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="text-emerald-500 dark:text-emerald-400 mt-0.5 shrink-0" />
             <div className="flex-1">
-              <p className="text-xs font-bold text-emerald-700 mb-1">✓ Terverifikasi Sistem</p>
-              <p className="text-[10px] text-emerald-600">{result.message}</p>
+              <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400 mb-1">✓ Terverifikasi Sistem</p>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-500">{result.message}</p>
             </div>
           </div>
           {result.input && (
-            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-              <p className="text-xs font-medium text-emerald-700">Input Anda:</p>
-              <p className="text-xs text-emerald-600 mt-1 wrap-break-words">{result.input}</p>
+            <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+              <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Input Anda:</p>
+              <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-1 wrap-break-words">{result.input}</p>
             </div>
           )}
         </div>
@@ -530,7 +530,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
         <button
           disabled={submitting === task.id || (!inputValues[task.id] && !fileNames[task.id])}
           onClick={() => handleSubmitTask(task)}
-          className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 text-white rounded-lg text-xs font-bold"
+          className="w-full py-2.5 bg-indigo-600 dark:bg-indigo-700 hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white disabled:text-slate-500 rounded-lg text-xs font-bold"
         >
           {submitting === task.id ? 'Mengirim...' : 'Submit Misi'}
         </button>
@@ -540,57 +540,57 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative bg-white w-[95%] md:w-[80%] lg:w-[55%] max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="p-6 border-b border-slate-100">
+      <div className="relative bg-white dark:bg-slate-800 w-[95%] md:w-[80%] lg:w-[55%] max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-700 dark:bg-slate-800/50">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <span className="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-0.5 rounded mb-1 inline-block uppercase tracking-tighter">
+              <span className="bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-[10px] font-black px-2 py-0.5 rounded mb-1 inline-block uppercase tracking-tighter">
                 {kpi?.code}
               </span>
-              <h3 className="text-lg font-black text-slate-800">{customer?.pic}</h3>
-              <p className="text-xs text-slate-500 font-medium">{customer?.institution}</p>
+              <h3 className="text-lg font-black text-slate-800 dark:text-slate-100">{customer?.pic}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{customer?.institution}</p>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+            <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-slate-400 dark:text-slate-500">
               <HugeiconsIcon icon={CancelCircleIcon} size={20} />
             </button>
           </div>
 
           <div className="space-y-1">
             <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider">
-              <span className="text-slate-400">KPI Progress</span>
-              <span className={Math.round(stats?.percent || 0) === 100 ? 'text-emerald-600' : 'text-indigo-600'}>
+              <span className="text-slate-400 dark:text-slate-500">KPI Progress</span>
+              <span className={Math.round(stats?.percent || 0) === 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}>
                 {Math.round(stats?.percent || 0)}%
               </span>
             </div>
-            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
               <div 
-                className={`h-full transition-all duration-500 ${Math.round(stats?.percent || 0) === 100 ? 'bg-emerald-600' : 'bg-indigo-600'}`} 
+                className={`h-full transition-all duration-500 ${Math.round(stats?.percent || 0) === 100 ? 'bg-emerald-600 dark:bg-emerald-500' : 'bg-indigo-600 dark:bg-indigo-500'}`} 
                 style={{ width: `${stats?.percent || 0}%` }} 
               />
             </div>
           </div>
         </div>
 
-        <div className="p-6 space-y-4 overflow-y-auto flex-1 bg-slate-50/30">
+        <div className="p-6 space-y-4 overflow-y-auto flex-1 bg-slate-50/30 dark:bg-slate-900/20">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <HugeiconsIcon icon={InformationCircleIcon} size={16} className="text-indigo-500" />
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Daily Missions</span>
+              <HugeiconsIcon icon={InformationCircleIcon} size={16} className="text-indigo-500 dark:text-indigo-400" />
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight">Daily Missions</span>
             </div>
             {(approvedCount > 0 || rejectedCount > 0) && (
               <div className="flex gap-2 text-[10px] font-bold">
-                {approvedCount > 0 && <span className="text-emerald-600">✓ {approvedCount}</span>}
-                {rejectedCount > 0 && <span className="text-red-600">✗ {rejectedCount}</span>}
-                <span className="text-slate-400">/ {totalTasks}</span>
+                {approvedCount > 0 && <span className="text-emerald-600 dark:text-emerald-400">✓ {approvedCount}</span>}
+                {rejectedCount > 0 && <span className="text-red-600 dark:text-red-400">✗ {rejectedCount}</span>}
+                <span className="text-slate-400 dark:text-slate-500">/ {totalTasks}</span>
               </div>
             )}
           </div>
 
           {(!daily_goals || daily_goals.length === 0) && (
-            <div className="p-4 rounded-xl border-2 border-amber-200 bg-amber-50 text-center">
-              <p className="text-sm font-bold text-amber-700 mb-1">Tidak ada misi tersedia</p>
+            <div className="p-4 rounded-xl border-2 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 text-center">
+              <p className="text-sm font-bold text-amber-700 dark:text-amber-400 mb-1">Tidak ada misi tersedia</p>
             </div>
           )}
           
@@ -630,22 +630,22 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           })}
 
           {summaryRequired && (
-            <div className="mt-6 p-4 rounded-xl border-2 border-indigo-200 bg-indigo-50">
+            <div className="mt-6 p-4 rounded-xl border-2 border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20">
               <div className="flex items-center gap-2 mb-3">
-                <HugeiconsIcon icon={CheckmarkSquare02Icon} size={18} className="text-indigo-600" />
-                <span className="text-sm font-bold text-indigo-700 uppercase tracking-tight">Kesimpulan</span>
+                <HugeiconsIcon icon={CheckmarkSquare02Icon} size={18} className="text-indigo-600 dark:text-indigo-400" />
+                <span className="text-sm font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-tight">Kesimpulan</span>
               </div>
               <textarea
                 placeholder="Tulis kesimpulan Anda di sini..."
                 value={summaryValue}
                 onChange={(e) => setSummaryValue(e.target.value)}
                 rows={4}
-                className="w-full p-3 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+                className="w-full p-3 text-sm border border-indigo-200 dark:border-indigo-800 dark:bg-slate-700 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none resize-none placeholder-slate-400 dark:placeholder-slate-500"
               />
               <button
                 disabled={submittingSummary || !summaryValue || summaryValue.trim().length < 5}
                 onClick={handleSubmitSummary}
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-200 text-white rounded-lg text-sm font-bold mt-3"
+                className="w-full py-3 bg-emerald-600 dark:bg-emerald-700 hover:bg-emerald-700 dark:hover:bg-emerald-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white disabled:text-slate-500 rounded-lg text-sm font-bold mt-3"
               >
                 {submittingSummary ? 'Menyimpan...' : 'Submit Kesimpulan & Lanjut'}
               </button>
@@ -653,13 +653,13 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           )}
         </div>
 
-        <div className="p-4 bg-white border-t border-slate-100">
+        <div className="p-4 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700">
           {rejectedCount > 0 && !summaryRequired && (
-            <div className="bg-amber-50 border border-amber-300 rounded-lg p-3 mb-3">
-              <p className="text-xs font-bold text-amber-900 mb-1">⚠️ Terdapat {rejectedCount} misi yang ditolak</p>
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-800 rounded-lg p-3 mb-3">
+              <p className="text-xs font-bold text-amber-900 dark:text-amber-400 mb-1">⚠️ Terdapat {rejectedCount} misi yang ditolak</p>
             </div>
           )}
-          <p className="text-[10px] text-center text-slate-400 font-medium">
+          <p className="text-[10px] text-center text-slate-400 dark:text-slate-500 font-medium">
             {summaryRequired ? '⚡ Wajib mengisi Kesimpulan' : 'Sistem Verifikasi Otomatis'}
           </p>
         </div>

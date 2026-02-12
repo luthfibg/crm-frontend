@@ -98,7 +98,7 @@ const ProspectWorkspace = () => {
   };
 
   return (
-    <main className="flex-1 overflow-hidden flex flex-col h-full bg-slate-50/50">
+    <main className="flex-1 overflow-hidden flex flex-col h-full bg-slate-50/50 dark:bg-slate-900">
       <AddCustomerModal 
         isOpen={isAddCustomerOpen} 
         onClose={() => setIsAddCustomerOpen(false)} 
@@ -123,17 +123,17 @@ const ProspectWorkspace = () => {
       />
 
       {/* Header Section */}
-      <div className="p-6 border-b border-slate-100 bg-linear-to-br from-indigo-50/50 to-purple-50/30">
+      <div className="p-6 border-b border-slate-100 dark:border-slate-700 bg-linear-to-br from-indigo-50/50 to-purple-50/30 dark:from-slate-700/30 dark:to-slate-700/20">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-orange-100 rounded-xl">
               <HugeiconsIcon icon={WorkflowSquare01Icon} className="w-6 h-6 text-orange-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-800">
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
                 {view === 'pipeline' ? 'Prospect Pipeline' : view === 'customer' ? 'Customer Database' : 'Sales History'}
               </h2>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                 {view === 'pipeline' ?
                   filterType === 'all'
                     ? `Saat ini ada ${prospects.length} prospek aktif`
@@ -148,11 +148,11 @@ const ProspectWorkspace = () => {
           {/* Filter Dropdown - Only show in pipeline view */}
           {view === 'pipeline' && (
             <div className="flex items-center gap-2">
-              <HugeiconsIcon icon={FilterIcon} size={16} className="text-slate-400" />
+              <HugeiconsIcon icon={FilterIcon} size={16} className="text-slate-400 dark:text-slate-500" />
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="px-3 py-2 border border-slate-200 rounded-lg text-xs font-medium bg-white text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-medium bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 {filterOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -168,14 +168,14 @@ const ProspectWorkspace = () => {
             <>
               {/* History Button - from pipeline */}
               <button onClick={() => setView('history')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
                 <HugeiconsIcon icon={WorkHistoryIcon} size={18} />
                 History
               </button>
 
               {/* Database Button - from pipeline */}
               <button onClick={() => setView('customer')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
                 <HugeiconsIcon icon={ContactBookIcon} size={18} />
                 View Database
               </button>
@@ -186,14 +186,14 @@ const ProspectWorkspace = () => {
             <>
               {/* History Button - from customer */}
               <button onClick={() => setView('history')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
                 <HugeiconsIcon icon={WorkHistoryIcon} size={18} />
                 History
               </button>
 
               {/* Pipeline Button - from customer */}
               <button onClick={() => setView('pipeline')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
                 <HugeiconsIcon icon={WorkflowSquare01Icon} size={18} />
                 View Pipeline
               </button>
@@ -204,14 +204,14 @@ const ProspectWorkspace = () => {
             <>
               {/* Pipeline Button - from history */}
               <button onClick={() => setView('pipeline')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
                 <HugeiconsIcon icon={WorkflowSquare01Icon} size={18} />
                 View Pipeline
               </button>
 
               {/* Database Button - from history */}
               <button onClick={() => setView('customer')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white text-slate-600 border-slate-200 hover:bg-slate-50">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
                 <HugeiconsIcon icon={ContactBookIcon} size={18} />
                 View Database
               </button>
@@ -243,14 +243,14 @@ const ProspectWorkspace = () => {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-              <p className="text-slate-500">Loading prospects...</p>
+              <p className="text-slate-500 dark:text-slate-400">Loading prospects...</p>
             </div>
           </div>
         ) : error ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <p className="text-red-600 font-medium mb-2">Error loading data</p>
-              <p className="text-slate-500 text-sm">{error}</p>
+              <p className="text-red-600 dark:text-red-400 font-medium mb-2">Error loading data</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">{error}</p>
               <button 
                 onClick={() => setRefreshKey(k => k + 1)}
                 className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
