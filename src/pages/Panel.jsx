@@ -10,7 +10,7 @@ import ReportWorkspace from '../components/ReportWorkspace';
 import ProductWorkspace from '../components/ProductWorkspace';
 
 const Panel = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('sales');
   const { user } = useAuth();
 
@@ -61,10 +61,10 @@ const Panel = () => {
       </div>
 
       {/* Mobile Overlay */}
-      {!isOpen && (
+      {isOpen && (
         <div 
           className="lg:hidden fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40"
-          onClick={() => setIsOpen(true)}
+          onClick={() => setIsOpen(false)}
         />
       )}
     </div>
