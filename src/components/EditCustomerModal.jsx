@@ -143,46 +143,46 @@ useEffect(() => {
 
   return (
     <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white w-[95%] md:w-[80%] lg:w-[55%] max-w-5xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center shrink-0">
-          <h3 className="text-lg font-black text-slate-800">Edit Customer</h3>
-          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+      <div className="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white dark:bg-slate-800 w-[95%] md:w-[80%] lg:w-[55%] max-w-5xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] flex flex-col">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center shrink-0 dark:bg-slate-800/50">
+          <h3 className="text-lg font-black text-slate-800 dark:text-slate-100">Edit Customer</h3>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-slate-400 dark:text-slate-500">
             <HugeiconsIcon icon={CancelCircleIcon} size={20} />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4 dark:bg-slate-800">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2 space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Person In Charge *</label>
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Person In Charge *</label>
               <input
                 required
                 type="text"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none transition-all placeholder-slate-400 dark:placeholder-slate-500"
                 value={formData.pic}
                 onChange={(e) => setFormData({ ...formData, pic: e.target.value })}
                 placeholder="Full Name"
               />
             </div>
             <div className="md:col-span-2 space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer Category *</label>
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Customer Category *</label>
               <select
                 required
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none appearance-none"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none appearance-none"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
               >
-                <option value="" className="text-slate-400">-- Select Category --</option>
+                <option value="" className="text-slate-400 dark:text-slate-600">-- Select Category --</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
             </div>
             <div className="md:col-span-2 space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Customer Sub Category</label>
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Customer Sub Category</label>
               <select
                 disabled={formData.category !== 'Pemerintahan'}
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
                 value={formData.sub_category}
                 onChange={(e) => setFormData({ ...formData, sub_category: e.target.value })}
               >
@@ -193,40 +193,40 @@ useEffect(() => {
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Institution *</label>
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Institution *</label>
               <input
                 type="text"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500"
                 value={formData.institution}
                 onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
                 placeholder="Company Name"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Position</label>
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Position</label>
               <input
                 type="text"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500"
                 value={formData.position}
                 onChange={(e) => setFormData({ ...formData, position: e.target.value })}
                 placeholder="e.g. CEO / Manager"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Email</label>
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Email</label>
               <input
                 type="email"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="email@example.com"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Phone Number *</label>
+              <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Phone Number *</label>
               <input
                 type="text"
-                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500"
                 value={formData.phone_number}
                 onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
                 placeholder="+62..."
@@ -234,84 +234,84 @@ useEffect(() => {
             </div>
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Notes</label>
+            <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Notes</label>
             <textarea
               rows="3"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none"
+              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none resize-none placeholder-slate-400 dark:placeholder-slate-500"
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Any additional info..."
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Products <span className="text-slate-400 font-normal">(optional)</span>
+            <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              Products <span className="text-slate-400 dark:text-slate-500 font-normal">(optional)</span>
             </label>
             {loadingProducts ? (
               <div className="flex items-center justify-center py-4">
-                <div className="w-6 h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-                <span className="ml-2 text-xs text-slate-500">Memuat produk...</span>
+                <div className="w-6 h-6 border-2 border-indigo-200 dark:border-indigo-800 border-t-indigo-600 dark:border-t-indigo-400 rounded-full animate-spin" />
+                <span className="ml-2 text-xs text-slate-500 dark:text-slate-400">Memuat produk...</span>
               </div>
             ) : products.length === 0 ? (
-              <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 text-center">
-                <HugeiconsIcon icon={PackageIcon} className="w-6 h-6 text-slate-300 mx-auto mb-2" />
-                <p className="text-xs text-slate-500">Tidak ada produk aktif</p>
-                <p className="text-[10px] text-slate-400 mt-1">Tambahkan produk di halaman Produk</p>
+              <div className="p-4 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-700 text-center">
+                <HugeiconsIcon icon={PackageIcon} className="w-6 h-6 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
+                <p className="text-xs text-slate-500 dark:text-slate-400">Tidak ada produk aktif</p>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Tambahkan produk di halaman Produk</p>
               </div>
             ) : (
-              <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-xl p-2 space-y-1">
+              <div className="max-h-40 overflow-y-auto border border-slate-200 dark:border-slate-600 rounded-xl p-2 space-y-1 dark:bg-slate-700">
                 {products.map(product => (
                   <label
                     key={product.id}
-                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${selectedProductIds.includes(product.id) ? 'bg-indigo-50 border border-indigo-200' : 'hover:bg-slate-50'}`}
+                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${selectedProductIds.includes(product.id) ? 'bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800' : 'hover:bg-slate-50 dark:hover:bg-slate-600'}`}
                   >
                     <input
                       type="checkbox"
                       checked={selectedProductIds.includes(product.id)}
                       onChange={() => handleProductToggle(product.id)}
-                      className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500"
+                      className="w-4 h-4 text-indigo-600 dark:accent-indigo-600 border-slate-300 dark:border-slate-500 rounded focus:ring-indigo-500 dark:focus:ring-indigo-400"
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm font-medium text-slate-700 block truncate">{product.name}</span>
-                      <span className="text-xs text-slate-500">Rp {Number(product.default_price || 0).toLocaleString('id-ID')}</span>
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200 block truncate">{product.name}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">Rp {Number(product.default_price || 0).toLocaleString('id-ID')}</span>
                     </div>
-                    <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300 shrink-0" />
+                    <HugeiconsIcon icon={PackageIcon} className="w-4 h-4 text-slate-300 dark:text-slate-600 shrink-0" />
                   </label>
                 ))}
               </div>
             )}
             {selectedProductIds.length > 0 && (
-              <p className="text-xs text-indigo-600">{selectedProductIds.length} produk dipilih</p>
+              <p className="text-xs text-indigo-600 dark:text-indigo-400">{selectedProductIds.length} produk dipilih</p>
             )}
           </div>
 
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <label className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
               Custom Creation Date/Time
             </label>
             <input
               type="datetime-local"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 dark:text-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none"
               value={formData.created_at}
               onChange={(e) => setFormData({ ...formData, created_at: e.target.value })}
             />
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
               Leave empty to use current date/time. Set a past date for late data entry.
             </p>
           </div>
-          <div className="shrink-0 border-t border-slate-100 p-6">
+          <div className="shrink-0 border-t border-slate-100 dark:border-slate-700 p-6 dark:bg-slate-800">
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3 text-sm font-bold text-slate-500 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors"
+                className="flex-1 py-3 text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-all"
+                className="flex-1 py-3 bg-indigo-600 dark:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-indigo-900/50 hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:opacity-50 disabled:dark:opacity-40 flex items-center justify-center gap-2 transition-all"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
