@@ -229,7 +229,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
       {/* Status Time Bubble */}
       {statusTimeText && (
         <div
-          className="flex items-center gap-1 text-red-600 relative group cursor-pointer"
+          className="flex items-center gap-1 text-red-600 dark:text-red-400 relative group cursor-pointer"
           onMouseEnter={e => {
             setShowStatusTooltip(true);
             const rect = e.currentTarget.getBoundingClientRect();
@@ -245,7 +245,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
           <span>{statusTimeText}</span>
           {showStatusTooltip && (
             <div
-              className="absolute z-50 top-full mt-1 bg-white text-slate-700 text-[10px] px-2 py-1.5 rounded shadow-lg border border-slate-200 max-w-xs wrap-break-words whitespace-pre-line min-w-32"
+              className="absolute z-50 top-full mt-1 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] px-2 py-1.5 rounded shadow-lg border border-slate-200 dark:border-slate-600 max-w-xs wrap-break-words whitespace-pre-line min-w-32"
               style={statusTooltipPos}
             >
               {getStatusTooltipText()}
@@ -255,7 +255,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
       )}
       {/* Last FU Bubble */}
       <div
-        className="flex items-center gap-1 text-blue-600 relative group cursor-pointer"
+        className="flex items-center gap-1 text-blue-600 dark:text-blue-400 relative group cursor-pointer"
         onMouseEnter={e => {
           setShowFUTooltip(true);
           const rect = e.currentTarget.getBoundingClientRect();
@@ -271,7 +271,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
         <span>{lastFUText ? getFUDisplayText(lastFUText) : 'Belum FU'}</span>
         {showFUTooltip && (
           <div
-            className="absolute z-50 top-full mt-1 bg-white text-slate-700 text-[10px] px-2 py-1.5 rounded shadow-lg border border-slate-200 max-w-xs wrap-break-words whitespace-pre-line min-w-32"
+            className="absolute z-50 top-full mt-1 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] px-2 py-1.5 rounded shadow-lg border border-slate-200 dark:border-slate-600 max-w-xs wrap-break-words whitespace-pre-line min-w-32"
             style={fuTooltipPos}
           >
             {getFUTooltipText()}
@@ -282,32 +282,32 @@ const ProspectCard = ({ data, onDetailsClick }) => {
 
     {/* CURRENT KPI */}
     {currentKPI && (
-      <div className="mb-3 p-2.5 bg-indigo-50/50 rounded border border-indigo-100">
+      <div className="mb-3 p-2.5 bg-indigo-50/50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800">
         <div className="flex justify-between items-start mb-1.5">
           <div className="flex flex-col flex-1 min-w-0 pr-2">
-            <span className="text-[10px] font-semibold text-indigo-600 uppercase tracking-wide mb-0.5">
+            <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-0.5">
               Current Stage
             </span>
-            <span className="text-xs font-medium text-indigo-700 leading-tight line-clamp-2">
+            <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300 leading-tight line-clamp-2">
               {currentKPI.kpi_description}
             </span>
           </div>
           <div className="text-right shrink-0">
-            <span className="text-sm font-bold text-indigo-600 block leading-none">
+            <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400 block leading-none">
               {Math.round(currentKPI.percent)}%
             </span>
-            <span className="text-[10px] text-indigo-500 font-medium mt-0.5 block">
+            <span className="text-[10px] text-indigo-500 dark:text-indigo-400 font-medium mt-0.5 block">
               {formatPoints(currentPoints)}/{currentKPI.kpi_weight} pts
             </span>
           </div>
         </div>
-        <div className="h-1.5 w-full bg-indigo-100 rounded-full overflow-hidden mb-1">
+        <div className="h-1.5 w-full bg-indigo-100 dark:bg-indigo-800 rounded-full overflow-hidden mb-1">
           <div 
-            className="h-full bg-indigo-500 rounded-full transition-all duration-300" 
+            className="h-full bg-indigo-500 dark:bg-indigo-400 rounded-full transition-all duration-300" 
             style={{ width: `${currentKPI.percent}%` }} 
           />
         </div>
-        <div className="text-[10px] text-indigo-600 font-medium">
+        <div className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">
           {currentKPI.completed_count}/{currentKPI.assigned_count} tasks selesai
         </div>
       </div>
@@ -316,18 +316,18 @@ const ProspectCard = ({ data, onDetailsClick }) => {
     {/* PRODUCTS BOX - Hanya tampilkan jika ada produk */}
     <div 
       onClick={handleProductClick}
-      className="mb-3 p-2.5 bg-emerald-50/50 rounded border border-emerald-100 cursor-pointer hover:bg-emerald-100 hover:border-emerald-200 transition-colors"
+      className="mb-3 p-2.5 bg-emerald-50/50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-800 cursor-pointer hover:bg-emerald-100 dark:hover:bg-emerald-900/30 hover:border-emerald-200 dark:hover:border-emerald-700 transition-colors"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="p-1.5 bg-emerald-100 rounded-lg shrink-0">
-            <HugeiconsIcon icon={PackageIcon} size={12} className="text-emerald-600" />
+          <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/40 rounded-lg shrink-0">
+            <HugeiconsIcon icon={PackageIcon} size={12} className="text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wide block">
+            <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide block">
               Produk
             </span>
-            <span className="text-xs font-medium text-emerald-700 leading-tight line-clamp-2 block relative">
+            <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300 leading-tight line-clamp-2 block relative">
               {customer?.products && customer.products.length > 0 
                 ? customer.products.map(p => p.name).join(', ')
                 : 'Tidak ada produk'
@@ -385,15 +385,15 @@ const ProspectCard = ({ data, onDetailsClick }) => {
     )}
 
     {/* FOOTER */}
-    <div className="flex justify-between items-center pt-2.5 border-t border-slate-100">
-      <span className="text-xs text-slate-600 font-medium">
+    <div className="flex justify-between items-center pt-2.5 border-t border-slate-200 dark:border-slate-700">
+      <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">
         KPI: <span className="font-semibold">{kpi?.code || 'N/A'}</span>
       </span>
 
       <div className="flex items-center gap-1.5">
         <button 
           onClick={handleWhatsApp}
-          className="p-1 rounded hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-colors"
+          className="p-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
           title="Hubungi via WhatsApp"
         >
           <HugeiconsIcon icon={CallIcon} size={12} />
@@ -401,7 +401,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
 
         <button
           onClick={() => onDetailsClick?.(data)}
-          className="text-xs font-medium text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 px-2 py-1 rounded flex items-center gap-1 transition-colors"
+          className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 px-2 py-1 rounded flex items-center gap-1 transition-colors"
         >
           Checklist <HugeiconsIcon icon={AiChat02Icon} size={12} />
         </button>
@@ -410,7 +410,7 @@ const ProspectCard = ({ data, onDetailsClick }) => {
         {user.is_developer_mode ? (
           <button
             onClick={() => handleResetProspect(customer.id)}
-            className="p-1 rounded bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors"
+            className="p-1 rounded bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 hover:bg-red-500 dark:hover:bg-red-600 hover:text-white transition-colors"
             title="Developer: Reset Prospect Data"
           >
             <HugeiconsIcon icon={Delete02Icon} size={12} />

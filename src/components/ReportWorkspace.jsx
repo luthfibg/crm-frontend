@@ -156,37 +156,37 @@ const ReportWorkspace = ({ user }) => {
   return (
     <main className="flex-1 p-4 lg:p-6 overflow-auto">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
           {/* Header */}
-          <div className="p-6 border-b border-slate-100 bg-linear-to-br from-indigo-50/50 to-purple-50/30">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-700 bg-linear-to-br from-indigo-50/50 to-purple-50/30 dark:from-slate-700/30 dark:to-slate-700/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-indigo-100 rounded-xl">
                   <BarChart3 className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800">Laporan Progress Sales</h2>
-                  <p className="text-sm text-slate-500 mt-0.5">Generate dan export laporan progress prospek</p>
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Laporan Progress Sales</h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Generate dan export laporan progress prospek</p>
                 </div>
               </div>
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl shadow-sm">
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl shadow-sm">
                 <FileText className="w-4 h-4 text-slate-400" />
-                <span className="text-xs font-medium text-slate-600">PDF • Excel • Word</span>
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">PDF • Excel • Word</span>
               </div>
             </div>
           </div>
 
           {/* Filter Controls */}
-          <div className="p-6 bg-slate-50/30 border-b border-slate-100">
+          <div className="p-6 bg-slate-50/30 dark:bg-slate-700/20 border-b border-slate-100 dark:border-slate-700">
             <div className="flex items-center gap-2 mb-4">
-              <Filter className="w-4 h-4 text-slate-400" />
-              <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">Filter Laporan</h3>
+              <Filter className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+              <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wide">Filter Laporan</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Range Selector */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide flex items-center gap-2">
                   <CalendarRange className="w-3.5 h-3.5" />
                   Rentang Waktu
                 </label>
@@ -196,7 +196,7 @@ const ReportWorkspace = ({ user }) => {
                     className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                       range === 'daily' 
                         ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' 
-                        : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
+                        : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-indigo-300 dark:hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-600'
                     }`}
                     title="Tampilkan prospek yang mengisi daily goals pada tanggal tersebut"
                   >
@@ -207,14 +207,14 @@ const ReportWorkspace = ({ user }) => {
                     className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                       range === 'monthly' 
                         ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' 
-                        : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
+                        : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:border-indigo-300 dark:hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-600'
                     }`}
                     title="Tampilkan prospek yang mengubah status dalam bulan tersebut"
                   >
                     Bulanan
                   </button>
                 </div>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[10px] text-slate-400 dark:text-slate-500">
                   {range === 'daily' 
                     ? 'Berdasarkan pengisian daily goals pada hari tersebut' 
                     : 'Berdasarkan perubahan status dalam bulan tersebut'}
@@ -223,7 +223,7 @@ const ReportWorkspace = ({ user }) => {
 
               {/* Date/Month Picker */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide flex items-center gap-2">
                   <Calendar className="w-3.5 h-3.5" />
                   {range === 'daily' ? 'Pilih Tanggal' : 'Pilih Bulan'}
                 </label>
@@ -233,28 +233,28 @@ const ReportWorkspace = ({ user }) => {
                       type="date" 
                       value={date} 
                       onChange={(e) => setDate(e.target.value)} 
-                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
                     />
                   ) : (
                     <input 
                       type="month" 
                       value={month} 
                       onChange={(e) => setMonth(e.target.value)} 
-                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                      className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
                     />
                   )}
                 </div>
               </div>
               {/* Format Selector */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide flex items-center gap-2">
                   <FileText className="w-3.5 h-3.5" />
                   Format Export
                 </label>
                 <select 
                   value={format} 
                   onChange={(e) => setFormat(e.target.value)} 
-                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none appearance-none cursor-pointer"
+                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none appearance-none cursor-pointer"
                   style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
                     backgroundPosition: 'right 0.5rem center',
@@ -271,7 +271,7 @@ const ReportWorkspace = ({ user }) => {
 
               {/* User Filter */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide flex items-center gap-2">
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide flex items-center gap-2">
                   <Users className="w-3.5 h-3.5" />
                   Sales Person
                 </label>
@@ -279,7 +279,7 @@ const ReportWorkspace = ({ user }) => {
                   <select 
                     value={userId} 
                     onChange={(e) => setUserId(e.target.value)} 
-                    className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none appearance-none cursor-pointer"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none appearance-none cursor-pointer"
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
                       backgroundPosition: 'right 0.5rem center',
@@ -300,17 +300,17 @@ const ReportWorkspace = ({ user }) => {
                     type="text" 
                     value={user?.name || ''} 
                     disabled 
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-500 cursor-not-allowed"
+                    className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-500 dark:text-slate-400 cursor-not-allowed"
                   />
                 )}
               </div>
             </div>
             {/* Action Buttons */}
-            <div className="flex items-center gap-3 mt-6 pt-4 border-t border-slate-200">
+            <div className="flex items-center gap-3 mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
               <button 
                 onClick={fetchPreview} 
                 disabled={previewLoading}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600 hover:border-slate-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw className={`w-4 h-4 ${previewLoading ? 'animate-spin' : ''}`} />
                 {previewLoading ? 'Memuat...' : 'Refresh Preview'}
@@ -326,7 +326,7 @@ const ReportWorkspace = ({ user }) => {
               </button>
 
               {previewRows.length > 0 && (
-                <div className="ml-auto text-xs text-slate-500 font-medium">
+                <div className="ml-auto text-xs text-slate-500 dark:text-slate-400 font-medium">
                   Menampilkan {previewRows.length} data
                 </div>
               )}
@@ -334,80 +334,80 @@ const ReportWorkspace = ({ user }) => {
           </div>
           {/* Error Message */}
           {error && (
-            <div className="mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+            <div className="mx-6 mt-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl flex items-start gap-3">
               <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                 <span className="text-white text-xs font-bold">!</span>
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-red-800">{error}</p>
+                <p className="text-sm font-semibold text-red-800 dark:text-red-200">{error}</p>
               </div>
             </div>
           )}
 
           {/* Preview Table */}
-          <div className="p-6">
+          <div className="p-6 bg-white dark:bg-slate-800">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-slate-100 rounded-lg">
-                  <BarChart3 className="w-4 h-4 text-slate-600" />
+                <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                  <BarChart3 className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Preview Data</h3>
-                  <p className="text-xs text-slate-500">Sample data prospek dengan progress</p>
+                  <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">Preview Data</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Sample data prospek dengan progress</p>
                 </div>
               </div>
             </div>
 
-            <div className="overflow-hidden border border-slate-200 rounded-xl">
+            <div className="overflow-hidden border border-slate-200 dark:border-slate-700 rounded-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
-                  <thead className="bg-slate-50 border-b border-slate-200">
+                  <thead className="bg-slate-50 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-700">
                     <tr>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-12">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-12">
                         No
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-24">
                         Sales
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-36">
                         Pelanggan
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-56">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-56">
                         Produk
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-28">
                         Status
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-28">
                         Keterangan Status
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-80">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-80">
                         Kesimpulan
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-28">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-28">
                         Harga Penawaran
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-24">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-24">
                         Harga Deal
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-36">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-36">
                         Jadwal Kunjungan Presales
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-32">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-32">
                         Garansi Unit/Barang
                       </th>
-                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 uppercase tracking-wide w-32">
+                      <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide w-32">
                         Serial Number Unit/Barang
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 bg-white">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-slate-800">
                     {previewLoading ? (
                       <tr>
                         <td colSpan={12} className="px-6 py-12">
                           <div className="flex flex-col items-center justify-center gap-3">
-                            <div className="w-8 h-8 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
-                            <p className="text-sm text-slate-500 font-medium">Loading preview data...</p>
+                            <div className="w-8 h-8 border-4 border-slate-200 dark:border-slate-700 border-t-indigo-600 rounded-full animate-spin"></div>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Loading preview data...</p>
                           </div>
                         </td>
                       </tr>
@@ -415,12 +415,12 @@ const ReportWorkspace = ({ user }) => {
                       <tr>
                         <td colSpan={12} className="px-6 py-12">
                           <div className="flex flex-col items-center justify-center gap-3">
-                            <div className="p-4 bg-slate-100 rounded-full">
-                              <FileText className="w-8 h-8 text-slate-400" />
+                            <div className="p-4 bg-slate-100 dark:bg-slate-700 rounded-full">
+                              <FileText className="w-8 h-8 text-slate-400 dark:text-slate-500" />
                             </div>
                             <div className="text-center">
-                              <p className="text-sm font-semibold text-slate-700">Tidak ada data</p>
-                              <p className="text-xs text-slate-500 mt-1">Coba refresh atau ubah filter</p>
+                              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Tidak ada data</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Coba refresh atau ubah filter</p>
                             </div>
                           </div>
                         </td>
@@ -435,10 +435,10 @@ const ReportWorkspace = ({ user }) => {
                         return (
                           <tr
                             key={row._originalIndex}
-                            className="group hover:bg-slate-50/80 transition-colors"
+                            className="group hover:bg-slate-50/80 dark:hover:bg-slate-700/50 transition-colors"
                           >
                             <td className="px-4 py-3">
-                              <div className="w-8 h-8 bg-slate-100 text-slate-600 rounded-lg flex items-center justify-center text-xs font-bold">
+                              <div className="w-8 h-8 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg flex items-center justify-center text-xs font-bold">
                                 {row.no || '-'}
                               </div>
                             </td>
@@ -447,23 +447,23 @@ const ReportWorkspace = ({ user }) => {
                                 <div className="w-7 h-7 bg-indigo-100 rounded-full flex items-center justify-center">
                                   <User className="w-3.5 h-3.5 text-indigo-600" />
                                 </div>
-                                <span className="text-sm font-medium text-slate-700 truncate max-w-30">
+                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate max-w-30">
                                   {row.sales || row.sales_name || '-'}
                                 </span>
                               </div>
                             </td>
                             <td className="px-4 py-3">
                               <div>
-                                <span className="text-sm font-semibold text-slate-700 block truncate max-w-35">
+                                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 block truncate max-w-35">
                                   {row.customer || row.customer_name || '-'}
                                 </span>
-                                <span className="text-xs text-slate-500 truncate block max-w-35">
+                                <span className="text-xs text-slate-500 dark:text-slate-400 truncate block max-w-35">
                                   {row.institution || ''}
                                 </span>
                               </div>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-500">
+                              <span className="text-sm text-slate-500 dark:text-slate-400">
                                 {row.product || '-'}
                               </span>
                             </td>
@@ -473,39 +473,39 @@ const ReportWorkspace = ({ user }) => {
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-700 font-medium">
+                              <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">
                                 {keteranganStatus || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <div className="text-sm text-slate-600 w-72 wrap-break-words" title={kesimpulan}>
+                              <div className="text-sm text-slate-600 dark:text-slate-400 w-72 wrap-break-words" title={kesimpulan}>
                                 {kesimpulan.split('\n').map((line, i) => (
                                   <span key={i} className="block">{line}</span>
                                 ))}
                               </div>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-500">
+                              <span className="text-sm text-slate-500 dark:text-slate-400">
                                 {row['harga penawaran'] || row.harga_penawaran || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-500">
+                              <span className="text-sm text-slate-500 dark:text-slate-400">
                                 {row['harga deal'] || row.harga_deal || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-600 truncate block max-w-36" title={row['jadwal kunjungan presales'] || row.jadwal_kunjungan_presales || '-'}>
+                              <span className="text-sm text-slate-600 dark:text-slate-400 truncate block max-w-36" title={row['jadwal kunjungan presales'] || row.jadwal_kunjungan_presales || '-'}>
                                 {row['jadwal kunjungan presales'] || row.jadwal_kunjungan_presales || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-600 truncate block max-w-32" title={row['garansi unit/barang'] || row.garansi_unit || '-'}>
+                              <span className="text-sm text-slate-600 dark:text-slate-400 truncate block max-w-32" title={row['garansi unit/barang'] || row.garansi_unit || '-'}>
                                 {row['garansi unit/barang'] || row.garansi_unit || '-'}
                               </span>
                             </td>
                             <td className="px-4 py-3">
-                              <span className="text-sm text-slate-600 truncate block max-w-32" title={row['serial number unit/barang'] || row.serial_number_unit || '-'}>
+                              <span className="text-sm text-slate-600 dark:text-slate-400 truncate block max-w-32" title={row['serial number unit/barang'] || row.serial_number_unit || '-'}>
                                 {row['serial number unit/barang'] || row.serial_number_unit || '-'}
                               </span>
                             </td>
@@ -518,8 +518,8 @@ const ReportWorkspace = ({ user }) => {
               </div>
             </div>
             {previewRows.length > 0 && (
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                <p className="text-xs text-blue-800">
+              <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl">
+                <p className="text-xs text-blue-800 dark:text-blue-200">
                   <span className="font-bold">💡 Tips:</span> Preview menampilkan maksimal 50 data. File export akan berisi semua data sesuai filter yang dipilih.
                 </p>
               </div>
