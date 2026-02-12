@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import SalesWorkspace from '../components/SalesWorkspace';
 import ProspectWorkspace from '../components/ProspectWorkspace';
@@ -10,9 +10,28 @@ import ReportWorkspace from '../components/ReportWorkspace';
 import ProductWorkspace from '../components/ProductWorkspace';
 
 const Panel = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => {
+    // Default: desktop open, mobile closed
+    return typeof window !== 'undefined' && window.innerWidth >= 1024;
+  });
   const [activeTab, setActiveTab] = useState('sales');
   const { user } = useAuth();
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        // Desktop: open sidebar
+        setIsOpen(true);
+      } else {
+        // Mobile: close sidebar
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
