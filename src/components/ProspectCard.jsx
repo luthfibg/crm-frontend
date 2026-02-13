@@ -84,7 +84,9 @@ const ProspectCard = ({ data, onDetailsClick }) => {
   const stats = data?.stats || { percent: 0 };
   const kpiHistory = data?.kpi_progress_history || [];
   const lastFollowUpAt = data?.last_followup_at || null;
-  const user = useAuth().user;
+  const { user, isAdmin } = useAuth();
+  // Ambil nama sales/user yang menangani prospek
+  const salesName = data?.user?.name || data?.sales_name || data?.sales || data?.user_name;
 
   // State for time counter text (last FU)
   // Untuk lastFU, hilangkan kata 'kalender' jika ada
@@ -188,6 +190,14 @@ const ProspectCard = ({ data, onDetailsClick }) => {
 
     {/* HEADER */}
     <div className="flex justify-between items-start gap-3 mb-3">
+      {/* Jika admin, tampilkan nama sales/user yang menangani */}
+      {isAdmin && salesName && (
+        <div className="mb-1">
+          <span className="inline-block px-2 py-0.5 text-[10px] font-semibold rounded border bg-green-50 text-green-700 border-green-100">
+            Sales: {salesName}
+          </span>
+        </div>
+      )}
       <div className="min-w-0">
         <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
           {customer?.pic || 'Unnamed PIC'}
