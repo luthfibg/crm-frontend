@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { CallIcon, AiChat02Icon, PackageIcon } from '@hugeicons/core-free-icons';
 import api from '../api/axios';
@@ -6,6 +7,8 @@ import ProductDetailModal from './ProductDetailModal';
 
 const ProspectCardCompact = ({ data, onDetailsClick }) => {
   const customer = data?.customer || {};
+  const { isAdmin } = useAuth();
+  const salesName = data?.user?.name || data?.sales_name || data?.sales || data?.user_name;
   const kpiHistory = data?.kpi_progress_history || [];
   const stats = data?.stats || { percent: 0 };
   const [showProductModal, setShowProductModal] = useState(false);
@@ -86,6 +89,14 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
   return (
     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm hover:shadow-md transition flex flex-col gap-2">
       {/* HEADER: PIC + Score + Product Icon */}
+      {/* Jika admin, tampilkan nama sales/user yang menangani */}
+      {isAdmin && salesName && (
+        <div className="mb-1">
+          <span className="inline-block px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-green-50 text-green-700 border-green-100">
+            Sales: {salesName}
+          </span>
+        </div>
+      )}
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0 flex-1">
           <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
