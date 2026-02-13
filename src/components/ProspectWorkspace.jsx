@@ -33,8 +33,8 @@ const ProspectWorkspace = () => {
     { value: 'all', label: 'All Types' },
     { value: 'Pendidikan', label: 'Pendidikan' },
     { value: 'Pemerintahan', label: 'Pemerintahan' },
-    { value: 'Web Inquiry Corporate', label: 'Web Inquiry Corporate' },
-    { value: 'Web Inquiry C&I', label: 'Web Inquiry C&I' }
+    { value: 'Corporate', label: 'Corporate' },
+    { value: 'C&I', label: 'C&I' }
   ];
 
   // Get filtered prospects based on selected filter

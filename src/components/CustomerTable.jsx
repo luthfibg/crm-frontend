@@ -86,6 +86,9 @@ const CustomerTable = () => {
           email: item.email,
           phone_number: item.phone_number,
           category: item.category,
+          source: item.source,
+          sub_category: item.sub_category,
+          display_name: item.display_name,
           notes: item.notes,
           products: productsText,
           productsArray: item.products || []
@@ -143,6 +146,7 @@ const CustomerTable = () => {
               <tr className="border-b border-slate-100 dark:border-slate-700">
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Person in Charge</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Kategori</th>
+                <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Sumber</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Institution & Position</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Products</th>
                 <th className="px-6 py-4 text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-tighter">Contact Info</th>
@@ -164,7 +168,15 @@ const CustomerTable = () => {
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
                         <span className="text-sm text-slate-700 dark:text-slate-300">{item.category}</span>
+                        {item.display_name && (
+                          <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">{item.display_name}</span>
+                        )}
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-xs text-slate-600 dark:text-slate-400">
+                      {(item.category === 'Corporate' || item.category === 'C&I') && item.source ? item.source : '-'}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
