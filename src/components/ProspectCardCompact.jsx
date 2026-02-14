@@ -104,8 +104,11 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
-          {/* Score Badge */}
-          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 mb-0.5">
+          {/* Score / Progress Badge - klik untuk buka TaskChecklist */}
+          <div
+            className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 mb-0.5 cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-900/40 hover:border-amber-300 dark:hover:border-amber-600 transition-colors"
+            onClick={() => onDetailsClick?.(data)}
+          >
             <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400">
               {formatPoints(totalEarnedPoints)}
             </span>
@@ -145,13 +148,6 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
           title="WhatsApp"
         >
           <HugeiconsIcon icon={CallIcon} size={11} />
-        </button>
-
-        <button
-          onClick={() => onDetailsClick?.(data)}
-          className="text-[9px] font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 px-2 py-1 rounded flex items-center gap-1 transition-colors flex-1 justify-center"
-        >
-          Details <HugeiconsIcon icon={AiChat02Icon} size={10} />
         </button>
       </div>
 

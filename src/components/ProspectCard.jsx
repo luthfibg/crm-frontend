@@ -287,9 +287,12 @@ const ProspectCard = ({ data, onDetailsClick }) => {
       </div>
     </div>
 
-    {/* CURRENT KPI */}
+    {/* CURRENT KPI - klik untuk buka TaskChecklist */}
     {currentKPI && (
-      <div className="mb-3 p-2.5 bg-indigo-50/50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800">
+      <div
+        className="mb-3 p-2.5 bg-indigo-50/50 dark:bg-indigo-900/20 rounded border border-indigo-100 dark:border-indigo-800 cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900/30 hover:border-indigo-200 dark:hover:border-indigo-700 transition-colors"
+        onClick={() => onDetailsClick?.(data)}
+      >
         <div className="flex justify-between items-start mb-1.5">
           <div className="flex flex-col flex-1 min-w-0 pr-2">
             <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide mb-0.5">
@@ -404,13 +407,6 @@ const ProspectCard = ({ data, onDetailsClick }) => {
           title="Hubungi via WhatsApp"
         >
           <HugeiconsIcon icon={CallIcon} size={12} />
-        </button>
-
-        <button
-          onClick={() => onDetailsClick?.(data)}
-          className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 px-2 py-1 rounded flex items-center gap-1 transition-colors"
-        >
-          Checklist <HugeiconsIcon icon={AiChat02Icon} size={12} />
         </button>
 
         {/* Hanya tampilkan tombol delete jika developer mode */}

@@ -13,6 +13,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import api from '../api/axios';
+import { useAuth } from '../context/AuthContext';
 
 const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   const [submitting, setSubmitting] = useState(null);
@@ -22,6 +23,8 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   const [fileNames, setFileNames] = useState({});
   const [summaryRequired, setSummaryRequired] = useState(false);
   const [summaryValue, setSummaryValue] = useState('');
+
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     if (isOpen && prospect) {
@@ -76,6 +79,11 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   };
 
   const handleSubmitSummary = async () => {
+    if (isAdmin) {
+      alert('Administrator hanya dapat melihat progress, tidak dapat menginput kesimpulan.');
+      return;
+    }
+
     if (!summaryValue || summaryValue.trim().length < 5) {
       alert('Mohon isi Kesimpulan minimal 5 karakter sebelum submit');
       return;
@@ -106,6 +114,10 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   };
 
   const handleRevertTask = async (task) => {
+    if (isAdmin) {
+      alert('Administrator hanya dapat melihat riwayat, tidak dapat melakukan revert.');
+      return;
+    }
     if (!task.progress_id) {
       alert('Tidak dapat revert: Progress ID tidak ditemukan');
       return;
@@ -133,6 +145,10 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   };
 
   const handleSubmitTask = async (task) => {
+    if (isAdmin) {
+      alert('Administrator hanya dapat melihat progress, tidak dapat menginput checklist.');
+      return;
+    }
     const value = inputValues[task.id];
     const fileInput = document.getElementById(`file-${task.id}`);
     const file = fileInput?.files[0];
@@ -274,6 +290,9 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
   };
 
   const renderInputForm = (task) => {
+    // Mode read-only untuk administrator: tidak menampilkan input form baru
+    if (isAdmin) return null;
+
     switch (task.input_type) {
       case 'text':
         return (
@@ -403,14 +422,16 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             <div className="p-3 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-700 rounded-lg">
               <div className="flex items-center justify-between mb-1">
                 <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300">Input Anda:</p>
-                <button
-                  onClick={() => handleRevertTask(task)}
-                  disabled={submitting === task.id}
-                  className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/40 hover:bg-amber-200 dark:hover:bg-amber-800 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-amber-700 dark:text-amber-400 disabled:text-slate-400 dark:disabled:text-slate-500 rounded text-[10px] font-bold"
-                >
-                  <HugeiconsIcon icon={Undo02Icon} size={12} />
-                  Revert
-                </button>
+                {!isAdmin && (
+                  <button
+                    onClick={() => handleRevertTask(task)}
+                    disabled={submitting === task.id}
+                    className="flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-900/40 hover:bg-amber-200 dark:hover:bg-amber-800 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-amber-700 dark:text-amber-400 disabled:text-slate-400 dark:disabled:text-slate-500 rounded text-[10px] font-bold"
+                  >
+                    <HugeiconsIcon icon={Undo02Icon} size={12} />
+                    Revert
+                  </button>
+                )}
               </div>
               {['file', 'image', 'video'].includes(task.input_type) && task.progress_id ? (
                 <div className="flex items-center gap-2 mt-1">
@@ -451,16 +472,18 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               <p className="text-xs text-red-700 dark:text-red-300 mt-1 wrap-break-words">{task.user_input}</p>
             </div>
           )}
-          <div className="space-y-2">
-            {renderInputForm(task)}
-            <button
-              disabled={submitting === task.id}
-              onClick={() => handleSubmitTask(task)}
-              className="w-full py-2.5 bg-amber-600 dark:bg-amber-700 hover:bg-amber-700 dark:hover:bg-amber-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white rounded-lg text-xs font-bold"
-            >
-              {submitting === task.id ? 'Mengirim...' : 'Perbaiki & Submit'}
-            </button>
-          </div>
+          {!isAdmin && (
+            <div className="space-y-2">
+              {renderInputForm(task)}
+              <button
+                disabled={submitting === task.id}
+                onClick={() => handleSubmitTask(task)}
+                className="w-full py-2.5 bg-amber-600 dark:bg-amber-700 hover:bg-amber-700 dark:hover:bg-amber-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white rounded-lg text-xs font-bold"
+              >
+                {submitting === task.id ? 'Mengirim...' : 'Perbaiki & Submit'}
+              </button>
+            </div>
+          )}
         </div>
       );
     }
@@ -490,16 +513,18 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               <p className="text-xs text-red-700 dark:text-red-300 mt-1 wrap-break-words">{result.input}</p>
             </div>
           )}
-          <div className="space-y-2">
-            {renderInputForm(task)}
-            <button
-              disabled={submitting === task.id}
-              onClick={() => handleSubmitTask(task)}
-              className="w-full py-2.5 bg-amber-600 dark:bg-amber-700 hover:bg-amber-700 dark:hover:bg-amber-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white dark:text-white rounded-lg text-xs font-bold"
-            >
-              Perbaiki & Submit
-            </button>
-          </div>
+          {!isAdmin && (
+            <div className="space-y-2">
+              {renderInputForm(task)}
+              <button
+                disabled={submitting === task.id}
+                onClick={() => handleSubmitTask(task)}
+                className="w-full py-2.5 bg-amber-600 dark:bg-amber-700 hover:bg-amber-700 dark:hover:bg-amber-600 disabled:bg-slate-200 dark:disabled:bg-slate-700 text-white dark:text-white rounded-lg text-xs font-bold"
+              >
+                Perbaiki & Submit
+              </button>
+            </div>
+          )}
         </div>
       );
     }
@@ -520,6 +545,16 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
               <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1 wrap-break-words">{result.input}</p>
             </div>
           )}
+        </div>
+      );
+    }
+
+    if (isAdmin) {
+      return (
+        <div className="mt-2 p-3 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <p className="text-[11px] text-slate-600 dark:text-slate-300">
+            Checklist ini hanya dapat diisi oleh sales yang menangani prospek. Administrator hanya dapat melihat status dan input yang sudah ada.
+          </p>
         </div>
       );
     }
@@ -629,7 +664,7 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             );
           })}
 
-          {summaryRequired && (
+          {summaryRequired && !isAdmin && (
             <div className="mt-6 p-4 rounded-xl border-2 border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/20">
               <div className="flex items-center gap-2 mb-3">
                 <HugeiconsIcon icon={CheckmarkSquare02Icon} size={18} className="text-indigo-600 dark:text-indigo-400" />
@@ -660,7 +695,9 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
             </div>
           )}
           <p className="text-[10px] text-center text-slate-400 dark:text-slate-500 font-medium">
-            {summaryRequired ? '⚡ Wajib mengisi Kesimpulan' : 'Sistem Verifikasi Otomatis'}
+            {summaryRequired
+              ? (isAdmin ? '⚡ Kesimpulan wajib diisi oleh sales terkait' : '⚡ Wajib mengisi Kesimpulan')
+              : 'Sistem Verifikasi Otomatis'}
           </p>
         </div>
       </div>
