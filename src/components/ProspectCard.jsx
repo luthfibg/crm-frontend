@@ -190,20 +190,17 @@ const ProspectCard = ({ data, onDetailsClick }) => {
 
     {/* HEADER */}
     <div className="flex justify-between items-start gap-3 mb-3">
-      {/* Jika admin, tampilkan nama sales/user yang menangani */}
-      {isAdmin && salesName && (
-        <div className="mb-1">
-          <span className="inline-block px-2 py-0.5 text-[10px] font-semibold rounded border bg-green-50 text-green-700 border-green-100">
-            Sales: {salesName}
-          </span>
-        </div>
-      )}
       <div className="min-w-0">
         <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
           {customer?.pic || 'Unnamed PIC'}
         </h4>
         <p className="text-xs text-slate-500 dark:text-slate-400 truncate mb-2">
           {customer?.institution || 'No institution'}
+          {isAdmin && salesName && (
+            <>
+              {' '}| <span className="font-semibold text-emerald-600 dark:text-emerald-400">Sales: {salesName}</span>
+            </>
+          )}
         </p>
 
         <div className="flex items-center gap-1.5 mb-2 flex-wrap">
