@@ -89,14 +89,6 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
   return (
     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 shadow-sm hover:shadow-md transition flex flex-col gap-2">
       {/* HEADER: PIC + Score + Product Icon */}
-      {/* Jika admin, tampilkan nama sales/user yang menangani */}
-      {isAdmin && salesName && (
-        <div className="mb-1">
-          <span className="inline-block px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-green-50 text-green-700 border-green-100">
-            Sales: {salesName}
-          </span>
-        </div>
-      )}
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0 flex-1">
           <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 truncate">
@@ -104,11 +96,19 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
           </h4>
           <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
             {customer?.institution || 'No institution'}
+            {isAdmin && salesName && (
+              <>
+                {' '}| <span className="font-semibold text-emerald-600 dark:text-emerald-400">Sales: {salesName}</span>
+              </>
+            )}
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
-          {/* Score Badge */}
-          <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 mb-0.5">
+          {/* Score / Progress Badge - klik untuk buka TaskChecklist */}
+          <div
+            className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 mb-0.5 cursor-pointer hover:bg-amber-100 dark:hover:bg-amber-900/40 hover:border-amber-300 dark:hover:border-amber-600 transition-colors"
+            onClick={() => onDetailsClick?.(data)}
+          >
             <span className="text-[10px] font-bold text-amber-700 dark:text-amber-400">
               {formatPoints(totalEarnedPoints)}
             </span>
@@ -148,13 +148,6 @@ const ProspectCardCompact = ({ data, onDetailsClick }) => {
           title="WhatsApp"
         >
           <HugeiconsIcon icon={CallIcon} size={11} />
-        </button>
-
-        <button
-          onClick={() => onDetailsClick?.(data)}
-          className="text-[9px] font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 px-2 py-1 rounded flex items-center gap-1 transition-colors flex-1 justify-center"
-        >
-          Details <HugeiconsIcon icon={AiChat02Icon} size={10} />
         </button>
       </div>
 
