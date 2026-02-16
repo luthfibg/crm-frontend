@@ -101,6 +101,12 @@ const ProspectCard = ({ data, onDetailsClick }) => {
   // State for time counter status
   const [statusTimeText, setStatusTimeText] = useState(formatTimeDiff(statusChangedAt));
 
+  // State & helpers for Hand Over (admin only)
+  const [isHandoverOpen, setIsHandoverOpen] = useState(false);
+  const [handoverSalesOptions, setHandoverSalesOptions] = useState([]);
+  const [selectedSalesId, setSelectedSalesId] = useState('');
+  const [isHandoverLoading, setIsHandoverLoading] = useState(false);
+
   // Update counters every minute
   useEffect(() => {
     const updateTexts = () => {
@@ -175,6 +181,73 @@ const ProspectCard = ({ data, onDetailsClick }) => {
     
     // Buka WhatsApp
     window.open(`https://wa.me/${formattedNumber}`, '_blank');
+  };
+
+  // Load list of sales for handover (admin only)
+  const ensureHandoverSalesLoaded = async () => {
+    if (!isAdmin) return;
+    if (handoverSalesOptions.length > 0) return;
+
+    try {
+      const res = await api.get('/users');
+      const allUsers = res.data?.data || res.data || [];
+      const salesOnly = Array.isArray(allUsers)
+        ? allUsers.filter(u => u.role === 'sales')
+        : [];
+      setHandoverSalesOptions(salesOnly);
+    } catch (err) {
+      console.error('Failed to load sales for handover:', err);
+      alert('Gagal memuat daftar sales untuk Hand Over.');
+    }
+  };
+
+  const handleToggleHandover = async () => {
+    if (!isAdmin) return;
+    const nextOpen = !isHandoverOpen;
+    setIsHandoverOpen(nextOpen);
+    if (nextOpen) {
+      await ensureHandoverSalesLoaded();
+    }
+  };
+
+  const handleConfirmHandover = async () => {
+    if (!selectedSalesId) {
+      alert('Silakan pilih sales tujuan terlebih dahulu.');
+      return;
+    }
+
+    const customerId = customer?.id || data?.customer_id;
+    if (!customerId) {
+      alert('Data customer tidak valid.');
+      return;
+    }
+
+    if (parseInt(selectedSalesId, 10) === parseInt(customer?.user_id, 10)) {
+      alert('Prospek ini sudah dimiliki oleh sales tersebut.');
+      return;
+    }
+
+    if (!window.confirm('Yakin ingin melakukan Hand Over prospek ini ke sales terpilih?')) {
+      return;
+    }
+
+    try {
+      setIsHandoverLoading(true);
+      await api.post(`/customers/${customerId}/handover`, {
+        new_user_id: selectedSalesId,
+      });
+      alert('Prospek berhasil di-hand over ke sales baru.');
+      setIsHandoverOpen(false);
+      setSelectedSalesId('');
+      // Untuk kesederhanaan, reload halaman agar data terbaru terambil
+      window.location.reload();
+    } catch (err) {
+      console.error('Failed to hand over prospect:', err);
+      const msg = err?.response?.data?.message || 'Gagal melakukan Hand Over prospek.';
+      alert(msg);
+    } finally {
+      setIsHandoverLoading(false);
+    }
   };
 
   // Filter previous KPIs (non-current)
@@ -400,7 +473,60 @@ const ProspectCard = ({ data, onDetailsClick }) => {
         KPI: <span className="font-semibold">{kpi?.code || 'N/A'}</span>
       </span>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 relative">
+        {isAdmin && (
+          <div className="relative">
+            <button
+              onClick={handleToggleHandover}
+              className="p-1 rounded hover:bg-amber-50 dark:hover:bg-amber-900/20 text-slate-400 dark:text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors mr-0.5"
+              title="Hand Over"
+            >
+              <HugeiconsIcon icon={File01Icon} size={12} />
+            </button>
+
+            {isHandoverOpen && (
+              <div className="absolute right-0 bottom-7 z-40 w-52 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg p-2">
+                <div className="mb-1">
+                  <span className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
+                    Hand Over ke Sales
+                  </span>
+                </div>
+                <select
+                  className="w-full mb-2 px-2 py-1 text-xs rounded border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-200"
+                  value={selectedSalesId}
+                  onChange={(e) => setSelectedSalesId(e.target.value)}
+                >
+                  <option value="">Pilih sales tujuan</option>
+                  {handoverSalesOptions.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="flex justify-end gap-1">
+                  <button
+                    type="button"
+                    className="px-2 py-0.5 text-[10px] rounded border border-slate-200 dark:border-slate-600 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    onClick={() => {
+                      setIsHandoverOpen(false);
+                      setSelectedSalesId('');
+                    }}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    className="px-2 py-0.5 text-[10px] rounded bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={handleConfirmHandover}
+                    disabled={isHandoverLoading}
+                  >
+                    {isHandoverLoading ? 'Memproses...' : 'Hand Over'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <button 
           onClick={handleWhatsApp}
           className="p-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-slate-400 dark:text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
