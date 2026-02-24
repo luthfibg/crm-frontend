@@ -338,16 +338,23 @@ const TaskChecklistModal = ({ isOpen, onClose, prospect, onSuccess }) => {
           </div>
         );
 
-      case 'number':
+      case 'number': {
+        const desc = (task.description || '').toLowerCase();
+        const isSerialTask = desc.includes('serial number') || desc.includes('sn');
+        const placeholder = isSerialTask
+          ? 'Contoh: SERIAL NUMBER: XBMS0009C11 (boleh ada teks lain)'
+          : 'Contoh: 150 atau 150.5';
+
         return (
           <input
             type="text"
-            placeholder="Contoh: 150 atau 150.5"
+            placeholder={placeholder}
             value={inputValues[task.id] || ''}
             onChange={(e) => handleInputChange(task.id, e.target.value)}
             className="w-full p-2 text-sm border border-slate-200 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 outline-none placeholder-slate-400 dark:placeholder-slate-500"
           />
         );
+      }
 
       case 'currency':
         const currencyPhrase = detectPhrase(inputValues[task.id], 'currency');
