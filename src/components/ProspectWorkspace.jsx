@@ -123,17 +123,17 @@ const ProspectWorkspace = () => {
       />
 
       {/* Header Section */}
-      <div className="p-6 border-b border-slate-100 dark:border-slate-700 bg-linear-to-br from-indigo-50/50 to-purple-50/30 dark:from-slate-700/30 dark:to-slate-700/20">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-orange-100 rounded-xl">
+      <div className="px-4 py-4 sm:px-6 border-b border-slate-100 dark:border-slate-700 bg-linear-to-br from-indigo-50/50 to-purple-50/30 dark:from-slate-700/30 dark:to-slate-700/20">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="p-3 bg-orange-100 rounded-xl shrink-0">
               <HugeiconsIcon icon={WorkflowSquare01Icon} className="w-6 h-6 text-orange-600" />
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 truncate">
                 {view === 'pipeline' ? 'Prospect Pipeline' : view === 'customer' ? 'Customer Database' : 'Sales History'}
               </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                 {view === 'pipeline' ?
                   filterType === 'all'
                     ? `Saat ini ada ${prospects.length} prospek aktif`
@@ -143,8 +143,8 @@ const ProspectWorkspace = () => {
               </p>
             </div>
           </div>
-        
-        <div className="flex items-center gap-2">
+
+        <div className="flex flex-wrap items-center justify-start md:justify-end gap-2">
           {/* Filter Dropdown - Only show in pipeline view */}
           {view === 'pipeline' && (
             <div className="flex items-center gap-2">
@@ -168,14 +168,14 @@ const ProspectWorkspace = () => {
             <>
               {/* History Button - from pipeline */}
               <button onClick={() => setView('history')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 whitespace-nowrap">
                 <HugeiconsIcon icon={WorkHistoryIcon} size={18} />
                 History
               </button>
 
               {/* Database Button - from pipeline */}
               <button onClick={() => setView('customer')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 whitespace-nowrap">
                 <HugeiconsIcon icon={ContactBookIcon} size={18} />
                 View Database
               </button>
@@ -186,14 +186,14 @@ const ProspectWorkspace = () => {
             <>
               {/* History Button - from customer */}
               <button onClick={() => setView('history')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 whitespace-nowrap">
                 <HugeiconsIcon icon={WorkHistoryIcon} size={18} />
                 History
               </button>
 
               {/* Pipeline Button - from customer */}
               <button onClick={() => setView('pipeline')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 whitespace-nowrap">
                 <HugeiconsIcon icon={WorkflowSquare01Icon} size={18} />
                 View Pipeline
               </button>
@@ -204,14 +204,14 @@ const ProspectWorkspace = () => {
             <>
               {/* Pipeline Button - from history */}
               <button onClick={() => setView('pipeline')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 whitespace-nowrap">
                 <HugeiconsIcon icon={WorkflowSquare01Icon} size={18} />
                 View Pipeline
               </button>
 
               {/* Database Button - from history */}
               <button onClick={() => setView('customer')}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600">
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all border bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 whitespace-nowrap">
                 <HugeiconsIcon icon={ContactBookIcon} size={18} />
                 View Database
               </button>
@@ -222,14 +222,14 @@ const ProspectWorkspace = () => {
           {view === 'pipeline' ? (
             <button
               onClick={() => setIsAddProspectOpen(true)}
-              className='flex bg-indigo-600 items-center gap-2 px-4 py-2 rounded-lg text-xs font-black text-white hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100'>
+              className='flex bg-indigo-600 items-center gap-2 px-4 py-2 rounded-lg text-xs font-black text-white hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 whitespace-nowrap'>
               <HugeiconsIcon icon={PlusSignIcon} size={16} />
               ADD PROSPECT
             </button>
           ) : view === 'customer' ? (
             <button
               onClick={() => setIsAddCustomerOpen(true)}
-              className='flex bg-emerald-600 items-center gap-2 px-4 py-2 rounded-lg text-xs font-black text-white hover:bg-emerald-700 transition-all shadow-md shadow-emerald-100'>
+              className='flex bg-emerald-600 items-center gap-2 px-4 py-2 rounded-lg text-xs font-black text-white hover:bg-emerald-700 transition-all shadow-md shadow-emerald-100 whitespace-nowrap'>
               <HugeiconsIcon icon={PlusSignIcon} size={16} />
               NEW CUSTOMER
             </button>

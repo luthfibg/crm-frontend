@@ -189,12 +189,13 @@ const ProspectCard = ({ data, onDetailsClick }) => {
     if (handoverSalesOptions.length > 0) return;
 
     try {
-      const res = await api.get('/users');
-      const allUsers = res.data?.data || res.data || [];
-      const salesOnly = Array.isArray(allUsers)
-        ? allUsers.filter(u => u.role === 'sales')
-        : [];
-      setHandoverSalesOptions(salesOnly);
+      const customerId = customer?.id || data?.customer_id;
+      if (!customerId) return;
+
+      const res = await api.get(`/customers/${customerId}/eligible-sales`);
+      const list = res.data?.data || res.data || [];
+      const normalized = Array.isArray(list) ? list : [];
+      setHandoverSalesOptions(normalized);
     } catch (err) {
       console.error('Failed to load sales for handover:', err);
       alert('Gagal memuat daftar sales untuk Hand Over.');

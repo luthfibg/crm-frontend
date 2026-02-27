@@ -33,10 +33,16 @@ const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
       <div className="flex flex-col h-full">
         {/* Logo Section */}
         <div className="h-16 flex items-center px-6 border-b border-slate-50 dark:border-slate-700">
-          <div className="min-w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-            <div className="w-4 h-4 bg-white rounded-full animate-pulse" />
-          </div>
-          {isOpen && <span className="ml-3 font-bold text-lg text-slate-800 dark:text-slate-100 truncate">CRM MAS Jabar</span>}
+          <img
+            src="/logo/KSD2.png"
+            alt="Kawal Sampai DEAL"
+            className="w-8 h-8 rounded-lg object-contain shrink-0"
+          />
+          {isOpen && (
+            <span className="ml-3 font-bold text-lg text-slate-800 dark:text-slate-100 truncate">
+              Kawal Sampai DEAL
+            </span>
+          )}
         </div>
 
         {/* Navigation */}
