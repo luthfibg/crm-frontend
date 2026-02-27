@@ -39,7 +39,7 @@ const Sidebar = ({ isOpen, setIsOpen, activeTab, setActiveTab }) => {
             className="w-8 h-8 rounded-lg object-contain shrink-0"
           />
           {isOpen && (
-            <span className="ml-3 font-bold text-lg text-slate-800 dark:text-slate-100 truncate">
+            <span className="ml-3 font-bold text-md text-slate-800 dark:text-slate-100 truncate">
               Kawal Sampai DEAL
             </span>
           )}
